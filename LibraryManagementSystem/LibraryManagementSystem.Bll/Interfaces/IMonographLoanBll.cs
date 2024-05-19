@@ -1,0 +1,20 @@
+﻿using LibraryManagementSystem.Common.Runtime;
+using LibraryManagementSystem.Entities.Models;
+
+namespace LibraryManagementSystem.Bll.Interfaces
+{
+    public interface IMonographLoanBll : IBaseBll
+    {
+        Task<ApiResponse> Create(MonographLoan entity);
+
+        Task<ApiResponse> Delete(int id);
+        /* Para obtener todos los registros */
+        Task<ApiResponse> GetAll();
+        /* Para obtener un solo registro */
+        Task<ApiResponse> GetById(int id);
+        /* Para aprobar una solicitud de préstamo de monografía, estado de la solicitud: CREADA -> PRESTADA */
+        Task<ApiResponse> UpdateBorrowedMonographLoan(int monographLoanId, DateTime dueDate);
+        /* Para hacer la devolución de una monografía, estado de la solicitud: PRESTADA -> DEVUELTA */
+        Task<ApiResponse> UpdateReturnedMonographLoan(int monographLoanId);
+    }
+}
