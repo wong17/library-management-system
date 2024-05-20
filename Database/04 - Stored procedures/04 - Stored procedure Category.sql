@@ -67,13 +67,13 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que no vayan nombres de Categorias repetidos
-	IF EXISTS (SELECT [Name] FROM @Categories GROUP BY [Name] HAVING COUNT(*) > 1)
+	IF EXISTS (SELECT 1 FROM @Categories GROUP BY [Name] HAVING COUNT(*) > 1)
     BEGIN
         SELECT 1 AS IsSuccess, 'Uno o más Categorias están repetidos en la entrada' AS [Message];
         RETURN;
     END
 	-- Verificar que no existan Categorias con el mismo nombre en la base de datos
-	IF EXISTS (SELECT c.[Name] FROM @Categories AS c INNER JOIN [Library].Category AS db ON c.[Name] = db.[Name])
+	IF EXISTS (SELECT 1 FROM @Categories AS c INNER JOIN [Library].Category AS db ON c.[Name] = db.[Name])
     BEGIN
         SELECT 1 AS IsSuccess, 'Uno o más Categorias ya existen en la base de datos' AS [Message];
         RETURN;
@@ -175,12 +175,7 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que existen todas las Categorias a actualizar
-	IF EXISTS (
-        SELECT c.CategoryId
-        FROM @Categories AS c
-        LEFT JOIN [Library].Category AS db ON c.CategoryId = db.CategoryId
-        WHERE db.CategoryId IS NULL
-    )
+	IF EXISTS (SELECT 1 FROM @Categories AS c LEFT JOIN [Library].Category AS db ON c.CategoryId = db.CategoryId WHERE db.CategoryId IS NULL)
 	BEGIN
 		SELECT 2 AS IsSuccess, 'Una o más Categorias no existen en la base de datos' AS [Message];
 		RETURN
@@ -198,13 +193,13 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que no vayan nombres de Categorias repetidos
-	IF EXISTS (SELECT [Name] FROM @Categories GROUP BY [Name] HAVING COUNT(*) > 1)
+	IF EXISTS (SELECT 1 FROM @Categories GROUP BY [Name] HAVING COUNT(*) > 1)
     BEGIN
         SELECT 1 AS IsSuccess, 'Uno o más Categorias están repetidos en la entrada' AS [Message];
         RETURN;
     END
 	-- Verificar que no existan Categorias con el mismo nombre en la base de datos
-	IF EXISTS (SELECT c.[Name] FROM @Categories AS c INNER JOIN [Library].Category AS db ON c.[Name] = db.[Name])
+	IF EXISTS (SELECT 1 FROM @Categories AS c INNER JOIN [Library].Category AS db ON c.[Name] = db.[Name])
     BEGIN
         SELECT 1 AS IsSuccess, 'Uno o más Categorias ya existen en la base de datos' AS [Message];
         RETURN;

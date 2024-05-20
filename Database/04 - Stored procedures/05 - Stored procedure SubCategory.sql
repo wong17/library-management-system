@@ -74,12 +74,7 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que existen todas las Categorias 
-	IF EXISTS (
-        SELECT sc.CategoryId
-        FROM @SubCategories AS sc
-        LEFT JOIN [Library].Category AS db ON sc.CategoryId = db.CategoryId
-        WHERE db.CategoryId IS NULL
-    )
+	IF EXISTS (SELECT 1 FROM @SubCategories AS sc LEFT JOIN [Library].Category AS db ON sc.CategoryId = db.CategoryId WHERE db.CategoryId IS NULL)
 	BEGIN
 		SELECT 2 AS IsSuccess, 'Una o más Categorias no existen en la base de datos' AS [Message];
 		RETURN
@@ -97,13 +92,13 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que no vayan nombres de SubCategorias repetidos
-	IF EXISTS (SELECT [Name] FROM @SubCategories GROUP BY [Name] HAVING COUNT(*) > 1)
+	IF EXISTS (SELECT 1 FROM @SubCategories GROUP BY [Name] HAVING COUNT(*) > 1)
     BEGIN
         SELECT 1 AS IsSuccess, 'Uno o más Sub categorias están repetidos en la entrada' AS [Message];
         RETURN;
     END
 	-- Verificar que no existan SubCategorias con el mismo nombre en la base de datos
-	IF EXISTS (SELECT sc.[Name] FROM @SubCategories AS sc INNER JOIN [Library].SubCategory AS db ON sc.[Name] = db.[Name])
+	IF EXISTS (SELECT 1 FROM @SubCategories AS sc INNER JOIN [Library].SubCategory AS db ON sc.[Name] = db.[Name])
     BEGIN
         SELECT 1 AS IsSuccess, 'Uno o más Sub categorias ya existen en la base de datos' AS [Message];
         RETURN;
@@ -218,12 +213,7 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que existen todas las SubCategorias a actualizar
-	IF EXISTS (
-        SELECT sc.SubCategoryId
-        FROM @SubCategories AS sc
-        LEFT JOIN [Library].SubCategory AS db ON sc.SubCategoryId = db.SubCategoryId
-        WHERE db.SubCategoryId IS NULL
-    )
+	IF EXISTS (SELECT 1 FROM @SubCategories AS sc LEFT JOIN [Library].SubCategory AS db ON sc.SubCategoryId = db.SubCategoryId WHERE db.SubCategoryId IS NULL)
 	BEGIN
 		SELECT 2 AS IsSuccess, 'Una o más SubCategorias no existen en la base de datos' AS [Message];
 		RETURN
@@ -235,12 +225,7 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que existen todas las Categorias 
-	IF EXISTS (
-        SELECT sc.CategoryId
-        FROM @SubCategories AS sc
-        LEFT JOIN [Library].Category AS db ON sc.CategoryId = db.CategoryId
-        WHERE db.CategoryId IS NULL
-    )
+	IF EXISTS (SELECT 1 FROM @SubCategories AS sc LEFT JOIN [Library].Category AS db ON sc.CategoryId = db.CategoryId WHERE db.CategoryId IS NULL)
 	BEGIN
 		SELECT 2 AS IsSuccess, 'Una o más Categorias no existen en la base de datos' AS [Message];
 		RETURN
@@ -258,13 +243,13 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que no vayan nombres de SubCategorias repetidos
-	IF EXISTS (SELECT [Name] FROM @SubCategories GROUP BY [Name] HAVING COUNT(*) > 1)
+	IF EXISTS (SELECT 1 FROM @SubCategories GROUP BY [Name] HAVING COUNT(*) > 1)
     BEGIN
         SELECT 1 AS IsSuccess, 'Uno o más Sub categorias están repetidos en la entrada' AS [Message];
         RETURN;
     END
 	-- Verificar que no existan SubCategorias con el mismo nombre en la base de datos
-	IF EXISTS (SELECT sc.[Name] FROM @SubCategories AS sc INNER JOIN [Library].SubCategory AS db ON sc.[Name] = db.[Name])
+	IF EXISTS (SELECT 1 FROM @SubCategories AS sc INNER JOIN [Library].SubCategory AS db ON sc.[Name] = db.[Name])
     BEGIN
         SELECT 1 AS IsSuccess, 'Uno o más Sub categorias ya existen en la base de datos' AS [Message];
         RETURN;

@@ -175,12 +175,7 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que existen todos los Autores a actualizar
-	IF EXISTS (
-        SELECT a.AuthorId
-        FROM @Authors AS a
-        LEFT JOIN [Library].Author AS db ON a.AuthorId = db.AuthorId
-        WHERE db.AuthorId IS NULL
-    )
+	IF EXISTS (SELECT 1 FROM @Authors AS a LEFT JOIN [Library].Author AS db ON a.AuthorId = db.AuthorId WHERE db.AuthorId IS NULL)
 	BEGIN
 		SELECT 2 AS IsSuccess, 'Uno o mas Autores no existen en la base de datos' AS [Message];
 		RETURN
@@ -198,13 +193,13 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que no vayan nombres de Autores repetidos
-	IF EXISTS (SELECT [Name] FROM @Authors GROUP BY [Name] HAVING COUNT(*) > 1)
+	IF EXISTS (SELECT 1 FROM @Authors GROUP BY [Name] HAVING COUNT(*) > 1)
     BEGIN
         SELECT 1 AS IsSuccess, 'Uno o más Autores están repetidos en la entrada' AS [Message];
         RETURN;
     END
 	-- Verificar que no existan Autores con el mismo nombre en la base de datos
-	IF EXISTS (SELECT a.[Name] FROM @Authors AS a INNER JOIN [Library].Author AS db ON a.[Name] = db.[Name])
+	IF EXISTS (SELECT 1 FROM @Authors AS a INNER JOIN [Library].Author AS db ON a.[Name] = db.[Name])
     BEGIN
         SELECT 1 AS IsSuccess, 'Uno o más Autores ya existen en la base de datos' AS [Message];
         RETURN;

@@ -67,15 +67,15 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que no vayan nombres de Editoriales repetidos
-	IF EXISTS (SELECT [Name] FROM @Publishers GROUP BY [Name] HAVING COUNT(*) > 1)
+	IF EXISTS (SELECT 1 FROM @Publishers GROUP BY [Name] HAVING COUNT(*) > 1)
     BEGIN
-        SELECT 1 AS IsSuccess, 'Uno o más nombres están repetidos en la entrada' AS [Message];
+        SELECT 1 AS IsSuccess, 'Una o más Editoriales están repetidas en la entrada' AS [Message];
         RETURN;
     END
 	-- Verificar que no existan Editoriales con el mismo nombre en la base de datos
-	IF EXISTS (SELECT p.[Name] FROM @Publishers AS p INNER JOIN [Library].Publisher AS db ON p.[Name] = db.[Name])
+	IF EXISTS (SELECT 1 FROM @Publishers AS p INNER JOIN [Library].Publisher AS db ON p.[Name] = db.[Name])
     BEGIN
-        SELECT 1 AS IsSuccess, 'Uno o más nombres ya existen en la base de datos' AS [Message];
+        SELECT 1 AS IsSuccess, 'Una o más Editoriales ya existen en la base de datos' AS [Message];
         RETURN;
     END
 	--
@@ -175,12 +175,7 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que existen todas las Editoriales a actualizar
-	IF EXISTS (
-        SELECT p.PublisherId
-        FROM @Publishers AS p
-        LEFT JOIN [Library].Publisher AS db ON p.PublisherId = db.PublisherId
-        WHERE db.PublisherId IS NULL
-    )
+	IF EXISTS (SELECT 1 FROM @Publishers AS p LEFT JOIN [Library].Publisher AS db ON p.PublisherId = db.PublisherId WHERE db.PublisherId IS NULL)
 	BEGIN
 		SELECT 2 AS IsSuccess, 'Una o más Editoriales no existen en la base de datos' AS [Message];
 		RETURN
@@ -198,15 +193,15 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que no vayan nombres de Editoriales repetidos
-	IF EXISTS (SELECT [Name] FROM @Publishers GROUP BY [Name] HAVING COUNT(*) > 1)
+	IF EXISTS (SELECT 1 FROM @Publishers GROUP BY [Name] HAVING COUNT(*) > 1)
     BEGIN
-        SELECT 1 AS IsSuccess, 'Uno o más nombres están repetidos en la entrada' AS [Message];
+        SELECT 1 AS IsSuccess, 'Una o más Editoriales están repetidos en la entrada' AS [Message];
         RETURN;
     END
 	-- Verificar que no existan Editoriales con el mismo nombre en la base de datos
-	IF EXISTS (SELECT p.[Name] FROM @Publishers AS p INNER JOIN [Library].Publisher AS db ON p.[Name] = db.[Name])
+	IF EXISTS (SELECT 1 FROM @Publishers AS p INNER JOIN [Library].Publisher AS db ON p.[Name] = db.[Name])
     BEGIN
-        SELECT 1 AS IsSuccess, 'Uno o más nombres ya existen en la base de datos' AS [Message];
+        SELECT 1 AS IsSuccess, 'Un1 o más Editoriales ya existen en la base de datos' AS [Message];
         RETURN;
     END
 	--
