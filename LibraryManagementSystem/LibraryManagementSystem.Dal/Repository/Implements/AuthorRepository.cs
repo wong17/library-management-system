@@ -69,7 +69,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements
             try
             {
                 /* Ejecutar procedimiento almacenado que recibe tabla por parámetro */
-                DataSet result = await _sqlConnector.ExecuteSPWithTVPMany(table, "dbo.AuthorType", "", "@");
+                DataSet result = await _sqlConnector.ExecuteSPWithTVPMany(table, "[Library].AuthorType", "[Library].uspInsertManyAuthor", "@Authors");
                 /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
                 response = _sqlConnector.DataRowToObject<ApiResponse>(result.Tables[0].Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
@@ -284,7 +284,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements
             try
             {
                 /* Ejecutar procedimiento almacenado que recibe tabla por parámetro */
-                DataTable result = await _sqlConnector.ExecuteSPWithTVP(table, "dbo.AuthorType", "", "@");
+                DataTable result = await _sqlConnector.ExecuteSPWithTVP(table, "[Library].AuthorType", "[Library].uspUpdateManyAuthor", "@Authors");
                 /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
                 response = _sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */

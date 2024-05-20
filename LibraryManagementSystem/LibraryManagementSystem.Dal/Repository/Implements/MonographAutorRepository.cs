@@ -67,7 +67,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements
             try
             {
                 /* Ejecutar procedimiento almacenado que recibe tabla por parámetro */
-                DataSet result = await _sqlConnector.ExecuteSPWithTVPMany(table, "dbo.MonographAuthorType", "", "@");
+                DataSet result = await _sqlConnector.ExecuteSPWithTVPMany(table, "[Library].MonographAuthorType", "[Library].uspInsertManyMonographAuthor", "@MonographAuthors");
                 /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
                 response = _sqlConnector.DataRowToObject<ApiResponse>(result.Tables[0].Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
@@ -84,6 +84,12 @@ namespace LibraryManagementSystem.Dal.Repository.Implements
                 if (response.IsSuccess == 1)
                 {
                     response.StatusCode = HttpStatusCode.InternalServerError;
+                    return response;
+                }
+                /* No existe alguno de los registros para hacer la inserción */
+                if (response.IsSuccess == 2)
+                {
+                    response.StatusCode = HttpStatusCode.NotFound;
                     return response;
                 }
                 /* Retornar código de éxito y objeto registrado */
