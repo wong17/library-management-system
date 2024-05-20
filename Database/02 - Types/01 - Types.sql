@@ -78,7 +78,9 @@ GO
 CREATE TYPE [Library].BookSubcategoryType AS TABLE
 (
 	BookId INT,
-	SubCategoryId INT
+	SubCategoryId INT,
+	CreatedOn DATETIME,
+	ModifiedOn DATETIME
 )
 GO
 
@@ -88,8 +90,10 @@ IF TYPE_ID (N'Library.BookAuthorType') IS NOT NULL
 GO
 CREATE TYPE [Library].BookAuthorType AS TABLE 
 (
-	BookId INT NOT NULL,
-	AuthorId INT
+	BookId INT,
+	AuthorId INT,
+	CreatedOn DATETIME,
+	ModifiedOn DATETIME
 )
 GO
 
@@ -116,7 +120,7 @@ IF TYPE_ID (N'Library.MonographType') IS NOT NULL
 GO
 CREATE TYPE [Library].MonographType AS TABLE 
 (
-	MonographId INT IDENTITY(1,1),
+	MonographId INT,
 	[Classification] VARCHAR(25),
 	Title NVARCHAR(250),
 	[Description] NVARCHAR(500),
@@ -134,7 +138,7 @@ IF TYPE_ID (N'Library.MonographLoanType') IS NOT NULL
 GO
 CREATE TYPE [Library].MonographLoanType AS TABLE 
 (
-	MonographLoanId INT IDENTITY(1,1) NOT NULL,
+	MonographLoanId INT,
 	StudentId INT,
 	MonographId INT,
 	[State] CHAR(9),
@@ -151,6 +155,8 @@ GO
 CREATE TYPE [Library].MonographAuthorType AS TABLE 
 (
 	MonographId INT,
-	AuthorId INT
+	AuthorId INT,
+	CreatedOn DATETIME,
+	ModifiedOn DATETIME
 )
 GO
