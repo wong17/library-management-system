@@ -58,6 +58,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
+            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
+                return NotFound(response);
+
             return Ok(response);
         }
 

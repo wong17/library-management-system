@@ -161,7 +161,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PutListTVP([FromBody] IEnumerable<PublisherUpdateDto> list)
+        public async Task<IActionResult> UpdateMany([FromBody] IEnumerable<PublisherUpdateDto> list)
         {
             if (list is null)
                 return BadRequest(new ApiResponse() { Message = "Lista de Editoriales es null.", StatusCode = HttpStatusCode.BadRequest });

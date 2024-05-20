@@ -162,7 +162,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PutListTVP([FromBody] IEnumerable<CategoryUpdateDto> list)
+        public async Task<IActionResult> UpdateMany([FromBody] IEnumerable<CategoryUpdateDto> list)
         {
             if (list is null)
                 return BadRequest(new ApiResponse() { Message = "Lista de Categorias es null.", StatusCode = HttpStatusCode.BadRequest });
