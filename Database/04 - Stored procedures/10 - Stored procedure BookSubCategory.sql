@@ -57,6 +57,72 @@ BEGIN
 END
 GO
 
+--INSERT MANY BookSubCategory
+IF OBJECT_ID('Library.uspInsertManyBookSubCategory', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspInsertManyBookSubCategory;  
+GO
+CREATE PROC [Library].uspInsertManyBookSubCategory (
+	@BookSubCategories [Library].BookSubCategoryType READONLY
+)
+AS
+BEGIN
+	-- Verificar que el Id del Libro no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @BookSubCategories AS bsc WHERE bsc.BookId IS NULL OR bsc.BookId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id del Libro es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que existen todos los Libros
+	IF EXISTS (SELECT 1 FROM @BookSubCategories AS bsc LEFT JOIN [Library].Book AS db ON bsc.BookId = db.BookId WHERE db.BookId IS NULL)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'Uno o más Libros no existen en la base de datos' AS [Message];
+		RETURN
+	END
+	-- Verificar que el Id de la SubCategoria no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @BookSubCategories AS bsc WHERE bsc.SubCategoryId IS NULL OR bsc.SubCategoryId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id de la SubCategoria es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que existen todas las SubCategorias
+	IF EXISTS (SELECT 1 FROM @BookSubCategories AS bsc LEFT JOIN [Library].SubCategory AS db ON bsc.SubCategoryId = db.SubCategoryId WHERE db.SubCategoryId IS NULL)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'Una o más SubCategorias no existen en la base de datos' AS [Message];
+		RETURN
+	END
+	-- Verificar que no vayan relaciones de Libros-SubCategorias repetidas
+	IF EXISTS (SELECT 1 FROM @BookSubCategories AS bsc GROUP BY bsc.BookId, bsc.SubCategoryId HAVING COUNT(*) > 1)
+    BEGIN
+        SELECT 1 AS IsSuccess, 'Una o más relaciones Libro-Sub categoria están repetidos en la entrada' AS [Message];
+        RETURN;
+    END
+	-- Verificar que no existan las relaciones de Libros-SubCategorias en la base de datos
+	IF EXISTS (SELECT 1 FROM @BookSubCategories AS bsc INNER JOIN [Library].BookSubCategory AS db ON bsc.BookId = db.BookId AND bsc.SubCategoryId = db.SubCategoryId)
+    BEGIN
+        SELECT 1 AS IsSuccess, 'Una o más relaciones Libro-Sub categoria ya existen en la base de datos' AS [Message];
+        RETURN;
+    END
+	--
+	BEGIN TRAN
+	BEGIN TRY
+		-- Realizar la inserción 
+		INSERT INTO [Library].BookSubCategory(BookId, SubCategoryId) SELECT bsc.BookId, bsc.SubCategoryId FROM @BookSubCategories AS bsc
+		--
+		SELECT 0 AS IsSuccess, 'Sub categoría del libro registrada exitosamente' AS [Message];
+		--
+		IF @@ERROR = 0
+			IF @@TRANCOUNT > 0
+				COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRAN;
+		--
+        SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message];
+    END CATCH
+END
+GO
+
 --DELETE BookSubCategory
 IF OBJECT_ID('Library.uspDeleteBookSubCategory', 'P') IS NOT NULL  
     DROP PROCEDURE [Library].uspDeleteBookSubCategory;  

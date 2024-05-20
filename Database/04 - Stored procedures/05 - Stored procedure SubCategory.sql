@@ -58,6 +58,83 @@ BEGIN
 END
 GO
 
+--INSERT MANY SubCategory
+IF OBJECT_ID('Library.uspInsertManySubCategory', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspInsertManySubCategory;  
+GO
+CREATE PROC [Library].uspInsertManySubCategory (
+	@SubCategories [Library].SubCategoryType READONLY
+)
+AS
+BEGIN
+	-- Verificar que el Id de la Categoria no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @SubCategories AS sc WHERE sc.CategoryId IS NULL OR sc.CategoryId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id de la Categoria es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que existen todas las Categorias 
+	IF EXISTS (
+        SELECT sc.CategoryId
+        FROM @SubCategories AS sc
+        LEFT JOIN [Library].Category AS db ON sc.CategoryId = db.CategoryId
+        WHERE db.CategoryId IS NULL
+    )
+	BEGIN
+		SELECT 2 AS IsSuccess, 'Una o más Categorias no existen en la base de datos' AS [Message];
+		RETURN
+	END
+	-- Verificar que el nombre de todas las SubCategorias no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @SubCategories AS sc WHERE sc.[Name] IS NULL OR sc.[Name] = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Nombre de la SubCategoria es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que el nombre todas las SubCategorias solo tenga mayúsculas, minúsculas, guiones y espacios
+	IF EXISTS (SELECT 1 FROM @SubCategories AS sc WHERE sc.[Name] LIKE '%[^a-zA-Z- ]%')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Nombre de la SubCategoria solo puede tener mayúsculas, minúsculas, guiones y espacios' AS [Message]
+		RETURN
+	END
+	-- Verificar que no vayan nombres de SubCategorias repetidos
+	IF EXISTS (SELECT [Name] FROM @SubCategories GROUP BY [Name] HAVING COUNT(*) > 1)
+    BEGIN
+        SELECT 1 AS IsSuccess, 'Uno o más Sub categorias están repetidos en la entrada' AS [Message];
+        RETURN;
+    END
+	-- Verificar que no existan SubCategorias con el mismo nombre en la base de datos
+	IF EXISTS (SELECT sc.[Name] FROM @SubCategories AS sc INNER JOIN [Library].SubCategory AS db ON sc.[Name] = db.[Name])
+    BEGIN
+        SELECT 1 AS IsSuccess, 'Uno o más Sub categorias ya existen en la base de datos' AS [Message];
+        RETURN;
+    END
+	--
+	BEGIN TRAN
+	BEGIN TRY
+		-- Realizar la inserción y capturar los ID insertados en la tabla temporal
+		DECLARE @InsertedIDs TABLE (ID INT);
+
+		INSERT INTO [Library].SubCategory(CategoryId, [Name]) 
+		OUTPUT inserted.SubCategoryId INTO @InsertedIDs(ID)
+		SELECT sc.CategoryId, sc.[Name] FROM @SubCategories AS sc
+		--
+		SELECT 0 AS IsSuccess, 'SubCategorias registradas exitosamente' AS [Message];
+		-- Devuelve los ID de los registros insertados
+        SELECT ID AS InsertedID FROM @InsertedIDs;
+		--
+		IF @@ERROR = 0
+			IF @@TRANCOUNT > 0
+				COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRAN;
+		--
+        SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message];
+    END CATCH
+END
+GO
+
 -- UPDATE SubCategory
 IF OBJECT_ID('Library.uspUpdateSubCategory', 'P') IS NOT NULL  
     DROP PROCEDURE [Library].uspUpdateSubCategory;  
@@ -122,6 +199,97 @@ BEGIN
 		--
 		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
+END
+GO
+
+--UPDATE MANY SubCategory
+IF OBJECT_ID('Library.uspUpdateManySubCategory', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspUpdateManySubCategory;  
+GO
+CREATE PROC [Library].uspUpdateManySubCategory (
+	@SubCategories [Library].SubCategoryType READONLY
+)
+AS
+BEGIN
+	-- Verificar que el Id de la SubCategoria no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @SubCategories AS sc WHERE sc.SubCategoryId IS NULL OR sc.SubCategoryId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id de la SubCategoria es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que existen todas las SubCategorias a actualizar
+	IF EXISTS (
+        SELECT sc.SubCategoryId
+        FROM @SubCategories AS sc
+        LEFT JOIN [Library].SubCategory AS db ON sc.SubCategoryId = db.SubCategoryId
+        WHERE db.SubCategoryId IS NULL
+    )
+	BEGIN
+		SELECT 2 AS IsSuccess, 'Una o más SubCategorias no existen en la base de datos' AS [Message];
+		RETURN
+	END
+	-- Verificar que el Id de la Categoria no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @SubCategories AS sc WHERE sc.CategoryId IS NULL OR sc.CategoryId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id de la Categoria es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que existen todas las Categorias 
+	IF EXISTS (
+        SELECT sc.CategoryId
+        FROM @SubCategories AS sc
+        LEFT JOIN [Library].Category AS db ON sc.CategoryId = db.CategoryId
+        WHERE db.CategoryId IS NULL
+    )
+	BEGIN
+		SELECT 2 AS IsSuccess, 'Una o más Categorias no existen en la base de datos' AS [Message];
+		RETURN
+	END
+	-- Verificar que el nombre de todas las SubCategorias no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @SubCategories AS sc WHERE sc.[Name] IS NULL OR sc.[Name] = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Nombre de la SubCategoria es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que el nombre todas las SubCategorias solo tenga mayúsculas, minúsculas, guiones y espacios
+	IF EXISTS (SELECT 1 FROM @SubCategories AS sc WHERE sc.[Name] LIKE '%[^a-zA-Z- ]%')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Nombre de la SubCategoria solo puede tener mayúsculas, minúsculas, guiones y espacios' AS [Message]
+		RETURN
+	END
+	-- Verificar que no vayan nombres de SubCategorias repetidos
+	IF EXISTS (SELECT [Name] FROM @SubCategories GROUP BY [Name] HAVING COUNT(*) > 1)
+    BEGIN
+        SELECT 1 AS IsSuccess, 'Uno o más Sub categorias están repetidos en la entrada' AS [Message];
+        RETURN;
+    END
+	-- Verificar que no existan SubCategorias con el mismo nombre en la base de datos
+	IF EXISTS (SELECT sc.[Name] FROM @SubCategories AS sc INNER JOIN [Library].SubCategory AS db ON sc.[Name] = db.[Name])
+    BEGIN
+        SELECT 1 AS IsSuccess, 'Uno o más Sub categorias ya existen en la base de datos' AS [Message];
+        RETURN;
+    END
+	--
+	BEGIN TRAN
+	BEGIN TRY
+		-- Actualizar todos los registros
+		UPDATE db
+		SET db.CategoryId = sc.CategoryId, db.[Name] = sc.[Name]
+		FROM [Library].SubCategory AS db
+		INNER JOIN @SubCategories AS sc ON db.SubCategoryId = sc.SubCategoryId
+		--
+		SELECT 0 AS IsSuccess, 'SubCategorias actualizadas exitosamente' AS [Message]
+		--
+		IF @@ERROR = 0
+			IF @@TRANCOUNT > 0
+				COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRAN;
+		--
+        SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message];
+    END CATCH
 END
 GO
 

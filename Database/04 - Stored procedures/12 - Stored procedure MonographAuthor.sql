@@ -57,6 +57,72 @@ BEGIN
 END
 GO
 
+--INSERT MANY MonographAuthor
+IF OBJECT_ID('Library.uspInsertManyMonographAuthor', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspInsertManyMonographAuthor;  
+GO
+CREATE PROC [Library].uspInsertManyMonographAuthor (
+	@MonographAuthors [Library].MonographAuthorType READONLY
+)
+AS
+BEGIN
+	-- Verificar que el Id de la Monografia no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @MonographAuthors AS ma WHERE ma.MonographId IS NULL OR ma.MonographId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id de la Monografia es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que existen todas las Monografias
+	IF EXISTS (SELECT 1 FROM @MonographAuthors AS ma LEFT JOIN [Library].Monograph AS db ON ma.MonographId = db.MonographId WHERE db.MonographId IS NULL)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'Una o más Monografias no existen en la base de datos' AS [Message];
+		RETURN
+	END
+	-- Verificar que el Id del Autor no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @MonographAuthors AS ma WHERE ma.AuthorId IS NULL OR ma.AuthorId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id del Author es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que existen todos los Autores
+	IF EXISTS (SELECT 1 FROM @MonographAuthors AS ma LEFT JOIN [Library].Author AS db ON ma.AuthorId = db.AuthorId WHERE db.AuthorId IS NULL)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'Uno o más Autores no existen en la base de datos' AS [Message];
+		RETURN
+	END
+	-- Verificar que no vayan relaciones de Monografia-Autores repetidas
+	IF EXISTS (SELECT 1 FROM @MonographAuthors AS ma GROUP BY ma.MonographId, ma.AuthorId HAVING COUNT(*) > 1)
+    BEGIN
+        SELECT 1 AS IsSuccess, 'Una o más relaciones Monografia-Autores están repetidos en la entrada' AS [Message];
+        RETURN;
+    END
+	-- Verificar que no existan las relaciones de Libros-Autores en la base de datos
+	IF EXISTS (SELECT 1 FROM @MonographAuthors AS ma INNER JOIN [Library].MonographAuthor AS db ON ma.MonographId = db.MonographId AND ma.AuthorId = db.AuthorId)
+    BEGIN
+        SELECT 1 AS IsSuccess, 'Una o más relaciones Monografia-Autores ya existen en la base de datos' AS [Message];
+        RETURN;
+    END
+	--
+	BEGIN TRAN
+	BEGIN TRY
+		-- Realizar la inserción 
+		INSERT INTO [Library].MonographAuthor(MonographId, AuthorId) SELECT ma.MonographId, ma.AuthorId FROM @MonographAuthors AS ma
+		--
+		SELECT 0 AS IsSuccess, 'Autor de la monografia registrado exitosamente' AS [Message];
+		--
+		IF @@ERROR = 0
+			IF @@TRANCOUNT > 0
+				COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRAN;
+		--
+        SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message];
+    END CATCH
+END
+GO
+
 --DELETE MonographAuthor
 IF OBJECT_ID('Library.uspDeleteMonographAuthor', 'P') IS NOT NULL  
     DROP PROCEDURE [Library].uspDeleteMonographAuthor;  
