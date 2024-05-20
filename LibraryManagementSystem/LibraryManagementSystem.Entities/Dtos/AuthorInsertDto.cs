@@ -5,7 +5,8 @@ namespace LibraryManagementSystem.Entities.Dtos
     public class AuthorInsertDto
     {
         [Required]
-        [StringLength(maximumLength: 100, ErrorMessage = "Nombre del autor debe tener entre 1 y 100 caracteres", MinimumLength = 1)]
+        [StringLength(maximumLength: 100, ErrorMessage = "Nombre del Autor debe tener entre 1 y 100 caracteres", MinimumLength = 1)]
+        [RegularExpression(@"^[a-zA-Z. ]+$", ErrorMessage = "Nombre del Autor solo puede tener mayúsculas, minúsculas, puntos y espacios")]
         public string? Name { get; set; }
 
         [Required]

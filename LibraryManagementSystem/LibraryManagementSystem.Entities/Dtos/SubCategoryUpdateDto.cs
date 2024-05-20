@@ -14,6 +14,7 @@ namespace LibraryManagementSystem.Entities.Dtos
 
         [Required]
         [StringLength(maximumLength: 100, ErrorMessage = "Nombre de la Sub categoría debe tener entre 1 y 100 caracteres", MinimumLength = 1)]
+        [RegularExpression(@"^[a-zA-Z\- ]+$", ErrorMessage = "Nombre de la Sub categoría solo puede tener mayúsculas, minúsculas, guiones y espacios")]
         public string? Name { get; set; }
     }
 }

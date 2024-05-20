@@ -13,7 +13,8 @@ namespace LibraryManagementSystem.Entities.Dtos
         public int BookId { get; set; }
 
         [Required]
-        [StringLength(maximumLength: 10, ErrorMessage = "Tipo de préstamo del libro debe ser SALA o DOMICILIO", MinimumLength = 4)]
+        [StringLength(maximumLength: 10, ErrorMessage = "Tipo de préstamo debe ser SALA o DOMICILIO", MinimumLength = 4)]
+        [RegularExpression(@"^(SALA|DOMICILIO)$", ErrorMessage = "Tipo de préstamo debe ser SALA o DOMICILIO")]
         public string? TypeOfLoan { get; set; }
     }
 }
