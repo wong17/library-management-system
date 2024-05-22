@@ -37,7 +37,7 @@ BEGIN
 		--
 		INSERT INTO [Security].[Role] ([Name], [Description]) VALUES (@Name, @Description)
 		--
-		SELECT 0 AS IsSuccess, 'Rol registrado exitosamente' AS [Message]
+		SELECT 0 AS IsSuccess, 'Rol registrado exitosamente' AS [Message], SCOPE_IDENTITY() AS Result
 	END TRY
 	BEGIN CATCH
 		--
