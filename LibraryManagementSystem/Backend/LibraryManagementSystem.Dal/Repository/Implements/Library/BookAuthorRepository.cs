@@ -1,12 +1,12 @@
 ﻿using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Dal.Core;
-using LibraryManagementSystem.Dal.Repository.Interfaces;
-using LibraryManagementSystem.Entities.Models;
+using LibraryManagementSystem.Entities.Models.Library;
 using System.Data.SqlClient;
 using System.Data;
 using System.Net;
+using LibraryManagementSystem.Dal.Repository.Interfaces.Library;
 
-namespace LibraryManagementSystem.Dal.Repository.Implements
+namespace LibraryManagementSystem.Dal.Repository.Implements.Library
 {
     public class BookAuthorRepository(ISqlConnector sqlConnector) : IBookAuthorRepository
     {
@@ -40,6 +40,12 @@ namespace LibraryManagementSystem.Dal.Repository.Implements
                 if (response.IsSuccess == 1)
                 {
                     response.StatusCode = HttpStatusCode.InternalServerError;
+                    return response;
+                }
+                /* No existe alguno de los registros para hacer la inserción */
+                if (response.IsSuccess == 2)
+                {
+                    response.StatusCode = HttpStatusCode.NotFound;
                     return response;
                 }
                 /* Retornar código de éxito y objeto registrado */

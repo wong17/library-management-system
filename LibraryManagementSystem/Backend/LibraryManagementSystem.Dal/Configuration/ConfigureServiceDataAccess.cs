@@ -1,6 +1,10 @@
 ﻿using LibraryManagementSystem.Dal.Core;
-using LibraryManagementSystem.Dal.Repository.Implements;
-using LibraryManagementSystem.Dal.Repository.Interfaces;
+using LibraryManagementSystem.Dal.Repository.Implements.Library;
+using LibraryManagementSystem.Dal.Repository.Implements.Security;
+using LibraryManagementSystem.Dal.Repository.Implements.University;
+using LibraryManagementSystem.Dal.Repository.Interfaces.Library;
+using LibraryManagementSystem.Dal.Repository.Interfaces.Security;
+using LibraryManagementSystem.Dal.Repository.Interfaces.University;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LibraryManagementSystem.Dal.Configuration
@@ -11,7 +15,14 @@ namespace LibraryManagementSystem.Dal.Configuration
         {
             /* Core */
             services.AddScoped<ISqlConnector, SqlServerConnector>();
-            /* Agregar servicios DALs */
+            /* Agregar servicios DALs Security */
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+            /* Agregar servicios DALs University */
+            services.AddScoped<ICareerRepository, CareerRepository>();
+            services.AddScoped<IStudentRepository, StudentRepository>();
+            /* Agregar servicios DALs Library */
             services.AddScoped<IPublisherRepository, PublisherRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();

@@ -1,10 +1,8 @@
 ﻿using LibraryManagementSystem.Common.Runtime;
-using LibraryManagementSystem.Dal.Repository.Interfaces.Base;
-using LibraryManagementSystem.Entities.Models;
 
-namespace LibraryManagementSystem.Dal.Repository.Interfaces
+namespace LibraryManagementSystem.Dal.Repository.Interfaces.Base
 {
-    public interface IBookRepository : IRepositoryBase<Book>
+    public interface IRepositoryGetAllBase<in T> where T : class
     {
         /* Para obtener todos los registros */
         Task<ApiResponse> GetAll();

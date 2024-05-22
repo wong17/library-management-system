@@ -1,12 +1,12 @@
 ﻿using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Dal.Core;
-using LibraryManagementSystem.Dal.Repository.Interfaces;
-using LibraryManagementSystem.Entities.Models;
+using LibraryManagementSystem.Entities.Models.Library;
 using System.Data.SqlClient;
 using System.Data;
 using System.Net;
+using LibraryManagementSystem.Dal.Repository.Interfaces.Library;
 
-namespace LibraryManagementSystem.Dal.Repository.Implements
+namespace LibraryManagementSystem.Dal.Repository.Implements.Library
 {
     public class BookLoanRepository(ISqlConnector sqlConnector) : IBookLoanRepository
     {
