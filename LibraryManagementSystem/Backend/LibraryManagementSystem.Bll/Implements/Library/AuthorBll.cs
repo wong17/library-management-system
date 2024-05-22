@@ -1,9 +1,9 @@
-﻿using LibraryManagementSystem.Bll.Interfaces;
+﻿using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
-using LibraryManagementSystem.Dal.Repository.Interfaces;
-using LibraryManagementSystem.Entities.Models;
+using LibraryManagementSystem.Dal.Repository.Interfaces.Library;
+using LibraryManagementSystem.Entities.Models.Library;
 
-namespace LibraryManagementSystem.Bll.Implements
+namespace LibraryManagementSystem.Bll.Implements.Library
 {
     public class AuthorBll(IAuthorRepository repository) : IAuthorBll
     {

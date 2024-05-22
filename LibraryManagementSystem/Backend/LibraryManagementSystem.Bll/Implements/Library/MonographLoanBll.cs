@@ -1,9 +1,9 @@
-﻿using LibraryManagementSystem.Bll.Interfaces;
+﻿using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
-using LibraryManagementSystem.Dal.Repository.Interfaces;
-using LibraryManagementSystem.Entities.Models;
+using LibraryManagementSystem.Dal.Repository.Interfaces.Library;
+using LibraryManagementSystem.Entities.Models.Library;
 
-namespace LibraryManagementSystem.Bll.Implements
+namespace LibraryManagementSystem.Bll.Implements.Library
 {
     public class MonographLoanBll(IMonographLoanRepository repository) : IMonographLoanBll
     {
@@ -17,7 +17,7 @@ namespace LibraryManagementSystem.Bll.Implements
 
         public async Task<ApiResponse> GetById(int id) => await _repository.GetById(id);
 
-        public async Task<ApiResponse> UpdateBorrowedMonographLoan(int monographLoanId, DateTime dueDate) => 
+        public async Task<ApiResponse> UpdateBorrowedMonographLoan(int monographLoanId, DateTime dueDate) =>
             await _repository.UpdateBorrowedMonographLoan(monographLoanId, dueDate);
 
         public async Task<ApiResponse> UpdateReturnedMonographLoan(int monographLoanId) => await _repository.UpdateReturnedMonographLoan(monographLoanId);

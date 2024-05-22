@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
-using LibraryManagementSystem.Entities.Dtos;
-using LibraryManagementSystem.Entities.Models;
+using LibraryManagementSystem.Entities.Dtos.Library;
+using LibraryManagementSystem.Entities.Dtos.Security;
+using LibraryManagementSystem.Entities.Models.Library;
+using LibraryManagementSystem.Entities.Models.Security;
 
 namespace LibraryManagementSystem.Bll.Mapping
 {
@@ -8,6 +10,16 @@ namespace LibraryManagementSystem.Bll.Mapping
     {
         public AutoMapperProfile()
         {
+            /* Models - Dtos Security */
+            CreateMap<User, UserInsertDto>().ReverseMap();
+            CreateMap<User, UserUpdateDto>().ReverseMap();
+
+            CreateMap<Role, RoleInsertDto>().ReverseMap();
+            CreateMap<Role, RoleUpdateDto>().ReverseMap();
+
+            CreateMap<UserRole, UserRoleInsertDto>().ReverseMap();
+
+            /* Models - Dtos Library */
             CreateMap<Publisher, PublisherInsertDto>().ReverseMap();
             CreateMap<Publisher, PublisherUpdateDto>().ReverseMap();
 

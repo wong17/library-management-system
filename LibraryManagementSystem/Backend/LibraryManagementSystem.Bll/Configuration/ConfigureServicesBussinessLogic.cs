@@ -1,5 +1,9 @@
-﻿using LibraryManagementSystem.Bll.Implements;
-using LibraryManagementSystem.Bll.Interfaces;
+﻿using LibraryManagementSystem.Bll.Implements.Library;
+using LibraryManagementSystem.Bll.Implements.Security;
+using LibraryManagementSystem.Bll.Implements.University;
+using LibraryManagementSystem.Bll.Interfaces.Library;
+using LibraryManagementSystem.Bll.Interfaces.Security;
+using LibraryManagementSystem.Bll.Interfaces.University;
 using LibraryManagementSystem.Bll.Mapping;
 using LibraryManagementSystem.Dal.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +16,14 @@ namespace LibraryManagementSystem.Bll.Configuration
         {
             /* Agregar primero servicios de Data Access Layer (DAL) */
             services.AddDataAccessLayer();
-            /* Agregar BLLs */
+            /* Agregar BLLs Security */
+            services.AddScoped<IUserBll, UserBll>();
+            services.AddScoped<IRoleBll, RoleBll>();
+            services.AddScoped<IUserRoleBll, UserRoleBll>();
+            /* Agregar BLLs University */
+            services.AddScoped<ICareerBll, CareerBll>();
+            services.AddScoped<IStudentBll, StudentBll>();
+            /* Agregar BLLs Library */
             services.AddScoped<IPublisherBll, PublisherBll>();
             services.AddScoped<ICategoryBll, CategoryBll>();
             services.AddScoped<ISubCategoryBll, SubCategoryBll>();

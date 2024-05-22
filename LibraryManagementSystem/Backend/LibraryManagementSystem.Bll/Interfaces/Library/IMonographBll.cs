@@ -1,7 +1,8 @@
-﻿using LibraryManagementSystem.Common.Runtime;
-using LibraryManagementSystem.Entities.Models;
+﻿using LibraryManagementSystem.Bll.Interfaces.Base;
+using LibraryManagementSystem.Common.Runtime;
+using LibraryManagementSystem.Entities.Models.Library;
 
-namespace LibraryManagementSystem.Bll.Interfaces
+namespace LibraryManagementSystem.Bll.Interfaces.Library
 {
     public interface IMonographBll : IBaseBll
     {
