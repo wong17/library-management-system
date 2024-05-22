@@ -4,13 +4,13 @@ GO
 
 -- IsSuccess (0. Éxito, 1. Error en la bd o no paso una validación, 2. No existe el recurso)
 
---INSERT UserRol
-IF OBJECT_ID('Security.uspInsertUserRol', 'P') IS NOT NULL
-	DROP PROCEDURE [Security].uspInsertUserRol
+--INSERT UserRole
+IF OBJECT_ID('Security.uspInsertUserRole', 'P') IS NOT NULL
+	DROP PROCEDURE [Security].uspInsertUserRole
 GO
-CREATE PROC [Security].uspInsertUserRol (
+CREATE PROC [Security].uspInsertUserRole (
 	@UserId INT,
-	@RolId INT
+	@RoleId INT
 )
 AS
 BEGIN
@@ -27,19 +27,19 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@RolId IS NULL OR @RolId = '')
+	IF (@RoleId IS NULL OR @RoleId = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Id del rol es obligatorio' AS [Message]
 		RETURN
 	END
 	--
-	IF NOT EXISTS (SELECT 1 FROM [Security].[Rol] WHERE RolId = @RolId)
+	IF NOT EXISTS (SELECT 1 FROM [Security].[Role] WHERE RoleId = @RoleId)
 	BEGIN
 		SELECT 2 AS IsSuccess, 'No existe un rol con el Id ingresado' AS [Message]
 		RETURN
 	END
 	--
-	IF EXISTS (SELECT 1 FROM [Security].UserRol WHERE UserId = @UserId AND RolId = @RolId)
+	IF EXISTS (SELECT 1 FROM [Security].UserRole WHERE UserId = @UserId AND RoleId = @RoleId)
 	BEGIN
 		SELECT 1 AS IsSuccess, 'El usuario ya tiene el rol asignado' AS [Message]
 		RETURN
@@ -47,7 +47,7 @@ BEGIN
 	--
 	BEGIN TRY
 		--
-		INSERT INTO [Security].[UserRol] (UserId, RolId) VALUES (@UserId, @RolId)
+		INSERT INTO [Security].[UserRole] (UserId, RoleId) VALUES (@UserId, @RoleId)
 		--
 		SELECT 0 AS IsSuccess, 'Rol del usuario ingresado exitosamente' AS [Message]
 	END TRY
@@ -58,13 +58,13 @@ BEGIN
 END
 GO
 
---DELETE UserRol
-IF OBJECT_ID('Security.uspDeleteUserRol', 'P') IS NOT NULL
-	DROP PROCEDURE [Security].uspDeleteUserRol
+--DELETE UserRole
+IF OBJECT_ID('Security.uspDeleteUserRole', 'P') IS NOT NULL
+	DROP PROCEDURE [Security].uspDeleteUserRole
 GO
-CREATE PROC [Security].uspDeleteUserRol (
+CREATE PROC [Security].uspDeleteUserRole (
 	@UserId INT,
-	@RolId INT
+	@RoleId INT
 )
 AS
 BEGIN
@@ -75,13 +75,13 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@RolId IS NULL OR @RolId = '')
+	IF (@RoleId IS NULL OR @RoleId = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Id del rol es obligatorio' AS [Message]
 		RETURN
 	END
 	--
-	IF NOT EXISTS (SELECT 1 FROM [Security].UserRol WHERE UserId = @UserId AND RolId = @RolId)
+	IF NOT EXISTS (SELECT 1 FROM [Security].UserRole WHERE UserId = @UserId AND RoleId = @RoleId)
 	BEGIN
 		SELECT 2 AS IsSuccess, 'No existe un usuario con el rol ingresado' AS [Message]
 		RETURN
@@ -89,7 +89,7 @@ BEGIN
 	--
 	BEGIN TRY
 		--
-		DELETE FROM [Security].UserRol WHERE UserId = @UserId AND RolId = @RolId
+		DELETE FROM [Security].UserRole WHERE UserId = @UserId AND RoleId = @RoleId
 		--
 		SELECT 0 AS IsSuccess, 'Rol del usuario eliminado exitosamente' AS [Message]
 	END TRY
@@ -100,11 +100,11 @@ BEGIN
 END
 GO
 
---DELETE ALL UserRol
-IF OBJECT_ID('Security.uspDeleteAllUserRol', 'P') IS NOT NULL
-	DROP PROCEDURE [Security].uspDeleteAllUserRol
+--DELETE ALL UserRole
+IF OBJECT_ID('Security.uspDeleteAllUserRole', 'P') IS NOT NULL
+	DROP PROCEDURE [Security].uspDeleteAllUserRole
 GO
-CREATE PROC [Security].uspDeleteAllUserRol (
+CREATE PROC [Security].uspDeleteAllUserRole (
 	@UserId INT
 )
 AS
@@ -122,7 +122,7 @@ BEGIN
 		RETURN
 	END
 	--
-	IF NOT EXISTS (SELECT 1 FROM [Security].UserRol WHERE UserId = @UserId)
+	IF NOT EXISTS (SELECT 1 FROM [Security].UserRole WHERE UserId = @UserId)
 	BEGIN
 		SELECT 2 AS IsSuccess, 'El usuario no tiene ningun rol asignado' AS [Message]
 		RETURN
@@ -130,7 +130,7 @@ BEGIN
 	--
 	BEGIN TRY
 		--
-		DELETE FROM [Security].UserRol WHERE UserId = @UserId
+		DELETE FROM [Security].UserRole WHERE UserId = @UserId
 		--
 		SELECT 0 AS IsSuccess, 'Roles del usuario eliminados exitosamente' AS [Message]
 	END TRY
@@ -141,24 +141,24 @@ BEGIN
 END
 GO
 
---GET UserRol
-IF OBJECT_ID('Security.uspGetUserRol', 'P') IS NOT NULL
-	DROP PROCEDURE [Security].uspGetUserRol
+--GET UserRole
+IF OBJECT_ID('Security.uspGetUserRole', 'P') IS NOT NULL
+	DROP PROCEDURE [Security].uspGetUserRole
 GO
-CREATE PROC [Security].uspGetUserRol (
+CREATE PROC [Security].uspGetUserRole (
 	@UserId INT = NULL,
-	@RolId INT = NULL
+	@RoleId INT = NULL
 )
 AS
 BEGIN
 	--
-	IF (@UserId IS NULL OR @UserId = '' OR @RolId IS NULL OR @RolId = '')
+	IF (@UserId IS NULL OR @UserId = '' OR @RoleId IS NULL OR @RoleId = '')
 	BEGIN
-		SELECT UserId, RolId FROM [Security].UserRol
+		SELECT UserId, RoleId FROM [Security].UserRole
 	END
 	ELSE
 	BEGIN
-		SELECT UserId, RolId FROM [Security].UserRol WHERE UserId = @UserId AND RolId = @RolId
+		SELECT UserId, RoleId FROM [Security].UserRole WHERE UserId = @UserId AND RoleId = @RoleId
 	END
 END
 GO

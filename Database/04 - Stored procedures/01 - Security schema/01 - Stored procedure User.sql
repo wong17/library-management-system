@@ -142,7 +142,7 @@ BEGIN
 			IsSuccess INT,
 			[Message] VARCHAR(255)
 		)
-		INSERT INTO @SPResult EXEC [Security].uspDeleteAllUserRol @UserId
+		INSERT INTO @SPResult EXEC [Security].uspDeleteAllUserRole @UserId
 		IF ((SELECT IsSuccess FROM @SPResult) != 0)
 		BEGIN
 			--

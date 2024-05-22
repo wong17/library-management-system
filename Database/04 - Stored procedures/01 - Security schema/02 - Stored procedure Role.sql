@@ -4,11 +4,11 @@ GO
 
 -- IsSuccess (0. Éxito, 1. Error en la bd o no paso una validación, 2. No existe el recurso)
 
---INSERT Rol
-IF OBJECT_ID('Security.uspInsertRol', 'P') IS NOT NULL  
-    DROP PROCEDURE [Security].uspInsertRol;  
+--INSERT Role
+IF OBJECT_ID('Security.uspInsertRole', 'P') IS NOT NULL  
+    DROP PROCEDURE [Security].uspInsertRole;  
 GO
-CREATE PROC [Security].uspInsertRol (
+CREATE PROC [Security].uspInsertRole (
 	@Name VARCHAR(100),
 	@Description VARCHAR(500)
 )
@@ -27,7 +27,7 @@ BEGIN
 		RETURN
 	END
 	--
-	IF EXISTS (SELECT 1 FROM [Security].[Rol] WHERE [Name] = @Name)
+	IF EXISTS (SELECT 1 FROM [Security].[Role] WHERE [Name] = @Name)
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Ya existe un rol con el mismo nombre en la base de datos' AS [Message]
 		RETURN
@@ -35,7 +35,7 @@ BEGIN
 	--
 	BEGIN TRY
 		--
-		INSERT INTO [Security].Rol ([Name], [Description]) VALUES (@Name, @Description)
+		INSERT INTO [Security].[Role] ([Name], [Description]) VALUES (@Name, @Description)
 		--
 		SELECT 0 AS IsSuccess, 'Rol registrado exitosamente' AS [Message]
 	END TRY
@@ -46,25 +46,25 @@ BEGIN
 END
 GO
 
---UPDATE ROL
-IF OBJECT_ID('Security.uspUpdateRol', 'P') IS NOT NULL  
-    DROP PROCEDURE [Security].uspUpdateRol;  
+--UPDATE Role
+IF OBJECT_ID('Security.uspUpdateRole', 'P') IS NOT NULL  
+    DROP PROCEDURE [Security].uspUpdateRole;  
 GO
-CREATE PROC [Security].uspUpdateRol (
-	@RolId INT,
+CREATE PROC [Security].uspUpdateRole (
+	@RoleId INT,
 	@Name VARCHAR(100),
 	@Description VARCHAR(500)
 )
 AS
 BEGIN
 	--
-	IF (@RolId IS NULL OR @RolId = '')
+	IF (@RoleId IS NULL OR @RoleId = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Id del rol es obligatorio' AS [Message]
 		RETURN
 	END
 	--
-	IF NOT EXISTS (SELECT 1 FROM [Security].[Rol] WHERE RolId = @RolId)
+	IF NOT EXISTS (SELECT 1 FROM [Security].[Role] WHERE RoleId = @RoleId)
 	BEGIN
 		SELECT 2 AS IsSuccess, 'No existe un rol con el Id ingresado' AS [Message]
 		RETURN
@@ -82,7 +82,7 @@ BEGIN
 		RETURN
 	END
 	--
-	IF EXISTS (SELECT 1 FROM [Security].[Rol] WHERE [Name] = @Name)
+	IF EXISTS (SELECT 1 FROM [Security].[Role] WHERE [Name] = @Name)
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Ya existe un rol con el mismo nombre en la base de datos' AS [Message]
 		RETURN
@@ -90,7 +90,7 @@ BEGIN
 	--
 	BEGIN TRY
 		--
-		UPDATE [Security].Rol SET [Name] = @Name, [Description] = @Description WHERE RolId = @RolId
+		UPDATE [Security].[Role] SET [Name] = @Name, [Description] = @Description WHERE RoleId = @RoleId
 		--
 		SELECT 0 AS IsSuccess, 'Rol actualizado exitosamente' AS [Message]
 	END TRY
@@ -101,23 +101,23 @@ BEGIN
 END
 GO
 
---DELETE Rol
-IF OBJECT_ID('Security.uspDeleteRol', 'P') IS NOT NULL  
-    DROP PROCEDURE [Security].uspDeleteRol;  
+--DELETE Role
+IF OBJECT_ID('Security.uspDeleteRole', 'P') IS NOT NULL  
+    DROP PROCEDURE [Security].uspDeleteRole;  
 GO
-CREATE PROC [Security].uspDeleteRol (
-	@RolId INT
+CREATE PROC [Security].uspDeleteRole (
+	@RoleId INT
 )
 AS
 BEGIN
 	--
-	IF (@RolId IS NULL OR @RolId = '')
+	IF (@RoleId IS NULL OR @RoleId = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Id del rol es obligatorio' AS [Message]
 		RETURN
 	END
 	--
-	IF NOT EXISTS (SELECT 1 FROM [Security].[Rol] WHERE RolId = @RolId)
+	IF NOT EXISTS (SELECT 1 FROM [Security].[Role] WHERE RoleId = @RoleId)
 	BEGIN
 		SELECT 2 AS IsSuccess, 'No existe un rol con el Id ingresado' AS [Message]
 		RETURN
@@ -125,7 +125,7 @@ BEGIN
 	--
 	BEGIN TRY
 		--
-		DELETE FROM [Security].Rol WHERE RolId = @RolId
+		DELETE FROM [Security].[Role] WHERE RoleId = @RoleId
 		--
 		SELECT 0 AS IsSuccess, 'Rol eliminado exitosamente' AS [Message]
 	END TRY
@@ -136,23 +136,23 @@ BEGIN
 END
 GO
 
---GET Rol
-IF OBJECT_ID('Security.uspGetRol', 'P') IS NOT NULL  
-    DROP PROCEDURE [Security].uspGetRol;  
+--GET Role
+IF OBJECT_ID('Security.uspGetRole', 'P') IS NOT NULL  
+    DROP PROCEDURE [Security].uspGetRole;  
 GO
-CREATE PROC [Security].uspGetRol (
-	@RolId INT = NULL
+CREATE PROC [Security].uspGetRole (
+	@RoleId INT = NULL
 )
 AS
 BEGIN
 	--
-	IF (@RolId IS NULL OR @RolId = '')
+	IF (@RoleId IS NULL OR @RoleId = '')
 	BEGIN
-		SELECT RolId, [Name], [Description] FROM Security.Rol
+		SELECT RoleId, [Name], [Description] FROM [Security].[Role]
 	END
 	ELSE
 	BEGIN
-		SELECT RolId, [Name], [Description] FROM Security.Rol WHERE RolId = @RolId
+		SELECT RoleId, [Name], [Description] FROM [Security].[Role] WHERE RoleId = @RoleId
 	END
 END
 GO

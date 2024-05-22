@@ -2,15 +2,15 @@
 USE LibraryManagementDB
 GO
 
--- CREATE Rol TABLE
-IF OBJECT_ID(N'Security.Rol', 'U') IS NOT NULL
-  DROP TABLE [Security].[Rol]
+-- CREATE Role TABLE
+IF OBJECT_ID(N'Security.Role', 'U') IS NOT NULL
+  DROP TABLE [Security].[Role]
 GO
-CREATE TABLE [Security].[Rol] (
-	RolId INT NOT NULL IDENTITY(1,1),
+CREATE TABLE [Security].[Role] (
+	RoleId INT NOT NULL IDENTITY(1,1),
 	[Name] VARCHAR(100) NOT NULL,
 	[Description] VARCHAR(500) NULL,
-	CONSTRAINT PK_Rol_RolId PRIMARY KEY(RolId)
+	CONSTRAINT PK_Rol_RoleId PRIMARY KEY(RoleId)
 )
 GO
 
@@ -32,14 +32,14 @@ CREATE TABLE [Security].[User] (
 )
 GO
 
--- CREATE UserRol TABLE
-IF OBJECT_ID(N'Security.UserRol', 'U') IS NOT NULL
-  DROP TABLE [Security].[UserRol]
+-- CREATE UserRole TABLE
+IF OBJECT_ID(N'Security.UserRole', 'U') IS NOT NULL
+  DROP TABLE [Security].[UserRole]
 GO
-CREATE TABLE [Security].UserRol (
+CREATE TABLE [Security].UserRole (
 	UserId INT NOT NULL,
-	RolId INT NOT NULL,
-	CONSTRAINT PK_UserId_RolId PRIMARY KEY(UserId, RolId),
+	RoleId INT NOT NULL,
+	CONSTRAINT PK_UserId_RoleId PRIMARY KEY(UserId, RoleId),
 	CONSTRAINT FK_UserRol_UserId FOREIGN KEY(UserId) REFERENCES [Security].[User](UserId),
-	CONSTRAINT FK_UserRol_RolId FOREIGN KEY(RolId) REFERENCES [Security].[Rol](RolId)
+	CONSTRAINT FK_UserRol_RoleId FOREIGN KEY(RoleId) REFERENCES [Security].[Role](RoleId)
 )
