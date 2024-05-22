@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using LibraryManagementSystem.Bll.Interfaces;
+using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
-using LibraryManagementSystem.Entities.Dtos;
-using LibraryManagementSystem.Entities.Models;
+using LibraryManagementSystem.Entities.Dtos.Library;
+using LibraryManagementSystem.Entities.Models.Library;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -10,13 +10,13 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthorController(IAuthorBll authorBll, IMapper mapper) : ControllerBase
+    public class CategoryController(ICategoryBll categoryBll, IMapper mapper) : ControllerBase
     {
-        private readonly IAuthorBll _authorBll = authorBll;
+        private readonly ICategoryBll _categoryBll = categoryBll;
         private readonly IMapper _mapper = mapper;
 
         /// <summary>
-        /// Inserta un Autor
+        /// Inserta una Categoria
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -24,12 +24,12 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] AuthorInsertDto value)
+        public async Task<IActionResult> Create([FromBody] CategoryInsertDto value)
         {
             if (value is null)
-                return BadRequest(new ApiResponse() { Message = "Autor es null.", StatusCode = HttpStatusCode.BadRequest });
+                return BadRequest(new ApiResponse() { Message = "Categoría es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _authorBll.Create(_mapper.Map<Author>(value));
+            var response = await _categoryBll.Create(_mapper.Map<Category>(value));
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
@@ -37,7 +37,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Inserta varios Autores
+        /// Inserta varias Categorías
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
@@ -45,15 +45,15 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateMany([FromBody] IEnumerable<AuthorInsertDto> list)
+        public async Task<IActionResult> CreateMany([FromBody] IEnumerable<CategoryInsertDto> list)
         {
             if (list is null)
-                return BadRequest(new ApiResponse() { Message = "Lista de Autores es null.", StatusCode = HttpStatusCode.BadRequest });
+                return BadRequest(new ApiResponse() { Message = "Lista de Categorías es null.", StatusCode = HttpStatusCode.BadRequest });
 
             if (!list.Any())
                 return BadRequest(new ApiResponse() { Message = "La lista no tiene elementos a insertar.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _authorBll.CreateMany(_mapper.Map<IEnumerable<Author>>(list));
+            var response = await _categoryBll.CreateMany(_mapper.Map<IEnumerable<Category>>(list));
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
@@ -61,7 +61,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Elimina un Autor por su Id
+        /// Elimina una Categoría por su Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -75,7 +75,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             if (id <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _authorBll.Delete(id);
+            var response = await _categoryBll.Delete(id);
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
@@ -86,7 +86,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Devuelve todos los Autores
+        /// Devuelve todas las Categorías
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -94,7 +94,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
         {
-            var response = await _authorBll.GetAll();
+            var response = await _categoryBll.GetAll();
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
@@ -102,7 +102,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Devuelve un Autor por su Id
+        /// Devuelve una Categoría por su Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -116,7 +116,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             if (id <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _authorBll.GetById(id);
+            var response = await _categoryBll.GetById(id);
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
@@ -127,7 +127,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Actualiza un Autor
+        /// Actualiza una Categoría
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -136,12 +136,12 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update([FromBody] AuthorUpdateDto value)
+        public async Task<IActionResult> Update([FromBody] CategoryUpdateDto value)
         {
             if (value is null)
-                return BadRequest(new ApiResponse() { Message = "Autor es null.", StatusCode = HttpStatusCode.BadRequest });
+                return BadRequest(new ApiResponse() { Message = "Categoria es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _authorBll.Update(_mapper.Map<Author>(value));
+            var response = await _categoryBll.Update(_mapper.Map<Category>(value));
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
@@ -152,7 +152,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Actualiza varios Autores
+        /// Actualiza varias Categorías
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
@@ -161,15 +161,15 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateMany([FromBody] IEnumerable<AuthorUpdateDto> list)
+        public async Task<IActionResult> UpdateMany([FromBody] IEnumerable<CategoryUpdateDto> list)
         {
             if (list is null)
-                return BadRequest(new ApiResponse() { Message = "Lista de Autores es null.", StatusCode = HttpStatusCode.BadRequest });
+                return BadRequest(new ApiResponse() { Message = "Lista de Categorias es null.", StatusCode = HttpStatusCode.BadRequest });
 
             if (!list.Any())
                 return BadRequest(new ApiResponse() { Message = "La lista no tiene elementos a actualizar.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _authorBll.UpdateMany(_mapper.Map<IEnumerable<Author>>(list));
+            var response = await _categoryBll.UpdateMany(_mapper.Map<IEnumerable<Category>>(list));
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 

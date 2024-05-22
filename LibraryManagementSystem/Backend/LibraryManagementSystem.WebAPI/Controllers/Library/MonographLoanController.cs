@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using LibraryManagementSystem.Bll.Interfaces;
+using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
-using LibraryManagementSystem.Entities.Dtos;
-using LibraryManagementSystem.Entities.Models;
+using LibraryManagementSystem.Entities.Dtos.Library;
+using LibraryManagementSystem.Entities.Models.Library;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -10,13 +10,13 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookLoanController(IBookLoanBll bookLoanBll, IMapper mapper) : ControllerBase
+    public class MonographLoanController(IMonographLoanBll monographLoanBll, IMapper mapper) : ControllerBase
     {
-        private readonly IBookLoanBll _bookLoanBll = bookLoanBll;
+        private readonly IMonographLoanBll _monographLoanBll = monographLoanBll;
         private readonly IMapper _mapper = mapper;
 
         /// <summary>
-        /// Inserta un préstamo de libro
+        /// Inserta un préstamo de monografia
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -24,12 +24,12 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] BookLoanInsertDto value)
+        public async Task<IActionResult> Create([FromBody] MonographLoanInsertDto value)
         {
             if (value is null)
-                return BadRequest(new ApiResponse() { Message = "Préstamo de libro es null.", StatusCode = HttpStatusCode.BadRequest });
+                return BadRequest(new ApiResponse() { Message = "Préstamo de monografia es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookLoanBll.Create(_mapper.Map<BookLoan>(value));
+            var response = await _monographLoanBll.Create(_mapper.Map<MonographLoan>(value));
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
@@ -37,7 +37,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Elimina un préstamo de libro por su Id
+        /// Elimina un préstamo de monografia por su Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -51,7 +51,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             if (id <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookLoanBll.Delete(id);
+            var response = await _monographLoanBll.Delete(id);
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
@@ -62,7 +62,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Devuelve todos los préstamos de libros
+        /// Devuelve todos los préstamos de monografias
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -70,7 +70,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
         {
-            var response = await _bookLoanBll.GetAll();
+            var response = await _monographLoanBll.GetAll();
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
@@ -78,7 +78,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Devuelve un préstamo de libro por su Id
+        /// Devuelve un préstamo de monografia por su Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -92,7 +92,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             if (id <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookLoanBll.GetById(id);
+            var response = await _monographLoanBll.GetById(id);
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
@@ -103,21 +103,21 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Para aprobar una solicitud de préstamo de libro, estado de la solicitud: CREADA -> PRESTADO
+        /// Para aprobar una solicitud de préstamo de monografía, estado de la solicitud: CREADA -> PRESTADA
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpPut("{bookLoanId:int}/{dueDate:datetime}")]
+        [HttpPut("{monographLoanId:int}/{dueDate:datetime}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateBorrowedBookLoan(int bookLoanId, DateTime dueDate)
+        public async Task<IActionResult> UpdateBorrowedMonographLoan(int monographLoanId, DateTime dueDate)
         {
-            if (bookLoanId <= 0)
+            if (monographLoanId <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookLoanBll.UpdateBorrowedBookLoan(bookLoanId, dueDate);
+            var response = await _monographLoanBll.UpdateBorrowedMonographLoan(monographLoanId, dueDate);
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
@@ -128,21 +128,21 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Para hacer la devolución de un libro, estado de la solicitud: PRESTADO -> DEVUELTO
+        /// Para hacer la devolución de una monografía, estado de la solicitud: PRESTADA -> DEVUELTA
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpPut("{bookLoanId:int}")]
+        [HttpPut("{monographLoanId:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateReturnedBookLoan(int bookLoanId)
+        public async Task<IActionResult> UpdateReturnedMonographLoan(int monographLoanId)
         {
-            if (bookLoanId <= 0)
+            if (monographLoanId <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookLoanBll.UpdateReturnedBookLoan(bookLoanId);
+            var response = await _monographLoanBll.UpdateReturnedMonographLoan(monographLoanId);
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 

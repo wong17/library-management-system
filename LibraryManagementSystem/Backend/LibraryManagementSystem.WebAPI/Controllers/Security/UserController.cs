@@ -1,22 +1,22 @@
 ﻿using AutoMapper;
-using LibraryManagementSystem.Bll.Interfaces;
+using LibraryManagementSystem.Bll.Interfaces.Security;
 using LibraryManagementSystem.Common.Runtime;
-using LibraryManagementSystem.Entities.Dtos;
-using LibraryManagementSystem.Entities.Models;
+using LibraryManagementSystem.Entities.Dtos.Security;
+using LibraryManagementSystem.Entities.Models.Security;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace LibraryManagementSystem.WebAPI.Controllers
+namespace LibraryManagementSystem.WebAPI.Controllers.Security
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookSubCategoryController(IBookSubCategoryBll bookSubCategoryBll, IMapper mapper) : ControllerBase
+    public class UserController(IUserBll userBll, IMapper mapper) : ControllerBase
     {
-        private readonly IBookSubCategoryBll _bookSubCategoryBll = bookSubCategoryBll;
+        private readonly IUserBll _userBll = userBll;
         private readonly IMapper _mapper = mapper;
 
         /// <summary>
-        /// Inserta una Sub categoria para el libro
+        /// Inserta un Usuario
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -24,12 +24,12 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] BookSubCategoryInsertDto value)
+        public async Task<IActionResult> Create([FromBody] UserInsertDto value)
         {
             if (value is null)
-                return BadRequest(new ApiResponse() { Message = "Sub categoria del libro es null.", StatusCode = HttpStatusCode.BadRequest });
+                return BadRequest(new ApiResponse() { Message = "Usuario es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookSubCategoryBll.Create(_mapper.Map<BookSubCategory>(value));
+            var response = await _userBll.Create(_mapper.Map<User>(value));
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
@@ -37,48 +37,21 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Inserta varias Sub categorias para el libro
-        /// </summary>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        [HttpPost("CreateMany")]
-        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateMany([FromBody] IEnumerable<BookSubCategoryInsertDto> list)
-        {
-            if (list is null)
-                return BadRequest(new ApiResponse() { Message = "Lista de Sub categorías para el libro es null.", StatusCode = HttpStatusCode.BadRequest });
-
-            if (!list.Any())
-                return BadRequest(new ApiResponse() { Message = "La lista no tiene elementos a insertar.", StatusCode = HttpStatusCode.BadRequest });
-
-            var response = await _bookSubCategoryBll.CreateMany(_mapper.Map<IEnumerable<BookSubCategory>>(list));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
-
-            return Ok(response);
-        }
-
-        /// <summary>
-        /// Elimina una sub categoria para el libro por su Id
+        /// Elimina un Usuario por su Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("{bookId:int}/{subCategoryId:int}")]
+        [HttpDelete("{id:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Delete(int bookId, int subCategoryId)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (bookId <= 0 || subCategoryId <= 0)
-                return BadRequest(new ApiResponse() { Message = "Id(s) no pueden ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
+            if (id <= 0)
+                return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookSubCategoryBll.Delete(bookId, subCategoryId);
+            var response = await _userBll.Delete(id);
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
@@ -89,7 +62,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Devuelve todas las sub categorias del libro
+        /// Devuelve todos los Usuarios
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -97,7 +70,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
         {
-            var response = await _bookSubCategoryBll.GetAll();
+            var response = await _userBll.GetAll();
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
@@ -105,21 +78,46 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Devuelve una sub categoria del libro por su Id
+        /// Devuelve un Usuario por su Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{bookId:int}/{subCategoryId:int}")]
+        [HttpGet("{id:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetById(int bookId, int subCategoryId)
+        public async Task<IActionResult> GetById(int id)
         {
-            if (bookId <= 0 || subCategoryId <= 0)
-                return BadRequest(new ApiResponse() { Message = "Id(s) no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
+            if (id <= 0)
+                return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookSubCategoryBll.GetById(bookId, subCategoryId);
+            var response = await _userBll.GetById(id);
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
+                return NotFound(response);
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Actualiza un Usuario
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        [HttpPut("Update")]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Update([FromBody] UserUpdateDto value)
+        {
+            if (value is null)
+                return BadRequest(new ApiResponse() { Message = "Usuario es null.", StatusCode = HttpStatusCode.BadRequest });
+
+            var response = await _userBll.Update(_mapper.Map<User>(value));
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 

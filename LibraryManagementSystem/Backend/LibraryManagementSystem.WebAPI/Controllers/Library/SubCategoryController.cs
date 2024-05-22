@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using LibraryManagementSystem.Bll.Interfaces;
+using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
-using LibraryManagementSystem.Entities.Dtos;
-using LibraryManagementSystem.Entities.Models;
+using LibraryManagementSystem.Entities.Dtos.Library;
+using LibraryManagementSystem.Entities.Models.Library;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using LibraryManagementSystem.Bll.Interfaces;
+using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
-using LibraryManagementSystem.Entities.Dtos;
-using LibraryManagementSystem.Entities.Models;
+using LibraryManagementSystem.Entities.Dtos.Library;
+using LibraryManagementSystem.Entities.Models.Library;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -23,6 +23,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         [HttpPost("Create")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Create([FromBody] BookAuthorInsertDto value)
         {
@@ -32,6 +33,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             var response = await _bookAuthorBll.Create(_mapper.Map<BookAuthor>(value));
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
+                return NotFound(response);
 
             return Ok(response);
         }
