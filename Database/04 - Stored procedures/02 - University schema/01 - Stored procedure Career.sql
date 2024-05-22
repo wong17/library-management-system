@@ -36,7 +36,7 @@ BEGIN
 		--
 		INSERT INTO [University].Career ([Name]) VALUES (@Name)
 		--
-		SELECT 0 AS IsSucess, 'Carrera registrada exitosamente' AS [Message], SCOPE_IDENTITY() AS Result
+		SELECT 0 AS IsSuccess, 'Carrera registrada exitosamente' AS [Message], SCOPE_IDENTITY() AS Result
 	END TRY
 	BEGIN CATCH
 		--
