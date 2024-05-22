@@ -76,7 +76,7 @@ BEGIN
 		IF ((SELECT IsSuccess FROM @SPResult) != 0)
 		BEGIN
 			--
-			SELECT 1 AS IsSuccess, (SELECT [Message] FROM @SPResult) AS [MESSAGE]
+			SELECT IsSuccess, [Message] FROM @SPResult
 			--
 			IF @@TRANCOUNT > 0
 				ROLLBACK TRAN;
@@ -149,7 +149,7 @@ BEGIN
 		IF ((SELECT IsSuccess FROM @SPResult) != 0)
 		BEGIN
 			--
-			SELECT 1 AS IsSuccess, (SELECT [Message] FROM @SPResult) AS [MESSAGE]
+			SELECT IsSuccess, [Message] FROM @SPResult
 			--
 			IF @@TRANCOUNT > 0
 				ROLLBACK TRAN;
@@ -229,7 +229,7 @@ BEGIN
 		IF ((SELECT IsSuccess FROM @SPResult) != 0)
 		BEGIN
 			--
-			SELECT 1 AS IsSuccess, (SELECT [Message] FROM @SPResult) AS [MESSAGE]
+			SELECT IsSuccess, [Message] FROM @SPResult
 			--
 			IF @@TRANCOUNT > 0
 				ROLLBACK TRAN;
@@ -296,7 +296,7 @@ BEGIN
 		IF ((SELECT IsSuccess FROM @SPResult) != 0)
 		BEGIN
 			--
-			SELECT 1 AS IsSuccess, (SELECT [Message] FROM @SPResult) AS [MESSAGE]
+			SELECT IsSuccess, [Message] FROM @SPResult
 			--
 			IF @@TRANCOUNT > 0
 				ROLLBACK TRAN;
