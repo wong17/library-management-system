@@ -2,6 +2,17 @@
 USE LibraryManagementDB
 GO
 
+-- UserRole TYPE
+IF TYPE_ID (N'Security.UserRoleType') IS NOT NULL 
+	DROP TYPE [Security].UserRoleType;
+GO
+CREATE TYPE [Security].UserRoleType AS TABLE
+(
+	UserId INT,
+	RoleId INT
+)
+GO
+
 -- Publisher TYPE
 IF TYPE_ID (N'Library.PublisherType') IS NOT NULL 
 	DROP TYPE [Library].PublisherType;
