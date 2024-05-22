@@ -58,6 +58,72 @@ BEGIN
 END
 GO
 
+--INSERT MANY UserRole
+IF OBJECT_ID('Security.uspInsertManyUserRole', 'P') IS NOT NULL
+	DROP PROCEDURE [Security].uspInsertManyUserRole
+GO
+CREATE PROC [Security].uspInsertManyUserRole (
+	@UserRoles [Security].UserRoleType READONLY
+)
+AS
+BEGIN
+	-- Verificar que el Id del Usuario no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @UserRoles AS ur WHERE ur.UserId IS NULL OR ur.UserId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id del Usuario es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que existen todos los Usuarios
+	IF EXISTS (SELECT 1 FROM @UserRoles AS ur LEFT JOIN [Security].[User] AS db ON ur.UserId = db.UserId WHERE db.UserId IS NULL)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'Uno o más Usuarios no existen en la base de datos' AS [Message];
+		RETURN
+	END
+	-- Verificar que el Id del Rol no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @UserRoles AS ur WHERE ur.RoleId IS NULL OR ur.RoleId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id del Rol es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que existen todos los Roles
+	IF EXISTS (SELECT 1 FROM @UserRoles AS ur LEFT JOIN [Security].[Role] AS db ON ur.RoleId = db.RoleId WHERE db.RoleId IS NULL)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'Uno o más Roles no existen en la base de datos' AS [Message];
+		RETURN
+	END
+	-- Verificar que no vayan relaciones de Usuario-Roles repetidas
+	IF EXISTS (SELECT 1 FROM @UserRoles AS ur GROUP BY ur.UserId, ur.RoleId HAVING COUNT(*) > 1)
+    BEGIN
+        SELECT 1 AS IsSuccess, 'Una o más relaciones Usuario-Roles están repetidos en la entrada' AS [Message];
+        RETURN;
+    END
+	-- Verificar que no existan las relaciones de Usuario-Roles en la base de datos
+	IF EXISTS (SELECT 1 FROM @UserRoles AS ur INNER JOIN [Security].UserRole AS db ON ur.UserId = db.UserId AND ur.RoleId = db.RoleId)
+    BEGIN
+        SELECT 1 AS IsSuccess, 'Una o más relaciones Usuario-Roles ya existen en la base de datos' AS [Message];
+        RETURN;
+    END
+	--
+	BEGIN TRAN
+	BEGIN TRY
+		-- Realizar la inserción 
+		INSERT INTO [Security].UserRole(UserId, RoleId) SELECT ur.UserId, ur.RoleId FROM @UserRoles AS ur
+		--
+		SELECT 0 AS IsSuccess, 'Roles de los usuarios registrados exitosamente' AS [Message];
+		--
+		IF @@ERROR = 0
+			IF @@TRANCOUNT > 0
+				COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRAN;
+		--
+        SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message];
+    END CATCH
+END
+GO
+
 --DELETE UserRole
 IF OBJECT_ID('Security.uspDeleteUserRole', 'P') IS NOT NULL
 	DROP PROCEDURE [Security].uspDeleteUserRole
