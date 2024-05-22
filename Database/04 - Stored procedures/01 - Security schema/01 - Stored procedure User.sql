@@ -11,7 +11,7 @@ GO
 CREATE PROC [Security].uspInsertUser (
 	@UserName VARCHAR(50),
 	@Email VARCHAR(250),
-	@Password VARBINARY(64)
+	@Password VARCHAR(64)
 )
 AS
 BEGIN
@@ -66,7 +66,7 @@ GO
 CREATE PROC [Security].uspUpdateUser (
 	@UserId INT,
 	@Email VARCHAR(250),
-	@Password VARBINARY(64)
+	@Password VARCHAR(64)
 )
 AS
 BEGIN
@@ -175,14 +175,11 @@ BEGIN
 	--
 	IF (@UserId IS NULL OR @UserId = '')
 	BEGIN
-		SELECT UserId, UserName, Email, [Password], AccessToken, RefreshToken, RefreshTokenExpiryTime, LockoutEnabled, AccessFailedCount 
-		FROM [Security].[User]
+		SELECT UserId, UserName, Email FROM [Security].[User]
 	END
 	ELSE
 	BEGIN
-		SELECT UserId, UserName, Email, [Password], AccessToken, RefreshToken, RefreshTokenExpiryTime, LockoutEnabled, AccessFailedCount 
-		FROM [Security].[User]
-		WHERE UserId = @UserId
+		SELECT UserId, UserName, Email FROM [Security].[User] WHERE UserId = @UserId
 	END
 END
 GO
