@@ -306,14 +306,14 @@ BEGIN
 	--
 	IF (@StudentId IS NULL OR @StudentId = '')
 	BEGIN
-		SELECT [FirstName], [SecondName], [FirstLastname], [SecondLastname], [Carnet], [PhoneNumber], [Sex], [Email], 
-			[Shift], [BorrowedBooks], [HasBorrowedMonograph], [Fine], [CreatedOn], [ModifiedOn],[CareerId]
+		SELECT [StudentId], [FirstName], [SecondName], [FirstLastname], [SecondLastname], [Carnet], [PhoneNumber], [Sex], [Email], 
+			[Shift], [BorrowedBooks], [HasBorrowedMonograph], [Fine], [CreatedOn], [ModifiedOn], [CareerId]
 		FROM [University].Student 
 	END
 	ELSE 
 	BEGIN
-		SELECT [FirstName], [SecondName], [FirstLastname], [SecondLastname], [Carnet], [PhoneNumber], [Sex], [Email], 
-			[Shift], [BorrowedBooks], [HasBorrowedMonograph], [Fine], [CreatedOn], [ModifiedOn],[CareerId]
+		SELECT [StudentId], [FirstName], [SecondName], [FirstLastname], [SecondLastname], [Carnet], [PhoneNumber], [Sex], [Email], 
+			[Shift], [BorrowedBooks], [HasBorrowedMonograph], [Fine], [CreatedOn], [ModifiedOn], [CareerId]
 		FROM [University].Student 
 		WHERE StudentId = @StudentId
 	END
