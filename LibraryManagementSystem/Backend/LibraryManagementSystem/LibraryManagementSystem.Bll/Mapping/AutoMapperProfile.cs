@@ -15,11 +15,14 @@ namespace LibraryManagementSystem.Bll.Mapping
             /* Models - Dtos Security */
             CreateMap<User, UserInsertDto>().ReverseMap();
             CreateMap<User, UserUpdateDto>().ReverseMap();
+            CreateMap<User, UserDto>().ReverseMap();
 
             CreateMap<Role, RoleInsertDto>().ReverseMap();
             CreateMap<Role, RoleUpdateDto>().ReverseMap();
+            CreateMap<Role, RoleDto>().ReverseMap();
 
             CreateMap<UserRole, UserRoleInsertDto>().ReverseMap();
+            CreateMap<UserRole, UserRoleDto>().ReverseMap();
 
             /* Models - Dtos Library */
             CreateMap<Publisher, PublisherInsertDto>().ReverseMap();
