@@ -14,7 +14,17 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 
         public async Task<ApiResponse> Create(SubCategory entity) => await _repository.Create(entity);
 
-        public async Task<ApiResponse> CreateMany(IEnumerable<SubCategory> entities) => await _repository.CreateMany(entities);
+        public async Task<ApiResponse> CreateMany(IEnumerable<SubCategory> entities)
+        {
+            var response = await _repository.CreateMany(entities);
+            // Comprobar si hay elementos
+            if (response.Result is null || response.Result is not IEnumerable<SubCategory> subCategories)
+                return response;
+            // Retornar Dtos
+            response.Result = _mapper.Map<IEnumerable<SubCategoryDto>>(subCategories);
+
+            return response;
+        }
 
         public async Task<ApiResponse> Delete(int id) => await _repository.Delete(id);
 
