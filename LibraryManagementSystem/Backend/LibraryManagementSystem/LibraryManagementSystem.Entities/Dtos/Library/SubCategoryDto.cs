@@ -7,8 +7,8 @@ namespace LibraryManagementSystem.Entities.Dtos.Library
         [JsonPropertyName("SubCategoryId")]
         public int SubCategoryId { get; set; }
 
-        [JsonPropertyName("CategoryId")]
-        public int CategoryId { get; set; }
+        [JsonPropertyName("Category")]
+        public CategoryDto? Category { get; set; }
 
         [JsonPropertyName("Name")]
         public string? Name { get; set; }
