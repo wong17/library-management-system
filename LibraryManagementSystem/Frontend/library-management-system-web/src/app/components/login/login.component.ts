@@ -8,6 +8,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormGroup } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { Validators } from '@angular/forms';
+import { ControlStateMatcher } from '../../util/control-state-matcher';
 
 @Component({
   selector: 'app-login',
@@ -20,12 +21,14 @@ export class LoginComponent {
 
   /* Formulario de inicio de sesión */
   loginForm: FormGroup;
+  /* */
+  matcher: ControlStateMatcher = new ControlStateMatcher()
 
   constructor(private formBuilder: FormBuilder) {
     /* Agrupar controles, crear formulario y agregar validaciones */
     this.loginForm = this.formBuilder.group({
-      username: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(50)]],
-      password: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(64)]]
+      username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(64)]]
     });
   }
 
