@@ -1,0 +1,34 @@
+.form-container  {
+    background-color: #ededed;
+    width: 400px;
+    margin: auto;
+    margin-top: 50px;
+    box-sizing: border-box;
+    box-shadow: 0 0 20px 0 #0007;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.form-header {
+    background-color: #4758b8;
+    padding: 20px;
+    border-top-left-radius: 10px; /* Bordes superiores redondeados */
+    border-top-right-radius: 10px;
+}
+
+.form-header h1 {
+    color: white;
+    margin: 0;
+}
+
+.form-content {
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.inputField {
+    width: 100%;
+}
