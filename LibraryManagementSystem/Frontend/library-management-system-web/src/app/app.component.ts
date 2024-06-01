@@ -10,7 +10,8 @@ import { LoginComponent } from "./components/login/login.component";
     imports: [RouterOutlet, LoginComponent]
 })
 export class AppComponent {
-  title = 'Gestión de biblioteca';
+  
+  title = 'Biblioteca Universitaria';
   /* 
   Librerias de componentes a usar
   https://getbootstrap.com/

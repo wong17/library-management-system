@@ -5,20 +5,20 @@
   </mat-card-header>
 
   <mat-card-content>
-    <form>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline">
           <mat-label>Nombre de usuario:</mat-label>
-          <input type="text" matInput placeholder="Usuario..." required>
+          <input type="text" matInput placeholder="Usuario..." formControlName="usernameField">
           <mat-icon matSuffix>person</mat-icon>
         </mat-form-field>
     
         <mat-form-field appearance="outline">
           <mat-label>Contraseña:</mat-label>
-          <input type="password" matInput placeholder="Contraseña..." required>
+          <input type="password" matInput placeholder="Contraseña..." formControlName="passwordField">
           <mat-icon matSuffix>password</mat-icon>
         </mat-form-field>
         
-        <button type="submit" mat-flat-button color="primary">Iniciar sesión</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="!loginForm.valid">Iniciar sesión</button>
     </form>
   </mat-card-content>
 
