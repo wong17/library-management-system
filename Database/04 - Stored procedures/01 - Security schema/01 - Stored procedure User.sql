@@ -209,16 +209,17 @@ BEGIN
 	--
 	IF NOT EXISTS (SELECT 1 FROM [Security].[User] WHERE UserName = @UserName COLLATE Latin1_General_BIN2)
 	BEGIN
-		SELECT 1 AS IsSuccess, 'No existe un usuario con el nombre ingresado' AS [Message]
+		SELECT 2 AS IsSuccess, 'No existe un usuario con el nombre ingresado' AS [Message]
 		RETURN
 	END
 	--
-	IF NOT EXISTS (SELECT 1 FROM [Security].[User] WHERE UserName = @UserName COLLATE Latin1_General_BIN2 AND [Password] = HASHBYTES('SHA2_512', @Password))
+	DECLARE @UserId INT = (SELECT UserId FROM [Security].[User] WHERE UserName = @UserName COLLATE Latin1_General_BIN2 AND [Password] = HASHBYTES('SHA2_512', @Password))
+	IF (@UserId IS NULL OR @UserId = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'La contraseña ingresada es incorrecta' AS [Message]
 		RETURN;
 	END
-
-	SELECT 0 AS IsSuccess, 'Login exitoso' AS [Message]
+	--
+	SELECT 0 AS IsSuccess, 'Inicio de sesión exitoso' AS [Message], @UserId AS [Result]
 END
 GO
