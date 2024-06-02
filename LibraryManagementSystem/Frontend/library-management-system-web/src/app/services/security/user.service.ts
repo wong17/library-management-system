@@ -55,7 +55,7 @@ export class UserService {
   /**
    * Actualiza un usuario
    * @param user
-   * @returns
+   * @returns Observable<ApiResponse>
    */
   update(user: UserUpdateDto): Observable<ApiResponse> {
     return this.http.put<ApiResponse>(`${this.apiUrl}${this.userUpdateUrl}`, user, this.httpHeader);
@@ -80,7 +80,7 @@ export class UserService {
 
   /**
    * Devuelve un usuario
-   * @param id
+   * @param userId
    * @returns Observable<ApiResponse>
    */
   getById(userId: number): Observable<ApiResponse> {
