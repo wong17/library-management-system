@@ -183,3 +183,42 @@ BEGIN
 	END
 END
 GO
+
+-- LogIn User
+IF OBJECT_ID('Security.uspLogInUser', 'P') IS NOT NULL  
+    DROP PROCEDURE [Security].uspLogInUser;  
+GO
+CREATE PROC [Security].uspLogInUser (
+	@UserName VARCHAR(50),
+	@Password VARCHAR(64)
+)
+AS
+BEGIN
+	--
+	IF (@UserName IS NULL OR @UserName = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Nombre de usuario es obligatoria' AS [Message]
+		RETURN
+	END
+	--
+	IF (@Password IS NULL OR @Password = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Contraseña del usuario es obligatoria' AS [Message]
+		RETURN
+	END
+	--
+	IF NOT EXISTS (SELECT 1 FROM [Security].[User] WHERE UserName = @UserName COLLATE Latin1_General_BIN2)
+	BEGIN
+		SELECT 1 AS IsSuccess, 'No existe un usuario con el nombre ingresado' AS [Message]
+		RETURN
+	END
+	--
+	IF NOT EXISTS (SELECT 1 FROM [Security].[User] WHERE UserName = @UserName COLLATE Latin1_General_BIN2 AND [Password] = HASHBYTES('SHA2_512', @Password))
+	BEGIN
+		SELECT 1 AS IsSuccess, 'La contraseña ingresada es incorrecta' AS [Message]
+		RETURN;
+	END
+
+	SELECT 0 AS IsSuccess, 'Login exitoso' AS [Message]
+END
+GO
