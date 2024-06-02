@@ -7,7 +7,7 @@ namespace LibraryManagementSystem.Common.Runtime
     {
         /*
          * Resultado de la petición HTTP
-         * 0: Éxito, 1: Error en la bd o con una validación, 2: No existe el recurso
+         * 0: Éxito, 1: No paso una validación, 2: No existe el recurso, 3: Error en la base de datos
          */
         [JsonPropertyName("IsSuccess")]
         public int IsSuccess { get; set; } = 1;

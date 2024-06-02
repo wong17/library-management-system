@@ -16,6 +16,7 @@ namespace LibraryManagementSystem.Bll.Mapping
             CreateMap<User, UserInsertDto>().ReverseMap();
             CreateMap<User, UserUpdateDto>().ReverseMap();
             CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<User, UserLogInDto>().ReverseMap();
 
             CreateMap<Role, RoleInsertDto>().ReverseMap();
             CreateMap<Role, RoleUpdateDto>().ReverseMap();

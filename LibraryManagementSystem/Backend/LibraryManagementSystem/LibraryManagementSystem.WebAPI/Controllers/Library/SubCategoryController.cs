@@ -30,7 +30,13 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "SubCategoría es null.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _subCategoryBll.Create(_mapper.Map<SubCategory>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
+
+            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
+                return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -54,7 +60,13 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "La lista no tiene elementos a insertar.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _subCategoryBll.CreateMany(_mapper.Map<IEnumerable<SubCategory>>(list));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
+
+            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
+                return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -76,11 +88,14 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _subCategoryBll.Delete(id);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
 
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }
@@ -95,7 +110,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             var response = await _subCategoryBll.GetAll();
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -117,11 +132,11 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _subCategoryBll.GetById(id);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }
@@ -142,11 +157,14 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "Categoria es null.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _subCategoryBll.Update(_mapper.Map<SubCategory>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
 
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }
@@ -170,11 +188,14 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "La lista no tiene elementos a actualizar.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _subCategoryBll.UpdateMany(_mapper.Map<IEnumerable<SubCategory>>(list));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
 
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }

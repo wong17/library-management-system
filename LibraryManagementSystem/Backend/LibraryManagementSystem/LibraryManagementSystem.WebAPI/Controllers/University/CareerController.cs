@@ -21,7 +21,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.University
         public async Task<IActionResult> GetAll()
         {
             var response = await _carrerBll.GetAll();
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -43,11 +43,11 @@ namespace LibraryManagementSystem.WebAPI.Controllers.University
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _carrerBll.GetById(id);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }

@@ -30,7 +30,10 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "Editorial es null.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _publisherBll.Create(_mapper.Map<Publisher>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -54,7 +57,10 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "La lista no tiene elementos a insertar.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _publisherBll.CreateMany(_mapper.Map<IEnumerable<Publisher>>(list));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -76,11 +82,14 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _publisherBll.Delete(id);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
 
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }
@@ -95,7 +104,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             var response = await _publisherBll.GetAll();
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -117,11 +126,11 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _publisherBll.GetById(id);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }
@@ -142,11 +151,14 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "Editorial es null.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _publisherBll.Update(_mapper.Map<Publisher>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
 
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }
@@ -170,11 +182,14 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "La lista no tiene elementos a actualizar.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _publisherBll.UpdateMany(_mapper.Map<IEnumerable<Publisher>>(list));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
 
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }

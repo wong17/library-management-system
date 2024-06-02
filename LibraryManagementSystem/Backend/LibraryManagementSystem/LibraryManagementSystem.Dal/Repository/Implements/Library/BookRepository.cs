@@ -41,8 +41,20 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                     };
                     return response;
                 }
-                /* Ocurrio algún error o no paso una validación en el procedimiento almacenado */
+                /* No paso una validación en el procedimiento almacenado */
                 if (response.IsSuccess == 1)
+                {
+                    response.StatusCode = HttpStatusCode.BadRequest;
+                    return response;
+                }
+                /* No existe el registro a eliminar */
+                if (response.IsSuccess == 2)
+                {
+                    response.StatusCode = HttpStatusCode.NotFound;
+                    return response;
+                }
+                /* Ocurrio algún error en el procedimiento almacenado */
+                if (response.IsSuccess == 3)
                 {
                     response.StatusCode = HttpStatusCode.InternalServerError;
                     return response;
@@ -87,16 +99,22 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                     };
                     return response;
                 }
-                /* Ocurrio algún error en el procedimiento almacenado */
+                /* No paso una validación en el procedimiento almacenado */
                 if (response.IsSuccess == 1)
                 {
-                    response.StatusCode = HttpStatusCode.InternalServerError;
+                    response.StatusCode = HttpStatusCode.BadRequest;
                     return response;
                 }
                 /* No existe el registro a eliminar */
                 if (response.IsSuccess == 2)
                 {
                     response.StatusCode = HttpStatusCode.NotFound;
+                    return response;
+                }
+                /* Ocurrio algún error en el procedimiento almacenado */
+                if (response.IsSuccess == 3)
+                {
+                    response.StatusCode = HttpStatusCode.InternalServerError;
                     return response;
                 }
                 /* Retornar código de éxito */
@@ -210,8 +228,20 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                     };
                     return response;
                 }
-                /* Ocurrio algún error o no paso una validación en el procedimiento almacenado */
+                /* No paso una validación en el procedimiento almacenado */
                 if (response.IsSuccess == 1)
+                {
+                    response.StatusCode = HttpStatusCode.BadRequest;
+                    return response;
+                }
+                /* No existe el registro a eliminar */
+                if (response.IsSuccess == 2)
+                {
+                    response.StatusCode = HttpStatusCode.NotFound;
+                    return response;
+                }
+                /* Ocurrio algún error en el procedimiento almacenado */
+                if (response.IsSuccess == 3)
                 {
                     response.StatusCode = HttpStatusCode.InternalServerError;
                     return response;

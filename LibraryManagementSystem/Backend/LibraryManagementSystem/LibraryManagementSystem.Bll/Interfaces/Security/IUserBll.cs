@@ -11,5 +11,6 @@ namespace LibraryManagementSystem.Bll.Interfaces.Security
         Task<ApiResponse> Delete(int id);
         Task<ApiResponse> GetAll();
         Task<ApiResponse> GetById(int id);
+        Task<ApiResponse> LogIn(User entity);
     }
 }

@@ -41,5 +41,7 @@ namespace LibraryManagementSystem.Bll.Implements.Security
         }
 
         public async Task<ApiResponse> Update(User entity) => await _repository.Update(entity);
+
+        public async Task<ApiResponse> LogIn(User entity) => await _repository.LogIn(entity);
     }
 }

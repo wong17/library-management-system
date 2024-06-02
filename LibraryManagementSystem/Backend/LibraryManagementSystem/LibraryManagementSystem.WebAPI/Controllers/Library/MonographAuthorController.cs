@@ -31,11 +31,14 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "Autor es null.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _monographAuthorBll.Create(_mapper.Map<MonographAuthor>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
 
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }
@@ -58,11 +61,14 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "La lista no tiene elementos a insertar.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _monographAuthorBll.CreateMany(_mapper.Map<IEnumerable<MonographAuthor>>(list));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
 
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }
@@ -83,11 +89,14 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "Id(s) no pueden ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _monographAuthorBll.Delete(monographId, authorId);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
 
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }
@@ -102,7 +111,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             var response = await _monographAuthorBll.GetAll();
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -124,11 +133,11 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "Id(s) no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _monographAuthorBll.GetById(monographId, authorId);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }

@@ -30,7 +30,13 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "Préstamo de monografia es null.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _monographLoanBll.Create(_mapper.Map<MonographLoan>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
+
+            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
+                return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -52,11 +58,14 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _monographLoanBll.Delete(id);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
 
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }
@@ -71,7 +80,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             var response = await _monographLoanBll.GetAll();
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -93,11 +102,11 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _monographLoanBll.GetById(id);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }
@@ -118,11 +127,14 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _monographLoanBll.UpdateBorrowedMonographLoan(monographLoanId, dueDate);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
 
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }
@@ -143,11 +155,14 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
             var response = await _monographLoanBll.UpdateReturnedMonographLoan(monographLoanId);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(response);
 
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
         }
