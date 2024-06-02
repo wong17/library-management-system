@@ -37,7 +37,6 @@ namespace LibraryManagementSystem.Bll.Configuration
             services.AddScoped<IMonographAuthorBll, MonographAuthorBll>();
             /* Agregar configuración de AutoMapper */
             services.AddAutoMapper(typeof(AutoMapperProfile));
-            services.AddSingleton<MapperleyMapper>();
 
             return services;
         }
