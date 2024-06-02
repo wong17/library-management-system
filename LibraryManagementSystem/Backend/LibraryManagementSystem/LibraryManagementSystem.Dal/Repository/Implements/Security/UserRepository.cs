@@ -206,8 +206,67 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
                     response.StatusCode = HttpStatusCode.InternalServerError;
                     return response;
                 }
+                /* No existe el registro a actualizar */
+                if (response.IsSuccess == 2)
+                {
+                    response.StatusCode = HttpStatusCode.NotFound;
+                    return response;
+                }
                 /* Retornar código de éxito */
                 response.StatusCode = HttpStatusCode.OK;
+            }
+            catch (Exception ex)
+            {
+                response = new()
+                {
+                    Message = ex.Message,
+                    StatusCode = HttpStatusCode.InternalServerError
+                };
+            }
+
+            return response;
+        }
+
+        /* Para iniciar sesión */
+
+        public async Task<ApiResponse> LogIn(User entity)
+        {
+            ApiResponse? response;
+            /* Lista de parámetros que recibe el procedimiento almacenado */
+            SqlParameter[] parameters = [new("@UserName", entity.UserName), new("@Password", entity.Password)];
+
+            try
+            {
+                /* Ejecutar procedimiento almacenado que recibe cada atributo por parámetro */
+                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Security].uspLogInUser", CommandType.StoredProcedure, parameters);
+                /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
+                response = _sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
+                /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
+                if (response is null)
+                {
+                    response = new()
+                    {
+                        Message = "Error al obtener respuesta de la base de datos.",
+                        StatusCode = HttpStatusCode.InternalServerError
+                    };
+                    return response;
+                }
+                /* Ocurrio algún error o no paso una validación en el procedimiento almacenado */
+                if (response.IsSuccess == 1)
+                {
+                    response.StatusCode = HttpStatusCode.InternalServerError;
+                    return response;
+                }
+                /* No existe un usuario con el nombre ingresado */
+                if (response.IsSuccess == 2)
+                {
+                    response.StatusCode = HttpStatusCode.NotFound;
+                    return response;
+                }
+                /* Retornar código de éxito y UserId */
+                response.StatusCode = HttpStatusCode.OK;
+                entity.UserId = Convert.ToInt32(response.Result);
+                response.Result = entity;
             }
             catch (Exception ex)
             {
