@@ -2,7 +2,7 @@
 USE LibraryManagementDB
 GO
 
--- IsSuccess (0. Éxito, 1. Error en la bd o no paso una validación, 2. No existe el recurso)
+-- IsSuccess (0. Éxito, 1. No paso una validación, 2. No existe el recurso, 3. Error en la base de datos)
 
 --INSERT BookLoan
 IF OBJECT_ID('Library.uspInsertBookLoan', 'P') IS NOT NULL  
@@ -95,7 +95,7 @@ BEGIN
 		IF @@TRANCOUNT > 0
 			ROLLBACK TRAN;
 		--
-		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
 END
 GO
@@ -168,7 +168,7 @@ BEGIN
 		IF @@TRANCOUNT > 0
 			ROLLBACK TRAN;
 		--
-		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
 END
 GO
@@ -248,7 +248,7 @@ BEGIN
 		IF @@TRANCOUNT > 0
 			ROLLBACK TRAN;
 		--
-		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
 END
 GO
@@ -315,7 +315,7 @@ BEGIN
 		IF @@TRANCOUNT > 0
 			ROLLBACK TRAN;
 		--
-		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
 END
 GO

@@ -2,7 +2,7 @@
 USE LibraryManagementDB
 GO
 
--- IsSuccess (0. Éxito, 1. Error en la bd o no paso una validación, 2. No existe el recurso)
+-- IsSuccess (0. Éxito, 1. No paso una validación, 2. No existe el recurso, 3. Error en la base de datos)
 
 -- CREATE STORED PROCEDURES FOR Student TABLE
 USE LibraryManagementDB
@@ -126,7 +126,7 @@ BEGIN
 		SELECT 0 AS IsSuccess, 'Estudiante registrado exitosamente' AS [Message], SCOPE_IDENTITY() AS Result
 	END TRY
 	BEGIN CATCH
-		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
 END
 GO
@@ -167,7 +167,7 @@ BEGIN
 		SELECT 0 AS IsSuccess, 'Libros prestados actualizados exitosamente'AS [Message]
 	END TRY
 	BEGIN CATCH
-		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
 END
 GO
@@ -202,7 +202,7 @@ BEGIN
 		SELECT 0 AS IsSuccess, 'Monografía prestada actualizada exitosamente' AS [Message]
 	END TRY
 	BEGIN CATCH
-		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
 END
 GO
@@ -243,7 +243,7 @@ BEGIN
 		SELECT 0 AS IsSuccess, 'Multa actualizada exitosamente' AS [Message]
 	END TRY
 	BEGIN CATCH
-		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
 END
 GO
@@ -289,7 +289,7 @@ BEGIN
 		SELECT 0 AS IsSuccess, 'Estudiante eliminado exitosamente' AS [Message]
 	END TRY
 	BEGIN CATCH
-		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
 END
 GO

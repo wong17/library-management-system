@@ -2,7 +2,7 @@
 USE LibraryManagementDB
 GO
 
--- IsSuccess (0. Éxito, 1. Error en la bd o no paso una validación, 2. No existe el recurso)
+-- IsSuccess (0. Éxito, 1. No paso una validación, 2. No existe el recurso, 3. Error en la base de datos)
 
 --INSERT Monograph
 IF OBJECT_ID('Library.uspInsertMonograph', 'P') IS NOT NULL  
@@ -89,7 +89,7 @@ BEGIN
 		SELECT 0 AS IsSuccess, 'Monografía registrada exitosamente' AS [Message], SCOPE_IDENTITY() AS Result
 	END TRY
 	BEGIN CATCH
-		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
 END
 GO
@@ -195,7 +195,7 @@ BEGIN
 		SELECT 0 AS IsSuccess, 'Monografía actualizada exitosamente' AS [Message]
 	END TRY
 	BEGIN CATCH
-		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
 END
 GO
@@ -230,7 +230,7 @@ BEGIN
 		SELECT 0 AS IsSuccess, 'Disponibilidad de la monografía actualizada exitosamente' AS [Message]
 	END TRY
 	BEGIN CATCH
-		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
 END
 GO
@@ -264,7 +264,7 @@ BEGIN
 		SELECT 0 AS IsSuccess, 'Monografía eliminada exitosamente' AS [Message]
 	END TRY
 	BEGIN CATCH
-		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
 END
 GO

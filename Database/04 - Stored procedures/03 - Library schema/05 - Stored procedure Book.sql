@@ -2,7 +2,7 @@
 USE LibraryManagementDB
 GO
 
--- IsSuccess (0. Éxito, 1. Error en la bd o no paso una validación, 2. No existe el recurso)
+-- IsSuccess (0. Éxito, 1. No paso una validación, 2. No existe el recurso, 3. Error en la base de datos)
 
 --INSERT Book
 IF OBJECT_ID('Library.uspInsertBook', 'P') IS NOT NULL  
@@ -128,7 +128,7 @@ BEGIN
 		SELECT 0 AS IsSuccess, 'Libro registrado exitosamente' AS [Message], SCOPE_IDENTITY() AS Result
 	END TRY
 	BEGIN CATCH
-		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
 END
 GO
@@ -273,7 +273,7 @@ BEGIN
 		SELECT 0 AS IsSuccess, 'Libro actualizado exitosamente' AS [Message]
 	END TRY
 	BEGIN CATCH
-		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
 END
 GO
@@ -316,7 +316,7 @@ BEGIN
 		SELECT 0 AS IsSuccess, 'Libro eliminado exitosamente' AS [Message]
 	END TRY
 	BEGIN CATCH
-		SELECT 1 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
 END
 GO
