@@ -82,7 +82,7 @@ BEGIN
 		RETURN
 	END
 	--
-	IF EXISTS (SELECT 1 FROM [Security].[Role] WHERE [Name] = @Name)
+	IF EXISTS (SELECT 1 FROM [Security].[Role] WHERE [Name] = @Name AND RoleId != @RoleId)
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Ya existe un rol con el mismo nombre en la base de datos' AS [Message]
 		RETURN

@@ -112,7 +112,7 @@ CREATE PROC [Library].uspUpdateMonograph (
 )
 AS
 BEGIN
-	--
+	-- MonographId
 	IF (@MonographId IS NULL OR @MonographId = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Id de la Monografía es obligatorio' AS [Message]
@@ -124,7 +124,7 @@ BEGIN
 		SELECT 2 AS IsSuccess, 'No existe una Monografía con el Id proporcionado' AS [Message]
 		RETURN
 	END
-	--
+	-- Classification
 	IF (@Classification IS NULL OR @Classification = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Clasificación de la monografía es obligatoria' AS [Message]
@@ -137,12 +137,12 @@ BEGIN
 		RETURN
 	END
 	--
-	IF EXISTS (SELECT 1 FROM [Library].Monograph WHERE [Classification] = @Classification)
+	IF EXISTS (SELECT 1 FROM [Library].Monograph WHERE [Classification] = @Classification AND MonographId != @MonographId)
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Ya existe una monografía con la misma clasificación' AS [Message]
 		RETURN
 	END
-	--
+	-- Title
 	IF (@Title IS NULL OR @Title = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Titulo de la monografía es obligatorio' AS [Message]
@@ -154,7 +154,7 @@ BEGIN
 		SELECT 1 AS IsSuccess, 'Titulo de la monografía solo puede tener mayúsculas, minúsculas, números, guiones, puntos y espacios' AS [Message]
 		RETURN
 	END
-	--
+	-- Tutor
 	IF (@Tutor IS NULL OR @Tutor = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Tutor de la monografía es obligatorio' AS [Message]
@@ -166,13 +166,13 @@ BEGIN
 		SELECT 1 AS IsSuccess, 'Tutor de la monografía solo puede tener mayúsculas, minúsculas puntos y espacios' AS [Message]
 		RETURN
 	END
-	--
+	-- PresentationDate
 	IF (@PresentationDate IS NULL)
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Fecha de presentación de la monografía es obligatoria' AS [Message]
 		RETURN
 	END
-	--
+	-- CareerId
 	IF (@CareerId IS NULL OR @CareerId = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Carrera a la que pertenece es obligatoria' AS [Message]

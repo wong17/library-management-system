@@ -153,7 +153,7 @@ CREATE PROC [Library].uspUpdateBook (
 )
 AS
 BEGIN
-	--
+	-- BookId
 	IF (@BookId IS NULL OR @BookId = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Id del Libro es obligatorio' AS [Message]
@@ -165,7 +165,7 @@ BEGIN
 		SELECT 2 AS IsSuccess, 'No existe un Libro con el Id proporcionado' AS [Message]
 		RETURN
 	END
-	--
+	-- ISBN10
 	IF (@ISBN10 IS NULL OR @ISBN10 = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'ISBN10 del libro es obligatorio' AS [Message]
@@ -178,6 +178,12 @@ BEGIN
 		RETURN
 	END
 	--
+	IF EXISTS (SELECT 1 FROM [Library].Book WHERE ISBN10 = @ISBN10 AND BookId != @BookId)
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Ya existe un Libro con el mismo ISBN10' AS [Message]
+		RETURN
+	END
+	-- ISBN13
 	IF (@ISBN13 IS NULL OR @ISBN13 = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'ISBN13 del libro es obligatorio' AS [Message]
@@ -190,6 +196,12 @@ BEGIN
 		RETURN
 	END
 	--
+	IF EXISTS (SELECT 1 FROM [Library].Book WHERE ISBN13 = @ISBN13 AND BookId != @BookId)
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Ya existe un Libro con el mismo ISBN13' AS [Message]
+		RETURN
+	END
+	-- Classification
 	IF (@Classification IS NULL OR @Classification = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Clasificación del libro es obligatoria' AS [Message]
@@ -202,12 +214,12 @@ BEGIN
 		RETURN
 	END
 	--
-	IF EXISTS (SELECT 1 FROM [Library].Book WHERE [Classification] = @Classification)
+	IF EXISTS (SELECT 1 FROM [Library].Book WHERE [Classification] = @Classification AND BookId != @BookId)
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Ya existe un Libro con la misma clasificación' AS [Message]
 		RETURN
 	END
-	--
+	-- Title
 	IF (@Title IS NULL OR @Title = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Titulo del libro es obligatorio' AS [Message]
@@ -220,18 +232,18 @@ BEGIN
 		RETURN
 	END
 	--
-	IF EXISTS (SELECT 1 FROM [Library].Book WHERE Title = @Title)
+	IF EXISTS (SELECT 1 FROM [Library].Book WHERE Title = @Title AND BookId != @BookId)
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Ya existe un Libro con el mismo titulo' AS [Message]
 		RETURN
 	END
-	--
+	-- PublicationYear
 	IF (@PublicationYear <= 0)
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Año de publicación del Libro fuera de rango' AS [Message]
 		RETURN
 	END
-	--
+	-- PublisherId
 	IF (@PublisherId IS NULL OR @PublisherId = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Editorial del libro es obligatoria' AS [Message]
@@ -243,7 +255,7 @@ BEGIN
 		SELECT 2 AS IsSuccess, 'No existe una Editorial con el Id proporcionado' AS [Message]
 		RETURN
 	END
-	--
+	-- CategoryId
 	IF (@CategoryId IS NULL OR @CategoryId = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Categoría del libro es obligatoria' AS [Message]
@@ -255,7 +267,7 @@ BEGIN
 		SELECT 2 AS IsSuccess, 'No existe una Categoría con el Id proporcionado' AS [Message]
 		RETURN
 	END
-	--
+	-- NumberOfCopies
 	IF (@NumberOfCopies < 0)
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Número de copias del Libro fuera de rango' AS [Message]
