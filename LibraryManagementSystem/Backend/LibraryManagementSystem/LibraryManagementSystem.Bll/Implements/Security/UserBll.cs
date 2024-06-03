@@ -117,6 +117,50 @@ namespace LibraryManagementSystem.Bll.Implements.Security
 
         public async Task<ApiResponse> Update(User entity) => await _repository.Update(entity);
 
-        public async Task<ApiResponse> LogIn(User entity) => await _repository.LogIn(entity);
+        public async Task<ApiResponse> LogIn(User entity)
+        {
+            var response = await _repository.LogIn(entity);
+
+            // Comprobar si hay un elemento
+            if (response.Result is null || response.Result is not User user)
+                return response;
+
+            // Convertir user a UserDto
+            var userDto = _mapper.Map<UserDto>(user);
+
+            // Comprobar si hay roles
+            var rolesResponse = _roleBll.GetAll();
+            var userRolesResponse = _userRoleBll.GetAll();
+            if ((rolesResponse.Result.Result is not null && rolesResponse.Result.Result is IEnumerable<RoleDto> roles) &&
+                (userRolesResponse.Result.Result is not null && userRolesResponse.Result.Result is IEnumerable<UserRoleDto> userRoles))
+            {
+                var rolesDictionary = roles.ToDictionary(r => r.RoleId);
+                var userRolesDictionary = ListHelper.ListToDictionary(userRoles.ToList(), ur => ur.UserId, ur => ur.RoleId);
+
+                var allRoles = new List<RoleDto>();
+
+                // Si no se puede obtener la lista con id de todos los roles del usuario actual...
+                if (userRolesDictionary.TryGetValue(userDto.UserId, out var rolesList))
+                {
+                    // Recorrer lista de id de roles para obtener el RoleDto
+                    for (int j = 0; j < rolesList.Count; j++)
+                    {
+                        var authorId = rolesList[j];
+                        // Obtener role en base a su id
+                        if (rolesDictionary.TryGetValue(authorId, out var authorDto))
+                        {
+                            allRoles.Add(authorDto);
+                        }
+                    }
+                    // Asignar lista
+                    userDto.Roles = allRoles;
+                }
+            }
+
+            // Retornar Dto
+            response.Result = userDto;
+
+            return response;
+        }
     }
 }
