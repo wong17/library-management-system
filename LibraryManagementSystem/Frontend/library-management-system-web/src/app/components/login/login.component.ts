@@ -9,6 +9,8 @@ import { FormGroup } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { ControlStateMatcher } from '../../util/control-state-matcher';
+import { UserLogInDto } from '../../entities/dtos/security/user-log-in-dto';
+import { UserService } from '../../services/security/user.service';
 
 @Component({
   selector: 'app-login',
@@ -24,7 +26,7 @@ export class LoginComponent {
   /* */
   matcher: ControlStateMatcher = new ControlStateMatcher()
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private userService: UserService) {
     /* Agrupar controles, crear formulario y agregar validaciones */
     this.loginForm = this.formBuilder.group({
       username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
@@ -33,8 +35,15 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    // TODO: Use EventEmitter with form value
-    console.warn(this.loginForm.value);
+    const userLoginDto: UserLogInDto = this.loginForm.value;
+    this.userService.login(userLoginDto).subscribe({
+      next: response => {
+        console.log(response);
+      },
+      error: error => {
+        console.log(error);
+      }
+    })
   }
 
   /* Getters */
