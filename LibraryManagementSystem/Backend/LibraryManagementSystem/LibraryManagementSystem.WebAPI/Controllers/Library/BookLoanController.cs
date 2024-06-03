@@ -116,7 +116,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpPut("{bookLoanId:int}/{dueDate:datetime}")]
+        [HttpPut("UpdateBorrowedBookLoan/{bookLoanId:int}/{dueDate:datetime}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -144,7 +144,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpPut("{bookLoanId:int}")]
+        [HttpPut("UpdateReturnedBookLoan/{bookLoanId:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
