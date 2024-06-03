@@ -2,11 +2,11 @@ import { StudentDto } from "../university/student-dto";
 import { MonographDto } from "./monograph-dto";
 
 export interface MonographLoanDto {
-    MonographLoanId: number;
-    State: string | null;
-    LoanDate: Date;
-    DueDate: Date;
-    ReturnDate: Date;
-    Student: StudentDto | null;
-    Monograph: MonographDto | null;
+    monographLoanId: number;
+    state: string | null;
+    loanDate: Date;
+    dueDate: Date;
+    returnDate: Date;
+    student: StudentDto | null;
+    monograph: MonographDto | null;
 }

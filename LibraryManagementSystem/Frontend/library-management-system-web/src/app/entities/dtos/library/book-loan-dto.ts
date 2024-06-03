@@ -2,12 +2,12 @@ import { StudentDto } from "../university/student-dto";
 import { BookDto } from "./book-dto";
 
 export interface BookLoanDto {
-    BookLoanId: number;
-    TypeOfLoan: string | null;
-    State: string | null;
-    LoanDate: Date;
-    DueDate: Date;
-    ReturnDate: Date;
-    Student: StudentDto | null;
-    Book: BookDto | null;
+    bookLoanId: number;
+    typeOfLoan: string | null;
+    state: string | null;
+    loanDate: Date;
+    dueDate: Date;
+    returnDate: Date;
+    student: StudentDto | null;
+    book: BookDto | null;
 }

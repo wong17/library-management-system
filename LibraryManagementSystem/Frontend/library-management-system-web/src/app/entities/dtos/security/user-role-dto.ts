@@ -1,4 +1,4 @@
 export interface UserRoleDto {
-    UserId: number;
-    RoleId: number;
+    userId: number;
+    roleId: number;
 }

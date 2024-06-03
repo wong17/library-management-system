@@ -1,13 +1,13 @@
 import { RoleDto } from "./role-dto";
 
 export interface UserDto {
-    UserId: number;
-    UserName: string | null;
-    Email: string | null;
-    AccessToken: string | null;
-    RefreshToken: string | null;
-    RefreshTokenExpiryTime: Date;
-    LockoutEnabled: boolean;
-    AccessFailedCount: number;
-    Roles: RoleDto[] | null;
+    userId: number;
+    userName: string | null;
+    email: string | null;
+    accessToken: string | null;
+    refreshToken: string | null;
+    refreshTokenExpiryTime: Date;
+    lockoutEnabled: boolean;
+    accessFailedCount: number;
+    roles: RoleDto[] | null;
 }

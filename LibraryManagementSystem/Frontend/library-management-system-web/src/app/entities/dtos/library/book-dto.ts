@@ -4,20 +4,20 @@ import { AuthorDto } from "./author-dto";
 import { SubCategoryDto } from "./sub-category-dto";
 
 export interface BookDto {
-    BookId: number;
-    ISBN10: string | null;
-    ISBN13: string | null;
-    Classification: string | null;
-    Title: string | null;
-    Description: string | null;
-    PublicationYear: number;
-    Image: string | null;
-    IsActive: boolean;
-    NumberOfCopies: number;
-    BorrowedCopies: number;
-    IsAvailable: boolean;
-    Publisher: PublisherDto | null;
-    Category: CategoryDto | null;
-    Authors: AuthorDto[] | null;
-    SubCategories: SubCategoryDto[] | null;
+    bookId: number;
+    iSBN10: string | null;
+    iSBN13: string | null;
+    classification: string | null;
+    title: string | null;
+    description: string | null;
+    publicationYear: number;
+    image: string | null;
+    isActive: boolean;
+    numberOfCopies: number;
+    borrowedCopies: number;
+    isAvailable: boolean;
+    publisher: PublisherDto | null;
+    category: CategoryDto | null;
+    authors: AuthorDto[] | null;
+    subCategories: SubCategoryDto[] | null;
 }

@@ -1,4 +1,4 @@
 export interface CareerDto {
-    CareerId: number;
-    Name: string | null;
+    careerId: number;
+    name: string | null;
 }

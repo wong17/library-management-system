@@ -1,5 +1,5 @@
 export interface AuthorDto {
-    AuthorId: number;
-    Name: string | null;
-    IsFormerGraduated: boolean;
+    authorId: number;
+    name: string | null;
+    isFormerGraduated: boolean;
 }

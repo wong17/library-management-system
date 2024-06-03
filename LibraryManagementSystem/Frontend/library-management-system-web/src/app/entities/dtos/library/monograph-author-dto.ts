@@ -1,6 +1,6 @@
 export interface MonographAuthorDto {
-    MonographId: number;
-    AuthorId: number;
-    CreatedOn: Date;
-    ModifiedOn: Date;
+    monographId: number;
+    authorId: number;
+    createdOn: Date;
+    modifiedOn: Date;
 }

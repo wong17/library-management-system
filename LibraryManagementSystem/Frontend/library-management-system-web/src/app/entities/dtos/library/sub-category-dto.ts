@@ -1,7 +1,7 @@
 import { CategoryDto } from "./category-dto";
 
 export interface SubCategoryDto {
-    SubCategoryId: number;
-    Category: CategoryDto | null;
-    Name: string | null;
+    subCategoryId: number;
+    category: CategoryDto | null;
+    name: string | null;
 }

@@ -1,6 +1,6 @@
 export interface BookAuthorDto {
-    BookId: number;
-    AuthorId: number;
-    CreatedOn: Date;
-    ModifiedOn: Date;
+    bookId: number;
+    authorId: number;
+    createdOn: Date;
+    modifiedOn: Date;
 }

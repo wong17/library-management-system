@@ -1,4 +1,4 @@
 export interface PublisherDto {
-    PublisherId: number;
-    Name: string | null;
+    publisherId: number;
+    name: string | null;
 }
