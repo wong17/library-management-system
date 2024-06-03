@@ -16,7 +16,7 @@ export class RoleService {
   /* Role urls */
   private readonly roleCreateUrl: string = '/api/Role/Create'
   private readonly roleUpdateUrl: string = '/api/Role/Update'
-  private readonly roleUrl: string = '/api/Role';
+  private readonly roleUrl: string = '/api/Role'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {

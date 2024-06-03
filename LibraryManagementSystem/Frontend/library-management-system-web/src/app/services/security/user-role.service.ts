@@ -12,10 +12,10 @@ export class UserRoleService {
 
   /* API url base */
   private readonly apiUrl: string = environment.apiUrl;
-  /* Role urls */
+  /* UserRole urls */
   private readonly userRoleCreateUrl: string = '/api/UserRole/Create'
   private readonly userRoleCreateManyUrl: string = '/api/UserRole/CreateMany'
-  private readonly userRoleUrl: string = '/api/UserRole';
+  private readonly userRoleUrl: string = '/api/UserRole'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {

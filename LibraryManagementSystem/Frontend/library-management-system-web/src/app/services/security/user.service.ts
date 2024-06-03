@@ -16,9 +16,9 @@ export class UserService {
   private readonly apiUrl: string = environment.apiUrl;
   /* User urls */
   private readonly userCreateUrl: string = '/api/User/Create'
-  private readonly userLogInUrl: string = '/api/User/LogIn';
+  private readonly userLogInUrl: string = '/api/User/LogIn'
   private readonly userUpdateUrl: string = '/api/User/Update'
-  private readonly userUrl: string = '/api/User';
+  private readonly userUrl: string = '/api/User'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {
