@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace LibraryManagementSystem.Entities.Dtos.Security
+﻿namespace LibraryManagementSystem.Entities.Dtos.Security
 {
     public class RoleDto
     {
