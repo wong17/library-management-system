@@ -1,0 +1,40 @@
+<!--Toolbar-->
+<mat-toolbar color="primary">
+  <button
+    mat-icon-button
+    (click)="sidenav.toggle()"
+    aria-label="Toggle sidenav"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span>Home</span>
+</mat-toolbar>
+
+<mat-sidenav-container class="sidenav-container">
+  <!-- Menu options -->
+  <mat-sidenav #sidenav mode="side" opened class="sidenav">
+    <!--Toolbar-->
+    <mat-toolbar>Admin</mat-toolbar>
+
+    <!--Options-->
+    <mat-nav-list>
+      <!--Items-->
+      @for(menu of menuItems; track menu) {
+      <mat-list-item [routerLink]="menu.link">
+        <button mat-button>
+          <mat-icon>{{ menu.icon }}</mat-icon>
+          {{ menu.label }}
+        </button>
+      </mat-list-item>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <!-- Main content -->
+  <mat-sidenav-content>
+    <!--Content-->
+    <div class="main-content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

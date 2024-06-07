@@ -11,6 +11,8 @@ import { Validators } from '@angular/forms';
 import { ControlStateMatcher } from '../../util/control-state-matcher';
 import { UserLogInDto } from '../../entities/dtos/security/user-log-in-dto';
 import { UserService } from '../../services/security/user.service';
+import { Router } from '@angular/router';
+import { UserDto } from '../../entities/dtos/security/user-dto';
 
 @Component({
   selector: 'app-login',
@@ -25,8 +27,14 @@ export class LoginComponent {
   loginForm: FormGroup;
   /* */
   matcher: ControlStateMatcher = new ControlStateMatcher()
+  /* Mapea un rol a un componente */
+  private roleRoutes: { [key: string]: string } = {
+    'ADMIN': '/admin-home',
+    'ESTUDIANTE': '/student-home',
+    'BIBLIOTECARIO': '/librarian-home'
+  };
 
-  constructor(private formBuilder: FormBuilder, private userService: UserService) {
+  constructor(private formBuilder: FormBuilder, private userService: UserService, private router: Router) {
     /* Agrupar controles, crear formulario y agregar validaciones */
     this.loginForm = this.formBuilder.group({
       username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
@@ -38,7 +46,29 @@ export class LoginComponent {
     const userLoginDto: UserLogInDto = this.loginForm.value;
     this.userService.login(userLoginDto).subscribe({
       next: response => {
-        console.log(response);
+        // Comprobar si se pudo iniciar sesión
+        if (response.isSuccess !== 0 && response.statusCode !== 200) {
+          console.log(response);
+          return;
+        }
+        // Obtener rol del usuario
+        var userDto: UserDto = response.result as UserDto;
+        if (!userDto.roles || userDto.roles.length === 0) {
+          console.error('El usuario no tiene ningún rol asociado');
+          return;
+        }
+        // Redirigir según el rol del usuario 
+        const role = userDto.roles[0].name;
+        if (!role) {
+          console.error('Rol del usuario es nulo');
+          return;
+        }
+        
+        const route = this.roleRoutes[role];
+        if (route) {
+          this.router.navigate([route]);
+        }
+
       },
       error: error => {
         console.log(error);

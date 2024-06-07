@@ -1,0 +1,82 @@
+<h1>Préstamo de libros</h1>
+
+<div class="filter-container">
+    <mat-form-field>
+        <mat-label>Filtrar</mat-label>
+        <input
+          matInput
+          (keyup)="applyFilter($event)"
+          placeholder="Ej. Enciclopedia del lenguaje C"
+          #input
+        />
+      </mat-form-field>
+      
+      <button mat-flat-button color="primary" (click)="insertNewBookLoanBtn()">
+          <mat-icon>add</mat-icon>
+          Nuevo
+      </button>
+</div>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <!-- Definición de la columna bookLoanId -->
+  <ng-container matColumnDef="bookLoanId">
+    <th mat-header-cell *matHeaderCellDef>Id</th>
+    <td mat-cell *matCellDef="let element">{{ element.bookLoanId }}</td>
+  </ng-container>
+
+  <!-- Definición de la columna typeOfLoan -->
+  <ng-container matColumnDef="typeOfLoan">
+    <th mat-header-cell *matHeaderCellDef>ISBN10</th>
+    <td mat-cell *matCellDef="let element">{{ element.typeOfLoan }}</td>
+  </ng-container>
+
+  <!-- Definición de la columna state -->
+  <ng-container matColumnDef="state">
+    <th mat-header-cell *matHeaderCellDef>ISBN13</th>
+    <td mat-cell *matCellDef="let element">{{ element.state }}</td>
+  </ng-container>
+
+  <!-- Definición de la columna loanDate -->
+  <ng-container matColumnDef="loanDate">
+    <th mat-header-cell *matHeaderCellDef>Clasificación</th>
+    <td mat-cell *matCellDef="let element">{{ element.loanDate }}</td>
+  </ng-container>
+
+  <!-- Definición de la columna dueDate -->
+  <ng-container matColumnDef="dueDate">
+    <th mat-header-cell *matHeaderCellDef>Titulo</th>
+    <td mat-cell *matCellDef="let element">{{ element.dueDate }}</td>
+  </ng-container>
+
+  <!-- Definición de la columna returnDate -->
+  <ng-container matColumnDef="returnDate">
+    <th mat-header-cell *matHeaderCellDef>Descripción</th>
+    <td mat-cell *matCellDef="let element">{{ element.returnDate }}</td>
+  </ng-container>
+
+  <!-- Definición de la columna student -->
+  <ng-container matColumnDef="student">
+    <th mat-header-cell *matHeaderCellDef>Año de publicación</th>
+    <td mat-cell *matCellDef="let element">{{ element.student }}</td>
+  </ng-container>
+
+  <!-- Definición de la columna book -->
+  <ng-container matColumnDef="book">
+    <th mat-header-cell *matHeaderCellDef>Activo</th>
+    <td mat-cell *matCellDef="let element">{{ element.book }}</td>
+  </ng-container>
+
+  <!-- Vincular arreglo que contiene el texto de las columnas que debe coincidir con la definición de cada una -->
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+  <!-- Row shown when there is no matching data. -->
+  <tr class="mat-row" *matNoDataRow>
+    <td class="mat-cell" colspan="4">
+      No hay datos que coincidan con el filtro "{{ input.value }}"
+    </td>
+  </tr>
+
+</table>
+<!-- Agregar componente de paginado -->
+<mat-paginator [pageSizeOptions]="[10, 20, 30, 50]" aria-label="Selecciona página de Préstamo de libros"></mat-paginator>
