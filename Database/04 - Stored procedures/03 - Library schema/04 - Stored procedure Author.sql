@@ -142,7 +142,7 @@ BEGIN
 		RETURN
 	END
 	--
-	IF EXISTS (SELECT 1 FROM [Library].Author WHERE [Name] = @Name)
+	IF EXISTS (SELECT 1 FROM [Library].Author WHERE [Name] = @Name AND AuthorId != @AuthorId)
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Ya existe una Autor con el mismo nombre' AS [Message]
 		RETURN
