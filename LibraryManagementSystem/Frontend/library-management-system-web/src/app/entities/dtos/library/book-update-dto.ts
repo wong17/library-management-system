@@ -1,7 +1,7 @@
 export interface BookUpdateDto {
     bookId: number;
-    iSBN10: string | null;
-    iSBN13: string | null;
+    isbN10: string | null;
+    isbN13: string | null;
     classification: string | null;
     title: string | null;
     description: string | null;

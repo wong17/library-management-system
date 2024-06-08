@@ -5,8 +5,8 @@ import { SubCategoryDto } from "./sub-category-dto";
 
 export interface BookDto {
     bookId: number;
-    iSbN10: string | null;
-    iSbN13: string | null;
+    isbN10: string | null;
+    isbN13: string | null;
     classification: string | null;
     title: string | null;
     description: string | null;

@@ -1,6 +1,6 @@
 export interface BookInsertDto {
-    iSBN10: string | null;
-    iSBN13: string | null;
+    iSbN10: string | null;
+    iSbN13: string | null;
     classification: string | null;
     title: string | null;
     description: string | null;
