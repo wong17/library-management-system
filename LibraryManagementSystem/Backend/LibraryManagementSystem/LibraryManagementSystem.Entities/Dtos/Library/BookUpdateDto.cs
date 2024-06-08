@@ -35,7 +35,7 @@ namespace LibraryManagementSystem.Entities.Dtos.Library
         [Range(1900, 9999, ErrorMessage = "Año de publicación del libro fuera de rango 1900 - año actual")]
         public short PublicationYear { get; set; }
 
-        public byte[]? Image { get; set; }
+        public string? Image { get; set; }
 
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Id de la editorial debe ser mayor que 0")]

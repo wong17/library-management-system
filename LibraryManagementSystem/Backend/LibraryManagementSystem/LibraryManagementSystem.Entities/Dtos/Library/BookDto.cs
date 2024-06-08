@@ -9,7 +9,7 @@
         public string? Title { get; set; }
         public string? Description { get; set; }
         public short PublicationYear { get; set; }
-        public byte[]? Image { get; set; }
+        public string? Image { get; set; }
         public bool IsActive { get; set; }
         public short NumberOfCopies { get; set; }
         public short BorrowedCopies { get; set; }

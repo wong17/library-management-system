@@ -42,9 +42,20 @@ namespace LibraryManagementSystem.Bll.Mapping
             CreateMap<Author, AuthorUpdateDto>().ReverseMap();
             CreateMap<Author, AuthorDto>().ReverseMap();
 
-            CreateMap<Book, BookInsertDto>().ReverseMap();
-            CreateMap<Book, BookUpdateDto>().ReverseMap();
-            CreateMap<Book, BookDto>().ReverseMap();
+            CreateMap<Book, BookDto>()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => Convert.ToBase64String(src.Image ?? Array.Empty<byte>())))
+                .ReverseMap()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => Convert.FromBase64String(src.Image ?? string.Empty)));
+
+            CreateMap<BookInsertDto, Book>()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => Convert.FromBase64String(src.Image ?? string.Empty)))
+                .ReverseMap()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => Convert.ToBase64String(src.Image ?? Array.Empty<byte>())));
+
+            CreateMap<BookUpdateDto, Book>()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => Convert.FromBase64String(src.Image ?? string.Empty)))
+                .ReverseMap()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => Convert.ToBase64String(src.Image ?? Array.Empty<byte>())));
 
             CreateMap<BookSubCategory, BookSubCategoryInsertDto>().ReverseMap();
             CreateMap<BookSubCategory, BookSubCategoryDto>().ReverseMap();
