@@ -140,7 +140,7 @@ BEGIN
 		RETURN
 	END
 	--
-	IF EXISTS (SELECT 1 FROM [Library].Category WHERE [Name] = @Name)
+	IF EXISTS (SELECT 1 FROM [Library].Category WHERE [Name] = @Name AND CategoryId != @CategoryId)
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Ya existe una Categoría con el mismo nombre' AS [Message]
 		RETURN
