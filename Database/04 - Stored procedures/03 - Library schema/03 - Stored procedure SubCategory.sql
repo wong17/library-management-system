@@ -29,19 +29,19 @@ BEGIN
 	--
 	IF (@Name IS NULL OR @Name = '')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Nombre de la SubCategoría es obligatorio' AS [Message]
+		SELECT 1 AS IsSuccess, 'Nombre de la Sub Categoría es obligatorio' AS [Message]
 		RETURN
 	END
 	--
 	IF (@Name LIKE '%[^a-zA-Z- ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Nombre de la SubCategoría solo puede tener mayúsculas, minúsculas, guiones y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Nombre de la Sub Categoría solo puede tener mayúsculas, minúsculas, guiones y espacios' AS [Message]
 		RETURN
 	END
 	--
 	IF EXISTS (SELECT 1 FROM [Library].SubCategory WHERE [Name] = @Name)
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Ya existe una SubCategoría con el mismo nombre' AS [Message]
+		SELECT 1 AS IsSuccess, 'Ya existe una Sub Categoría con el mismo nombre' AS [Message]
 		RETURN
 	END
 	--
@@ -49,7 +49,7 @@ BEGIN
 		--
 		INSERT INTO [Library].SubCategory (CategoryId, [Name]) VALUES (@CategoryId, @Name)
 		--
-		SELECT 0 AS IsSuccess, 'SubCategoría registrada exitosamente' AS [Message], SCOPE_IDENTITY() AS Result
+		SELECT 0 AS IsSuccess, 'Sub Categoría registrada exitosamente' AS [Message], SCOPE_IDENTITY() AS Result
 	END TRY
 	BEGIN CATCH
 		--
@@ -144,13 +144,13 @@ BEGIN
 	--
 	IF (@SubCategoryId IS NULL OR @SubCategoryId = '')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Id de la SubCategoría es obligatorio' AS [Message]
+		SELECT 1 AS IsSuccess, 'Id de la Sub Categoría es obligatorio' AS [Message]
 		RETURN
 	END
 	--
 	IF NOT EXISTS (SELECT 1 FROM [Library].SubCategory WHERE SubCategoryId = @SubCategoryId)
 	BEGIN
-		SELECT 2 AS IsSuccess, 'No existe una SubCategoría con el Id proporcionado' AS [Message]
+		SELECT 2 AS IsSuccess, 'No existe una Sub Categoría con el Id proporcionado' AS [Message]
 		RETURN
 	END
 	--
@@ -168,19 +168,19 @@ BEGIN
 	--
 	IF (@Name IS NULL OR @Name = '')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Nombre de la SubCategoría es obligatorio' AS [Message]
+		SELECT 1 AS IsSuccess, 'Nombre de la Sub Categoría es obligatorio' AS [Message]
 		RETURN
 	END
 	--
 	IF (@Name LIKE '%[^a-zA-Z- ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Nombre de la SubCategoría solo puede tener mayúsculas, minúsculas, guiones y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Nombre de la Sub Categoría solo puede tener mayúsculas, minúsculas, guiones y espacios' AS [Message]
 		RETURN
 	END
 	--
-	IF EXISTS (SELECT 1 FROM [Library].SubCategory WHERE [Name] = @Name)
+	IF EXISTS (SELECT 1 FROM [Library].SubCategory WHERE [Name] = @Name AND CategoryId = @CategoryId)
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Ya existe una SubCategoría con el mismo nombre' AS [Message]
+		SELECT 1 AS IsSuccess, 'Ya existe una Sub Categoría con el mismo nombre' AS [Message]
 		RETURN
 	END
 	--
@@ -188,7 +188,7 @@ BEGIN
 		--
 		UPDATE [Library].SubCategory SET CategoryId = @CategoryId, [Name] = @Name WHERE SubCategoryId = @SubCategoryId
 		--
-		SELECT 0 AS IsSuccess, 'SubCategoría actualizada exitosamente' AS [Message], SCOPE_IDENTITY() AS Result
+		SELECT 0 AS IsSuccess, 'Sub Categoría actualizada exitosamente' AS [Message], SCOPE_IDENTITY() AS Result
 	END TRY
 	BEGIN CATCH
 		--
@@ -290,19 +290,19 @@ BEGIN
 	--
 	IF (@SubCategoryId IS NULL OR @SubCategoryId = '')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Id de la SubCategoría es obligatorio' AS [Message]
+		SELECT 1 AS IsSuccess, 'Id de la Sub Categoría es obligatorio' AS [Message]
 		RETURN
 	END
 	--
 	IF NOT EXISTS (SELECT 1 FROM [Library].SubCategory WHERE SubCategoryId = @SubCategoryId)
 	BEGIN
-		SELECT 2 AS IsSuccess, 'No existe una SubCategoría con el Id proporcionado' AS [Message]
+		SELECT 2 AS IsSuccess, 'No existe una Sub Categoría con el Id proporcionado' AS [Message]
 		RETURN
 	END
 	--
 	IF EXISTS (SELECT 1 FROM [Library].BookSubCategory WHERE SubCategoryId = @SubCategoryId)
 	BEGIN
-		SELECT 1 AS IsSuccess, 'No se puede eliminar la SubCategoría porque hay libros asociados a ella' AS [Message]
+		SELECT 1 AS IsSuccess, 'No se puede eliminar la Sub Categoría porque hay libros asociados a ella' AS [Message]
 		RETURN
 	END
 	--
@@ -310,7 +310,7 @@ BEGIN
 		--
 		DELETE FROM [Library].SubCategory WHERE SubCategoryId = @SubCategoryId
 		--
-		SELECT 0 AS IsSuccess, 'SubCategoría eliminada exitosamente' AS [Message]
+		SELECT 0 AS IsSuccess, 'Sub Categoría eliminada exitosamente' AS [Message]
 	END TRY
 	BEGIN CATCH
 		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
