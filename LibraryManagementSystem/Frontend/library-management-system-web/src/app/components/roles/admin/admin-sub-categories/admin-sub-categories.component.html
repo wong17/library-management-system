@@ -11,7 +11,7 @@
         />
       </mat-form-field>
       
-      <button mat-flat-button color="primary" (click)="insertNewSubCategoryBtn()">
+      <button mat-flat-button color="primary" (click)="insertSubCategoryClick()">
           <mat-icon>add</mat-icon>
           Nuevo
       </button>
@@ -34,6 +34,24 @@
   <ng-container matColumnDef="categoryName">
     <th mat-header-cell *matHeaderCellDef>Cátegoria</th>
     <td mat-cell *matCellDef="let element">{{ element.category.name }}</td>
+  </ng-container>
+
+  <!-- Columna de opciones -->
+  <ng-container matColumnDef="options">
+    <th mat-header-cell *matHeaderCellDef>Opciones</th>
+    <!-- Iconos a mostrar en la columna -->
+    <mat-cell *matCellDef="let element">
+      <mat-icon
+        fontIcon="edit"
+        matTooltip="Editar"
+        (click)="editSubCategoryClick(element)"
+      ></mat-icon>
+      <mat-icon
+        fontIcon="delete"
+        matTooltip="Eliminar"
+        (click)="deleteSubCategoryClick(element)"
+      ></mat-icon>
+    </mat-cell>
   </ng-container>
 
   <!-- Vincular arreglo que contiene el texto de las columnas que debe coincidir con la definición de cada una -->

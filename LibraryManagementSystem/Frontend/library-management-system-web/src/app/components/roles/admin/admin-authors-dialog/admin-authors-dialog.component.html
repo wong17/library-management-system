@@ -1,1 +1,45 @@
-<p>admin-authors-dialog works!</p>
+<!--Titulo-->
+<h2 mat-dialog-title>{{ dialogData.title }}</h2>
+<!--Contenido-->
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="authorForm" (ngSubmit)="onSubmit()">
+    <!--Nombre del autor-->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Nombre</mat-label>
+      <input
+        matInput
+        placeholder="Nombre..."
+        formControlName="name"
+        [errorStateMatcher]="matcher"
+        maxlength="100"
+      />
+      <!--name validations-->
+      @if(name?.hasError('required')) {
+      <mat-error>Campo es <strong>obligatorio</strong></mat-error>
+      } @else if(name?.hasError('maxlength')) {
+      <mat-error>Nombre del autor debe tener un máximo de 100 caracteres</mat-error>
+      }
+    </mat-form-field>
+    <!--Es bachiller de la universidad-->
+    <mat-checkbox formControlName="isFormerGraduated">
+        ¿Es un estudiante graduado de la universidad?
+    </mat-checkbox>
+
+    <!--Acciones-->
+    <mat-dialog-actions align="end" class="dialog-actions">
+      <!---->
+      <button mat-button mat-dialog-close (click)="closeDialog(false)">
+        Cancelar
+      </button>
+      <!---->
+      <button
+        mat-flat-button
+        type="submit"
+        color="primary"
+        [disabled]="authorForm.invalid"
+      >
+        Guardar
+      </button>
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>

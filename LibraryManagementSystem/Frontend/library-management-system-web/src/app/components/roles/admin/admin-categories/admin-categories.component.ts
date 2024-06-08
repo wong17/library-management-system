@@ -9,6 +9,12 @@ import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog'
 import { CategoryService } from '../../../../services/library/category.service';
 import { CategoryDto } from '../../../../entities/dtos/library/category-dto';
+import { ToastrService } from 'ngx-toastr';
+import { DialogData, DialogOperation } from '../../../../util/dialog-data';
+import { AdminCategoriesDialogComponent } from '../admin-categories-dialog/admin-categories-dialog.component';
+import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ApiResponse } from '../../../../entities/api/api-response';
 
 @Component({
   selector: 'app-admin-categories',
@@ -19,7 +25,7 @@ import { CategoryDto } from '../../../../entities/dtos/library/category-dto';
 })
 export class AdminCategoriesComponent implements AfterViewInit, OnInit {
 
-  displayedColumns: string[] = ['id', 'name'];
+  displayedColumns: string[] = ['id', 'name', 'options'];
 
   /*  */
   dataSource: MatTableDataSource<CategoryDto> = new MatTableDataSource<CategoryDto>();
@@ -27,10 +33,8 @@ export class AdminCategoriesComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
-  /* Editoriales */
-  publishers: CategoryDto[] | undefined;
 
-  constructor(private categoryService: CategoryService, private dialog: MatDialog) { }
+  constructor(private categoryService: CategoryService, private dialog: MatDialog, private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.getCategoriesDto();
@@ -50,32 +54,156 @@ export class AdminCategoriesComponent implements AfterViewInit, OnInit {
     }
   }
 
+  insertCategoryClick(): void {
+    // data
+    const dialogData: DialogData = {
+      title: 'Agregar nueva categoría',
+      operation: DialogOperation.Add
+    };
+    // Abrir el dialogo y obtener una referencia de el
+    const dialogRef = this.dialog.open(AdminCategoriesDialogComponent, {
+      width: '500px',
+      disableClose: true,
+      data: dialogData
+    });
+    // Refrescar tabla despúes que el dialogo se cierre si se agrego un nuevo registro
+    dialogRef.afterClosed().subscribe((done) => {
+      if (done) {
+        this.getCategoriesDto();
+      }
+    });
+  }
+
+  deleteCategoryClick(element: CategoryDto) {
+    // Abrir dialogo para preguntar si desea eliminar el registro
+    const dialogRef = this.dialog.open(DeleteDialogComponent, {
+      width: '300px',
+      disableClose: true,
+      data: element.name
+    });
+    //
+    dialogRef.afterClosed().subscribe((done) => {
+      if (!done)
+        return
+
+      // Realizar solicitud para eliminar registro
+      this.categoryService.delete(element.categoryId).subscribe({
+        next: response => {
+          // Ocurrio un error
+          if (response.isSuccess !== 0 || response.statusCode !== 200) {
+            this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+              timeOut: 3000,
+              easeTime: 1000
+            })
+            return;
+          }
+          // Solicitud exitosa
+          this.toastr.success(`${response.message}`, 'Exito', {
+            timeOut: 3000,
+            easeTime: 1000
+          })
+
+          this.getCategoriesDto();
+        },
+        error: error => {
+          if (error instanceof HttpErrorResponse) {
+            //
+            const response = error.error as ApiResponse;
+            // BadRequest
+            if (response.isSuccess === 1 && response.statusCode === 400) {
+              this.toastr.warning(`${response.message}`, 'Atención', {
+                timeOut: 3000,
+                easeTime: 1000
+              });
+              return;
+            }
+            // InternalServerError
+            if (response.isSuccess === 3 && response.statusCode === 500) {
+              this.toastr.error(`${response.message}`, 'Error', {
+                timeOut: 3000,
+                easeTime: 1000
+              });
+            }
+          }
+        }
+      })
+    });
+  }
+
+  editCategoryClick(element: CategoryDto) {
+    // data
+    const dialogData: DialogData = {
+      title: `Editar categoría ${element.name}`,
+      operation: DialogOperation.Update,
+      data: element
+    };
+    // Abrir el dialogo y obtener una referencia de el
+    const dialogRef = this.dialog.open(AdminCategoriesDialogComponent, {
+      width: '500px',
+      disableClose: true,
+      data: dialogData
+    });
+    // Refrescar tabla despúes que el dialogo se cierre si se agrego un nuevo registro
+    dialogRef.afterClosed().subscribe((done) => {
+      if (done) {
+        this.getCategoriesDto();
+      }
+    });
+  }
+
   private getCategoriesDto(): void {
     this.categoryService.getAll().subscribe({
       next: response => {
-        //
-        if (!response) return;
-        //
-        if (response.isSuccess !== 1 && response.statusCode !== 200) {
-          console.error(`Message: ${response.message}, StatusCode: ${response.statusCode}`);
+        // Verificar si la respuesta es nula
+        if (!response) {
+          this.toastr.error('No se recibió respuesta del servidor', 'Error', {
+            timeOut: 3000,
+            easeTime: 1000
+          })
           return;
         }
-        //
-        if (response.result === null || !Array.isArray(response.result)) {
-          console.error(`Message: ${response.message}, StatusCode: ${response.statusCode}`);
+        // Verificar si ocurrio un error
+        if (response.isSuccess !== 0 || response.statusCode !== 200) {
+          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+            timeOut: 3000,
+            easeTime: 1000
+          })
           return;
         }
-        //
-        const list: CategoryDto[] = response.result as CategoryDto[];
-        this.dataSource.data = list;
+        // Verificar si el resultado es un array válido
+        const list = response.result;
+        if (!Array.isArray(list)) {
+          this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
+            timeOut: 3000,
+            easeTime: 1000
+          })
+          return;
+        }
+        // Asignar datos
+        this.dataSource.data = list as CategoryDto[];
       },
       error: error => {
-        console.error(error);
+        if (error instanceof HttpErrorResponse) {
+          //
+          const response = error.error as ApiResponse;
+          // BadRequest
+          if (response.isSuccess === 1 && response.statusCode === 400) {
+            this.toastr.warning(`${response.message}`, 'Atención', {
+              timeOut: 3000,
+              easeTime: 1000
+            });
+            return;
+          }
+          // InternalServerError
+          if (response.isSuccess === 3 && response.statusCode === 500) {
+            this.toastr.error(`${response.message}`, 'Error', {
+              timeOut: 3000,
+              easeTime: 1000
+            });
+          }
+        }
       }
     })
   }
 
-  insertNewCategoryBtn() {
-
-  }
 }

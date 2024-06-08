@@ -10,6 +10,9 @@ import { MatDialog } from '@angular/material/dialog'
 import { PublisherService } from '../../../../services/library/publisher.service';
 import { PublisherDto } from '../../../../entities/dtos/library/publisher-dto';
 import { AdminPublishersDialogComponent } from '../admin-publishers-dialog/admin-publishers-dialog.component';
+import { DialogData, DialogOperation } from '../../../../util/dialog-data';
+import { ToastrService } from 'ngx-toastr';
+import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
 
 @Component({
   selector: 'app-admin-publishers',
@@ -20,7 +23,7 @@ import { AdminPublishersDialogComponent } from '../admin-publishers-dialog/admin
 })
 export class AdminPublishersComponent implements AfterViewInit, OnInit {
 
-  displayedColumns: string[] = ['id', 'name'];
+  displayedColumns: string[] = ['id', 'name', 'options'];
 
   /*  */
   dataSource: MatTableDataSource<PublisherDto> = new MatTableDataSource<PublisherDto>();
@@ -31,7 +34,7 @@ export class AdminPublishersComponent implements AfterViewInit, OnInit {
   /* Editoriales */
   publishers: PublisherDto[] | undefined;
 
-  constructor(private publisherService: PublisherService, private dialog: MatDialog) { }
+  constructor(private publisherService: PublisherService, private dialog: MatDialog, private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.getPublishersDto();
@@ -51,45 +54,126 @@ export class AdminPublishersComponent implements AfterViewInit, OnInit {
     }
   }
 
-  insertNewPublisherBtn() {
+  insertPublisherClick() {
+    // data
+    const dialogData: DialogData = {
+      title: 'Agregar nueva editorial',
+      operation: DialogOperation.Add
+    };
     // Abrir el dialogo y obtener una referencia de el
     const dialogRef = this.dialog.open(AdminPublishersDialogComponent, {
       width: '500px',
       disableClose: true,
-      data: ['Nueva Editorial', true]
+      data: dialogData
     });
     // Refrescar tabla despúes que el dialogo se cierre si se agrego un nuevo registro
     dialogRef.afterClosed().subscribe((done) => {
-      if (done)
+      if (done) {
         this.getPublishersDto();
+      }
+    });
+  }
+
+  deletePublisherClick(element: PublisherDto) {
+    // Abrir dialogo para preguntar si desea eliminar el registro
+    const dialogRef = this.dialog.open(DeleteDialogComponent, {
+      width: '300px',
+      disableClose: true,
+      data: element.name
+    });
+    //
+    dialogRef.afterClosed().subscribe((done) => {
+      if (!done)
+        return
+
+      // Realizar solicitud para eliminar registro
+      this.publisherService.delete(element.publisherId).subscribe({
+        next: response => {
+          // Ocurrio un error
+          if (response.isSuccess !== 0 || response.statusCode !== 200) {
+            this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+              timeOut: 3000,
+              easeTime: 1000
+            })
+            return;
+          }
+          // Solicitud exitosa
+          this.toastr.success(`${response.message}`, 'Exito', {
+            timeOut: 3000,
+            easeTime: 1000
+          })
+
+          this.getPublishersDto();
+        },
+        error: error => {
+          this.toastr.error(error.message, 'Error', {
+            timeOut: 3000,
+            easeTime: 1000
+          });
+        }
+      })
+    });
+  }
+
+  editPublisherClick(element: PublisherDto) {
+    // data
+    const dialogData: DialogData = {
+      title: `Editar editorial ${element.name}`,
+      operation: DialogOperation.Update,
+      data: element
+    };
+    // Abrir el dialogo y obtener una referencia de el
+    const dialogRef = this.dialog.open(AdminPublishersDialogComponent, {
+      width: '500px',
+      disableClose: true,
+      data: dialogData
+    });
+    // Refrescar tabla despúes que el dialogo se cierre si se agrego un nuevo registro
+    dialogRef.afterClosed().subscribe((done) => {
+      if (done) {
+        this.getPublishersDto();
+      }
     });
   }
 
   private getPublishersDto(): void {
     this.publisherService.getAll().subscribe({
       next: response => {
-        //
-        if (!response) return;
-        //
-        if (response.isSuccess !== 1 && response.statusCode !== 200) {
-          console.error(`Message: ${response.message}, StatusCode: ${response.statusCode}`);
+        // Verificar si la respuesta es nula
+        if (!response) {
+          this.toastr.error('No se recibió respuesta del servidor', 'Error', {
+            timeOut: 3000,
+            easeTime: 1000
+          })
           return;
         }
-        //
-        if (response.result === null || !Array.isArray(response.result)) {
-          console.error(`Message: ${response.message}, StatusCode: ${response.statusCode}`);
+        // Verificar si ocurrio un error
+        if (response.isSuccess !== 0 || response.statusCode !== 200) {
+          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+            timeOut: 3000,
+            easeTime: 1000
+          })
           return;
         }
-        //
-        const list: PublisherDto[] = response.result as PublisherDto[];
-        this.dataSource.data = list;
+        // Verificar si el resultado es un array válido
+        const list = response.result;
+        if (!Array.isArray(list)) {
+          this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
+            timeOut: 3000,
+            easeTime: 1000
+          })
+          return;
+        }
+        // Asignar datos
+        this.dataSource.data = list as PublisherDto[];
       },
       error: error => {
-        console.error(error);
+        this.toastr.error(error.message, 'Error', {
+          timeOut: 3000,
+          easeTime: 1000
+        });
       }
-    })
+    });
   }
 
-  
-  
 }
