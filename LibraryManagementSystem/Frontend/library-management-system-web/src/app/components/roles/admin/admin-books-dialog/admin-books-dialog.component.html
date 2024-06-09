@@ -1,1 +1,270 @@
-<p>admin-books-dialog works!</p>
+<!--Titulo-->
+<h2 mat-dialog-title>{{ dialogData.title }}</h2>
+<!--Contenido-->
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="bookForm" (ngSubmit)="onSubmit()">
+    <!--Isbn10 del libro-->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>ISBN10</mat-label>
+      <input
+        matInput
+        placeholder="0-0000-0000-0..."
+        formControlName="isbn10"
+        [errorStateMatcher]="matcher"
+        maxlength="13"
+      />
+      <!--validations-->
+      @if(isbn10?.hasError('required')) {
+      <mat-error>Campo es <strong>obligatorio</strong></mat-error>
+      } @else if(isbn10?.hasError('maxlength')) {
+      <mat-error>ISBN10 debe tener un máximo de 13 caracteres</mat-error>
+      } @else if(isbn10?.hasError('minlength')) {
+      <mat-error>ISBN10 debe tener un mínimo de 10 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <!--Isbn13 del libro-->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>ISBN13</mat-label>
+      <input
+        matInput
+        placeholder="000-0-0000-0000-0..."
+        formControlName="isbn13"
+        [errorStateMatcher]="matcher"
+        maxlength="17"
+      />
+      <!--validations-->
+      @if(isbn13?.hasError('required')) {
+      <mat-error>Campo es <strong>obligatorio</strong></mat-error>
+      } @else if(isbn13?.hasError('maxlength')) {
+      <mat-error>ISBN13 debe tener un máximo de 17 caracteres</mat-error>
+      } @else if(isbn13?.hasError('minlength')) {
+      <mat-error>ISBN13 debe tener un mínimo de 14 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <!--Classification del libro-->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Clasificación</mat-label>
+      <input
+        matInput
+        placeholder="L001..."
+        formControlName="classification"
+        [errorStateMatcher]="matcher"
+        maxlength="25"
+      />
+      <!--validations-->
+      @if(classification?.hasError('required')) {
+      <mat-error>Campo es <strong>obligatorio</strong></mat-error>
+      } @else if(classification?.hasError('maxlength')) {
+      <mat-error>Clasificación debe tener un máximo de 25 caracteres</mat-error>
+      } @else if(classification?.hasError('minlength')) {
+      <mat-error>Clasificación debe tener un mínimo de 1 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <!--Titulo del libro-->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Titulo</mat-label>
+      <input
+        matInput
+        placeholder="Titulo..."
+        formControlName="title"
+        [errorStateMatcher]="matcher"
+        maxlength="100"
+      />
+      <!--validations-->
+      @if(title?.hasError('required')) {
+      <mat-error>Campo es <strong>obligatorio</strong></mat-error>
+      } @else if(title?.hasError('maxlength')) {
+      <mat-error>Titulo debe tener un máximo de 100 caracteres</mat-error>
+      } @else if(title?.hasError('minlength')) {
+      <mat-error>Titulo debe tener un mínimo de 1 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <!--Descripción del libro-->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Descripción</mat-label>
+      <input
+        matInput
+        placeholder="Descripción..."
+        formControlName="description"
+        [errorStateMatcher]="matcher"
+        maxlength="500"
+      />
+      <!--validations-->
+      @if(description?.hasError('maxlength')) {
+      <mat-error>Descripción debe tener un máximo de 500 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <!--Año de publicación-->
+    <mat-form-field class="form-field">
+      <mat-label>Año de publicación</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="publicationYear"
+        [errorStateMatcher]="matcher"
+        min="1900"
+        max="9999"
+      />
+      <!--validations-->
+      @if(publicationYear?.hasError('required')) {
+      <mat-error>Campo es <strong>obligatorio</strong></mat-error>
+      }
+    </mat-form-field>
+
+    <!--Imagen-->
+    <mat-form-field class="form-field">
+      <mat-label>Imagen</mat-label>
+      <div
+        class="fileUploadContainer"
+        [ngStyle]="{
+          'margin-top': image!.value ? '5px' : '20px'
+        }"
+      >
+        @if(image!.value) {
+        <ng-container>
+          <img [src]="image!.value" />
+          <button
+            class="deleteButton"
+            mat-icon-button
+            (click)="
+              fileInput.value = ''; image?.setValue(null)
+            "
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </ng-container>
+        }
+         <!-- no image -->
+        @if(!image!.value) {
+        <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="10px">
+          <mat-icon style="opacity: 60%">file_upload</mat-icon>
+          <button
+            mat-raised-button
+            color="primary"
+            style="width: 100%; opacity: 80%"
+          >
+            Browser
+          </button>
+          <small style="margin: 20px">Drag and drop here</small>
+        </div>
+        }
+
+        <input
+          #fileInput
+          class="fileInput"
+          type="file"
+          multiple="multiple"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+        />
+      </div>
+      <input matInput formControlName="image" [hidden]="true" />
+    </mat-form-field>
+
+    <!--Editoriales-->
+    <mat-form-field class="form-field">
+      <mat-label>Selecciona una editorial</mat-label>
+      <mat-select formControlName="publisherId">
+        @for (publisher of publishers; track publisher) {
+        <mat-option [value]="publisher.publisherId">{{
+          publisher.name
+        }}</mat-option>
+        }
+      </mat-select>
+      <!--validations-->
+      @if(publisherId?.hasError('required')) {
+      <mat-error>Campo es <strong>obligatorio</strong></mat-error>
+      }
+    </mat-form-field>
+
+    <!--Categorias-->
+    <mat-form-field class="form-field">
+      <mat-label>Selecciona una categoría</mat-label>
+      <mat-select formControlName="categoryId">
+        @for (category of categories; track category) {
+        <mat-option [value]="category.categoryId">{{
+          category.name
+        }}</mat-option>
+        }
+      </mat-select>
+      <!--category validation-->
+      @if(categoryId?.hasError('required')) {
+      <mat-error>Campo es <strong>obligatorio</strong></mat-error>
+      }
+    </mat-form-field>
+
+    <!--Sub categorias-->
+    <mat-form-field class="form-field">
+      <mat-label>Selecciona una o varias sub categorías</mat-label>
+      <mat-select formControlName="subCategoryIds">
+        @for (subcategory of filteredSubCategories; track subcategory) {
+        <mat-option [value]="subcategory.subCategoryId">{{
+          subcategory.name
+        }}</mat-option>
+        }
+      </mat-select>
+      <!--validation-->
+      @if(subCategoryIds?.hasError('required')) {
+      <mat-error>Campo es <strong>obligatorio</strong></mat-error>
+      }
+    </mat-form-field>
+
+    <!--Autores-->
+    <mat-form-field class="form-field">
+      <mat-label>Selecciona uno o varios autores</mat-label>
+      <mat-select formControlName="authorIds">
+        @for (author of authors; track author) {
+        <mat-option [value]="author.authorId">{{ author.name }}</mat-option>
+        }
+      </mat-select>
+      <!--validation-->
+      @if(authorIds?.hasError('required')) {
+      <mat-error>Campo es <strong>obligatorio</strong></mat-error>
+      }
+    </mat-form-field>
+
+    <!--Número de copias-->
+    <mat-form-field class="form-field">
+      <mat-label>Número de copias</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="numberOfCopies"
+        [errorStateMatcher]="matcher"
+        min="0"
+        max="32767"
+      />
+      <!--validations-->
+      @if(numberOfCopies?.hasError('required')) {
+      <mat-error>Campo es <strong>obligatorio</strong></mat-error>
+      }
+    </mat-form-field>
+
+    <!--Esta disponible para préstamo-->
+    <mat-checkbox formControlName="isAvailable">
+      ¿Está disponible para préstamo?
+    </mat-checkbox>
+
+    <!--Acciones-->
+    <mat-dialog-actions align="end" class="dialog-actions">
+      <!---->
+      <button mat-button mat-dialog-close (click)="closeDialog(false)">
+        Cancelar
+      </button>
+      <!---->
+      <button
+        mat-flat-button
+        type="submit"
+        color="primary"
+        [disabled]="bookForm.invalid"
+      >
+        Guardar
+      </button>
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>
