@@ -15,5 +15,7 @@ namespace LibraryManagementSystem.Bll.Interfaces.Library
         Task<ApiResponse> GetAll();
         /* Para obtener un solo registro */
         Task<ApiResponse> GetById(int bookId, int authorId);
+
+        Task<ApiResponse> UpdateMany(IEnumerable<BookAuthor> entities);
     }
 }
