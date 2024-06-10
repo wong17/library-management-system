@@ -176,6 +176,129 @@ BEGIN
 END
 GO
 
+--DELETE MANY MonographAuthor
+IF OBJECT_ID('Library.uspDeleteManyMonographAuthor', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspDeleteManyMonographAuthor;  
+GO
+CREATE PROC [Library].uspDeleteManyMonographAuthor (
+	@MonographId INT
+)
+AS
+BEGIN
+	--
+	IF (@MonographId IS NULL OR @MonographId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id de la monografía es obligatoria' AS [Message]
+		RETURN
+	END
+	--
+	IF NOT EXISTS (SELECT 1 FROM [Library].Monograph WHERE MonographId = @MonographId)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'No existe una monografía con el Id proporcionado' AS [Message]
+		RETURN
+	END
+	--
+	BEGIN TRY
+		--
+		DELETE FROM [Library].MonographAuthor WHERE MonographId = @MonographId
+		--
+		SELECT 0 AS IsSuccess, 'Autores de la monografía eliminados exitosamente' AS [Message]
+	END TRY
+	BEGIN CATCH
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+	END CATCH
+END
+GO
+
+--UPDATE MANY MonographAuthor
+IF OBJECT_ID('Library.uspUpdateManyMonographAuthor', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspUpdateManyMonographAuthor;  
+GO
+CREATE PROC [Library].uspUpdateManyMonographAuthor (
+	@MonographAuthors [Library].MonographAuthorType READONLY
+)
+AS
+BEGIN
+	-- Verificar que el Id de la Monografia no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @MonographAuthors AS ma WHERE ma.MonographId IS NULL OR ma.MonographId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id de la Monografia es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que existen todas las Monografias
+	IF EXISTS (SELECT 1 FROM @MonographAuthors AS ma LEFT JOIN [Library].Monograph AS db ON ma.MonographId = db.MonographId WHERE db.MonographId IS NULL)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'Una o más Monografias no existen en la base de datos' AS [Message];
+		RETURN
+	END
+	-- Verificar que el Id del Autor no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @MonographAuthors AS ma WHERE ma.AuthorId IS NULL OR ma.AuthorId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id del Author es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que existen todos los Autores
+	IF EXISTS (SELECT 1 FROM @MonographAuthors AS ma LEFT JOIN [Library].Author AS db ON ma.AuthorId = db.AuthorId WHERE db.AuthorId IS NULL)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'Uno o más Autores no existen en la base de datos' AS [Message];
+		RETURN
+	END
+	-- Verificar que no vayan relaciones de Monografia-Autores repetidas
+	IF EXISTS (SELECT 1 FROM @MonographAuthors AS ma GROUP BY ma.MonographId, ma.AuthorId HAVING COUNT(*) > 1)
+    BEGIN
+        SELECT 1 AS IsSuccess, 'Una o más relaciones Monografia-Autores están repetidos en la entrada' AS [Message];
+        RETURN;
+    END
+	-- Eliminar todas las relaciones existentes de la monografía
+	BEGIN TRAN
+	BEGIN TRY
+		-- Obtener Id del libro
+		DECLARE @MonographId INT = (SELECT TOP 1 ma.MonographId FROM @MonographAuthors AS ma)
+		-- Para almacenar la respuesta del sp
+		DECLARE @SPResult TABLE (
+				IsSuccess INT,
+				[Message] VARCHAR(255)
+		)
+		-- 1) Eliminar todos los autores de la monografía
+		INSERT INTO @SPResult EXEC [Library].uspDeleteManyMonographAuthor @MonographId
+		-- Verificar si todo salio bien
+		IF ((SELECT IsSuccess FROM @SPResult) != 0)
+		BEGIN
+			--
+			SELECT IsSuccess, [Message] FROM @SPResult
+			--
+			IF @@TRANCOUNT > 0
+				ROLLBACK TRAN;
+		END
+		-- Limpiar resultados
+		DELETE FROM @SPResult 
+		-- 2) Insertar las nuevas relaciones 
+		INSERT INTO @SPResult EXEC [Library].uspInsertManyMonographAuthor @MonographAuthors
+		-- Verificar si todo salio bien
+		IF ((SELECT IsSuccess FROM @SPResult) != 0)
+		BEGIN
+			--
+			SELECT IsSuccess, [Message] FROM @SPResult
+			--
+			IF @@TRANCOUNT > 0
+				ROLLBACK TRAN;
+		END
+		--
+		SELECT 0 AS IsSuccess, 'Autores de la monografía actualizadas exitosamente' AS [Message], @MonographId AS Result
+		--
+		IF @@ERROR = 0
+			IF @@TRANCOUNT > 0
+				COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRAN;
+		--
+        SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message];
+    END CATCH
+END
+GO
+
 --GET MonographAuthor
 IF OBJECT_ID('Library.uspGetMonographAuthor', 'P') IS NOT NULL  
     DROP PROCEDURE [Library].uspGetMonographAuthor;  
