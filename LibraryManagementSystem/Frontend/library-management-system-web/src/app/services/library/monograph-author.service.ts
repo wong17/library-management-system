@@ -16,6 +16,7 @@ export class MonographAuthorService {
   /* MonographAuthor urls */
   private readonly monographAuthorCreateUrl: string = '/api/MonographAuthor/Create'
   private readonly monographAuthorCreateManyUrl: string = '/api/MonographAuthor/CreateMany'
+  private readonly monographAuthorUpdateManyUrl: string = '/api/MonographAuthor/UpdateMany'
   private readonly monographAuthorUrl: string = '/api/MonographAuthor'
 
   /* Encabezado http para solicitudes POST y PUT */
@@ -51,6 +52,18 @@ export class MonographAuthorService {
    */
   createMany(monographAuthors: MonographAuthorInsertDto[]): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`${this.apiUrl}${this.monographAuthorCreateManyUrl}`, monographAuthors, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
+  }
+
+  /**
+   * Actualiza varios autores de una monografía
+   * @param monographAuthors
+   * @returns Observable<ApiResponse>
+   */
+  updateMany(monographAuthors: MonographAuthorInsertDto[]): Observable<ApiResponse> {
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.monographAuthorUpdateManyUrl}`, monographAuthors, this.httpHeader)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

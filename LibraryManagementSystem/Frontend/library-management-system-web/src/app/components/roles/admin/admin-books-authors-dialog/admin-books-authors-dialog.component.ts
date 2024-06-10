@@ -82,9 +82,9 @@ export class AdminBooksAuthorsDialogComponent {
       })
       return;
     }
-    // obtener sub categorias seleccionadas
-    const selectedSubCategories = this.authorIds?.value as number[];
-    selectedSubCategories.forEach(aId => {
+    // obtener autores seleccionados
+    const selectedAuthors = this.authorIds?.value as number[];
+    selectedAuthors.forEach(aId => {
       this.bookAuthorInsertDto.push({ bookId: bookId, authorId: aId })
     })
     

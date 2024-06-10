@@ -14,7 +14,6 @@ import { DialogData, DialogOperation } from '../../../../util/dialog-data';
 import { AuthorService } from '../../../../services/library/author.service';
 import { ToastrService } from 'ngx-toastr';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ApiResponse } from '../../../../entities/api/api-response';
 
 @Component({
