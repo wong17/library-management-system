@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserRoleInsertDto } from '../../entities/dtos/security/user-role-insert-dto';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { ApiResponse } from '../../entities/api/api-response';
+import { HttpErrorHandler } from '../../util/http-error-handler';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +38,10 @@ export class UserRoleService {
    * @returns Observable<ApiResponse>
    */
   create(userRole: UserRoleInsertDto): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.userRoleCreateUrl}`, userRole, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.userRoleCreateUrl}`, userRole, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -46,7 +50,10 @@ export class UserRoleService {
    * @returns Observable<ApiResponse>
    */
   createMany(userRoles: UserRoleInsertDto[]): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.userRoleCreateManyUrl}`, userRoles, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.userRoleCreateManyUrl}`, userRoles, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -55,7 +62,10 @@ export class UserRoleService {
    * @returns Observable<ApiResponse>
    */
   delete(userId: number, roleId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.userRoleUrl}/${userId}/${roleId}`);
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.userRoleUrl}/${userId}/${roleId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -63,7 +73,10 @@ export class UserRoleService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.userRoleUrl}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.userRoleUrl}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -72,6 +85,9 @@ export class UserRoleService {
    * @returns Observable<ApiResponse>
    */
   getById(userId: number, roleId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.userRoleUrl}/${userId}/${roleId}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.userRoleUrl}/${userId}/${roleId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 }

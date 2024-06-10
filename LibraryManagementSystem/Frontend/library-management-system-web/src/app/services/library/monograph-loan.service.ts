@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ApiResponse } from '../../entities/api/api-response';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { MonographLoanInsertDto } from '../../entities/dtos/library/monograph-loan-insert-dto';
+import { HttpErrorHandler } from '../../util/http-error-handler';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,10 @@ export class MonographLoanService {
    * @returns Observable<ApiResponse>
    */
   create(monographLoan: MonographLoanInsertDto): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.monographLoanCreateUrl}`, monographLoan, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.monographLoanCreateUrl}`, monographLoan, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -47,7 +51,10 @@ export class MonographLoanService {
    * @returns Observable<ApiResponse>
    */
   updateBorrowedMonographLoan(monographLoanId: number, dueDate: Date): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.monographLoanUpdateBorrowedMonographLoanUrl}/${monographLoanId}/${dueDate}`, this.httpHeader);
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.monographLoanUpdateBorrowedMonographLoanUrl}/${monographLoanId}/${dueDate}`, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -56,7 +63,10 @@ export class MonographLoanService {
    * @returns Observable<ApiResponse>
    */
   updateReturnedMonographLoan(monographLoanId: number): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.monographLoanUpdateReturnedMonographLoanUrl}/${monographLoanId}`, this.httpHeader);
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.monographLoanUpdateReturnedMonographLoanUrl}/${monographLoanId}`, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -65,7 +75,10 @@ export class MonographLoanService {
    * @returns Observable<ApiResponse>
    */
   delete(monographLoanId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.monographLoanUrl}/${monographLoanId}`);
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.monographLoanUrl}/${monographLoanId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -73,7 +86,10 @@ export class MonographLoanService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographLoanUrl}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographLoanUrl}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -82,6 +98,9 @@ export class MonographLoanService {
    * @returns Observable<ApiResponse>
    */
   getById(monographLoanId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographLoanUrl}/${monographLoanId}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographLoanUrl}/${monographLoanId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 }

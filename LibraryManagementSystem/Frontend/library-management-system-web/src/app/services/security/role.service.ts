@@ -3,8 +3,9 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RoleInsertDto } from '../../entities/dtos/security/role-insert-dto';
 import { ApiResponse } from '../../entities/api/api-response';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { RoleUpdateDto } from '../../entities/dtos/security/role-update-dto';
+import { HttpErrorHandler } from '../../util/http-error-handler';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,10 @@ export class RoleService {
    * @returns Observable<ApiResponse>
    */
   create(role: RoleInsertDto): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.roleCreateUrl}`, role, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.roleCreateUrl}`, role, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -47,7 +51,10 @@ export class RoleService {
    * @returns Observable<ApiResponse>
    */
   update(role: RoleUpdateDto): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.roleUpdateUrl}`, role, this.httpHeader);
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.roleUpdateUrl}`, role, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -56,7 +63,10 @@ export class RoleService {
    * @returns Observable<ApiResponse>
    */
   delete(roleId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.roleUrl}/${roleId}`);
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.roleUrl}/${roleId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -64,7 +74,10 @@ export class RoleService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.roleUrl}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.roleUrl}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -73,7 +86,10 @@ export class RoleService {
    * @returns Observable<ApiResponse>
    */
   getById(roleId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.roleUrl}/${roleId}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.roleUrl}/${roleId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
-  
+
 }

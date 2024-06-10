@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ApiResponse } from '../../entities/api/api-response';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { BookAuthorInsertDto } from '../../entities/dtos/library/book-author-insert-dto';
+import { HttpErrorHandler } from '../../util/http-error-handler';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +38,10 @@ export class BookAuthorService {
    * @returns Observable<ApiResponse>
    */
   create(bookAuthor: BookAuthorInsertDto): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.bookAuthorCreateUrl}`, bookAuthor, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.bookAuthorCreateUrl}`, bookAuthor, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -46,7 +50,10 @@ export class BookAuthorService {
    * @returns Observable<ApiResponse>
    */
   createMany(bookAuthors: BookAuthorInsertDto[]): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.bookAuthorCreateManyUrl}`, bookAuthors, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.bookAuthorCreateManyUrl}`, bookAuthors, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -55,7 +62,10 @@ export class BookAuthorService {
    * @returns Observable<ApiResponse>
    */
   delete(bookId: number, authorId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.bookAuthorUrl}/${bookId}/${authorId}`);
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.bookAuthorUrl}/${bookId}/${authorId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -63,7 +73,10 @@ export class BookAuthorService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookAuthorUrl}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookAuthorUrl}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -72,6 +85,9 @@ export class BookAuthorService {
    * @returns Observable<ApiResponse>
    */
   getById(bookId: number, authorId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookAuthorUrl}/${bookId}/${authorId}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookAuthorUrl}/${bookId}/${authorId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 }

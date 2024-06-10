@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../../entities/api/api-response';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
+import { HttpErrorHandler } from '../../util/http-error-handler';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,10 @@ export class StudentService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.studentUrl}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.studentUrl}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -34,6 +38,9 @@ export class StudentService {
    * @returns Observable<ApiResponse>
    */
   getById(studentId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.studentUrl}/${studentId}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.studentUrl}/${studentId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 }

@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { BookLoanInsertDto } from '../../entities/dtos/library/book-loan-insert-dto';
 import { ApiResponse } from '../../entities/api/api-response';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
+import { HttpErrorHandler } from '../../util/http-error-handler';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,10 @@ export class BookLoanService {
    * @returns Observable<ApiResponse>
    */
   create(bookLoan: BookLoanInsertDto): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.bookLoanCreateUrl}`, bookLoan, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.bookLoanCreateUrl}`, bookLoan, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -47,7 +51,10 @@ export class BookLoanService {
    * @returns Observable<ApiResponse>
    */
   updateBorrowedBookLoan(bookLoanId: number, dueDate: Date): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.bookLoanUpdateBorrowedBookLoanUrl}/${bookLoanId}/${dueDate}`, this.httpHeader);
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.bookLoanUpdateBorrowedBookLoanUrl}/${bookLoanId}/${dueDate}`, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -56,7 +63,10 @@ export class BookLoanService {
    * @returns Observable<ApiResponse>
    */
   updateReturnedBookLoan(bookLoanId: number): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.bookLoanUpdateReturnedBookLoanUrl}/${bookLoanId}`, this.httpHeader);
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.bookLoanUpdateReturnedBookLoanUrl}/${bookLoanId}`, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -65,7 +75,10 @@ export class BookLoanService {
    * @returns Observable<ApiResponse>
    */
   delete(bookLoanId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.bookLoanUrl}/${bookLoanId}`);
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.bookLoanUrl}/${bookLoanId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -73,7 +86,10 @@ export class BookLoanService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookLoanUrl}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookLoanUrl}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -82,6 +98,9 @@ export class BookLoanService {
    * @returns Observable<ApiResponse>
    */
   getById(bookLoanId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookLoanUrl}/${bookLoanId}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookLoanUrl}/${bookLoanId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 }

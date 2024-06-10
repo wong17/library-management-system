@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { ApiResponse } from '../../entities/api/api-response';
+import { HttpErrorHandler } from '../../util/http-error-handler';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,10 @@ export class CareerService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.careerUrl}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.careerUrl}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -34,6 +38,9 @@ export class CareerService {
    * @returns Observable<ApiResponse>
    */
   getById(careerId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.careerUrl}/${careerId}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.careerUrl}/${careerId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 }

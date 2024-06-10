@@ -2,9 +2,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../../entities/api/api-response';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { PublisherInsertDto } from '../../entities/dtos/library/publisher-insert-dto';
 import { PublisherUpdateDto } from '../../entities/dtos/library/publisher-update-dto';
+import { HttpErrorHandler } from '../../util/http-error-handler';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +41,10 @@ export class PublisherService {
    * @returns Observable<ApiResponse>
    */
   create(publisher: PublisherInsertDto): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.publisherCreateUrl}`, publisher, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.publisherCreateUrl}`, publisher, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -49,7 +53,10 @@ export class PublisherService {
    * @returns Observable<ApiResponse>
    */
   createMany(publishers: PublisherInsertDto[]): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.publisherCreateManyUrl}`, publishers, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.publisherCreateManyUrl}`, publishers, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -58,7 +65,10 @@ export class PublisherService {
    * @returns Observable<ApiResponse>
    */
   update(publisher: PublisherUpdateDto): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.publisherUpdateUrl}`, publisher, this.httpHeader);
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.publisherUpdateUrl}`, publisher, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -67,7 +77,10 @@ export class PublisherService {
    * @returns Observable<ApiResponse>
    */
   updateMany(publishers: PublisherUpdateDto[]): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.publisherUpdateManyUrl}`, publishers, this.httpHeader);
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.publisherUpdateManyUrl}`, publishers, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -76,7 +89,10 @@ export class PublisherService {
    * @returns Observable<ApiResponse>
    */
   delete(publisherId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.publisherUrl}/${publisherId}`);
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.publisherUrl}/${publisherId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -84,7 +100,10 @@ export class PublisherService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.publisherUrl}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.publisherUrl}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -93,6 +112,9 @@ export class PublisherService {
    * @returns Observable<ApiResponse>
    */
   getById(publisherId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.publisherUrl}/${publisherId}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.publisherUrl}/${publisherId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 }

@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ApiResponse } from '../../entities/api/api-response';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { SubCategoryInsertDto } from '../../entities/dtos/library/sub-category-insert-dto';
 import { SubCategoryUpdateDto } from '../../entities/dtos/library/sub-category-update-dto';
+import { HttpErrorHandler } from '../../util/http-error-handler';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +41,10 @@ export class SubCategoryService {
    * @returns Observable<ApiResponse>
    */
   create(subCategory: SubCategoryInsertDto): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.subCategoryCreateUrl}`, subCategory, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.subCategoryCreateUrl}`, subCategory, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -49,7 +53,10 @@ export class SubCategoryService {
    * @returns Observable<ApiResponse>
    */
   createMany(subCategories: SubCategoryInsertDto[]): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.subCategoryCreateManyUrl}`, subCategories, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.subCategoryCreateManyUrl}`, subCategories, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -58,7 +65,10 @@ export class SubCategoryService {
    * @returns Observable<ApiResponse>
    */
   update(subCategory: SubCategoryUpdateDto): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.subCategoryUpdateUrl}`, subCategory, this.httpHeader);
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.subCategoryUpdateUrl}`, subCategory, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -67,7 +77,10 @@ export class SubCategoryService {
    * @returns Observable<ApiResponse>
    */
   updateMany(subCategories: SubCategoryUpdateDto[]): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.subCategoryUpdateManyUrl}`, subCategories, this.httpHeader);
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.subCategoryUpdateManyUrl}`, subCategories, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -76,7 +89,10 @@ export class SubCategoryService {
    * @returns Observable<ApiResponse>
    */
   delete(subCategoryId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.subCategoryUrl}/${subCategoryId}`);
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.subCategoryUrl}/${subCategoryId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -84,7 +100,10 @@ export class SubCategoryService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.subCategoryUrl}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.subCategoryUrl}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -93,6 +112,9 @@ export class SubCategoryService {
    * @returns Observable<ApiResponse>
    */
   getById(subCategoryId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.subCategoryUrl}/${subCategoryId}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.subCategoryUrl}/${subCategoryId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 }

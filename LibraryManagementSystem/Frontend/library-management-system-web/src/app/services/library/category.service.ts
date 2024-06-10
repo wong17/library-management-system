@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CategoryInsertDto } from '../../entities/dtos/library/category-insert-dto';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { ApiResponse } from '../../entities/api/api-response';
 import { CategoryUpdateDto } from '../../entities/dtos/library/category-update-dto';
+import { HttpErrorHandler } from '../../util/http-error-handler';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +41,10 @@ export class CategoryService {
    * @returns Observable<ApiResponse>
    */
   create(category: CategoryInsertDto): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.categoryCreateUrl}`, category, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.categoryCreateUrl}`, category, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -49,7 +53,10 @@ export class CategoryService {
    * @returns Observable<ApiResponse>
    */
   createMany(categories: CategoryInsertDto[]): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.categoryCreateManyUrl}`, categories, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.categoryCreateManyUrl}`, categories, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -58,7 +65,10 @@ export class CategoryService {
    * @returns Observable<ApiResponse>
    */
   update(category: CategoryUpdateDto): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.categoryUpdateUrl}`, category, this.httpHeader);
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.categoryUpdateUrl}`, category, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -67,7 +77,10 @@ export class CategoryService {
    * @returns Observable<ApiResponse>
    */
   updateMany(categories: CategoryUpdateDto[]): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.categoryUpdateManyUrl}`, categories, this.httpHeader);
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.categoryUpdateManyUrl}`, categories, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -76,7 +89,10 @@ export class CategoryService {
    * @returns Observable<ApiResponse>
    */
   delete(categoryId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.categoryUrl}/${categoryId}`);
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.categoryUrl}/${categoryId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -84,7 +100,10 @@ export class CategoryService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.categoryUrl}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.categoryUrl}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -93,6 +112,9 @@ export class CategoryService {
    * @returns Observable<ApiResponse>
    */
   getById(categoryId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.categoryUrl}/${categoryId}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.categoryUrl}/${categoryId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 }

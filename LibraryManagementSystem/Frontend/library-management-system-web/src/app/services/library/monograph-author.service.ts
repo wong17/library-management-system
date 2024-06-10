@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ApiResponse } from '../../entities/api/api-response';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { MonographAuthorInsertDto } from '../../entities/dtos/library/monograph-author-insert-dto';
+import { HttpErrorHandler } from '../../util/http-error-handler';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +38,10 @@ export class MonographAuthorService {
    * @returns Observable<ApiResponse>
    */
   create(monographAuthor: MonographAuthorInsertDto): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.monographAuthorCreateUrl}`, monographAuthor, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.monographAuthorCreateUrl}`, monographAuthor, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -46,7 +50,10 @@ export class MonographAuthorService {
    * @returns Observable<ApiResponse>
    */
   createMany(monographAuthors: MonographAuthorInsertDto[]): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.monographAuthorCreateManyUrl}`, monographAuthors, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.monographAuthorCreateManyUrl}`, monographAuthors, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -55,7 +62,10 @@ export class MonographAuthorService {
    * @returns Observable<ApiResponse>
    */
   delete(monographId: number, authorId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.monographAuthorUrl}/${monographId}/${authorId}`);
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.monographAuthorUrl}/${monographId}/${authorId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -63,7 +73,10 @@ export class MonographAuthorService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographAuthorUrl}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographAuthorUrl}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -72,6 +85,9 @@ export class MonographAuthorService {
    * @returns Observable<ApiResponse>
    */
   getById(monographId: number, authorId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographAuthorUrl}/${monographId}/${authorId}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographAuthorUrl}/${monographId}/${authorId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 }

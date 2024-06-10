@@ -3,8 +3,9 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthorInsertDto } from '../../entities/dtos/library/author-insert-dto';
 import { ApiResponse } from '../../entities/api/api-response';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { AuthorUpdateDto } from '../../entities/dtos/library/author-update-dto';
+import { HttpErrorHandler } from '../../util/http-error-handler';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +41,10 @@ export class AuthorService {
    * @returns Observable<ApiResponse>
    */
   create(author: AuthorInsertDto): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.authorCreateUrl}`, author, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.authorCreateUrl}`, author, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -49,7 +53,10 @@ export class AuthorService {
    * @returns Observable<ApiResponse>
    */
   createMany(authors: AuthorInsertDto[]): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.authorCreateManyUrl}`, authors, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.authorCreateManyUrl}`, authors, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -58,7 +65,10 @@ export class AuthorService {
    * @returns Observable<ApiResponse>
    */
   update(author: AuthorUpdateDto): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.authorUpdateUrl}`, author, this.httpHeader);
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.authorUpdateUrl}`, author, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -67,7 +77,10 @@ export class AuthorService {
    * @returns Observable<ApiResponse>
    */
   updateMany(authors: AuthorUpdateDto[]): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.authorUpdateManyUrl}`, authors, this.httpHeader);
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.authorUpdateManyUrl}`, authors, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -76,7 +89,10 @@ export class AuthorService {
    * @returns Observable<ApiResponse>
    */
   delete(authorId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.authorUrl}/${authorId}`);
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.authorUrl}/${authorId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -84,7 +100,10 @@ export class AuthorService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.authorUrl}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.authorUrl}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -93,6 +112,9 @@ export class AuthorService {
    * @returns Observable<ApiResponse>
    */
   getById(authorId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.authorUrl}/${authorId}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.authorUrl}/${authorId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 }

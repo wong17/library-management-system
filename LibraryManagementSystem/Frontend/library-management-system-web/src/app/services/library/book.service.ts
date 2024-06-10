@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ApiResponse } from '../../entities/api/api-response';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { BookInsertDto } from '../../entities/dtos/library/book-insert-dto';
 import { BookUpdateDto } from '../../entities/dtos/library/book-update-dto';
+import { HttpErrorHandler } from '../../util/http-error-handler';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,10 @@ export class BookService {
    * @returns Observable<ApiResponse>
    */
   create(book: BookInsertDto): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}${this.bookCreateUrl}`, book, this.httpHeader);
+    return this.http.post<ApiResponse>(`${this.apiUrl}${this.bookCreateUrl}`, book, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -47,7 +51,10 @@ export class BookService {
    * @returns Observable<ApiResponse>
    */
   update(book: BookUpdateDto): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.bookUpdateUrl}`, book, this.httpHeader);
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.bookUpdateUrl}`, book, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -56,7 +63,10 @@ export class BookService {
    * @returns Observable<ApiResponse>
    */
   delete(bookId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.bookUrl}/${bookId}`);
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.bookUrl}/${bookId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -64,7 +74,10 @@ export class BookService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookUrl}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookUrl}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 
   /**
@@ -73,6 +86,9 @@ export class BookService {
    * @returns Observable<ApiResponse>
    */
   getById(bookId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookUrl}/${bookId}`);
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookUrl}/${bookId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
   }
 }
