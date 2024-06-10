@@ -3,7 +3,7 @@
 <!--Contenido-->
 <mat-dialog-content class="dialog-content">
   <form [formGroup]="subCategoryForm" (ngSubmit)="onSubmit()">
-    <!--Nombre del autor-->
+    <!--Nombre de la sub categoria-->
     <mat-form-field appearance="fill" class="form-field">
       <mat-label>Nombre</mat-label>
       <input
@@ -17,12 +17,12 @@
       @if(name?.hasError('required')) {
       <mat-error>Campo es <strong>obligatorio</strong></mat-error>
       } @else if(name?.hasError('maxlength')) {
-      <mat-error>Nombre de la cátegoria debe tener un máximo de 100 caracteres</mat-error>
+      <mat-error>Nombre de la categoría debe tener un máximo de 100 caracteres</mat-error>
       }
     </mat-form-field>
     <!--Lista de categorias-->
     <mat-form-field class="form-field">
-      <mat-label>Selecciona una cátegoria</mat-label>
+      <mat-label>Selecciona una categoría</mat-label>
       <mat-select formControlName="categoryId">
         @for (category of categories; track category) {
           <mat-option [value]="category.categoryId">{{ category.name }}</mat-option>

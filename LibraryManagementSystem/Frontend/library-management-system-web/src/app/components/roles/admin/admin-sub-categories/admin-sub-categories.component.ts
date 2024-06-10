@@ -13,7 +13,6 @@ import { ToastrService } from 'ngx-toastr';
 import { DialogData, DialogOperation } from '../../../../util/dialog-data';
 import { AdminSubCategoriesDialogComponent } from '../admin-sub-categories-dialog/admin-sub-categories-dialog.component';
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ApiResponse } from '../../../../entities/api/api-response';
 
 @Component({
@@ -33,8 +32,6 @@ export class AdminSubCategoriesComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
-  /* Editoriales */
-  publishers: SubCategoryDto[] | undefined;
 
   constructor(private subCategoryService: SubCategoryService, private dialog: MatDialog, private toastr: ToastrService) { }
 
@@ -94,39 +91,24 @@ export class AdminSubCategoriesComponent implements AfterViewInit, OnInit {
           // Ocurrio un error
           if (response.isSuccess !== 0 || response.statusCode !== 200) {
             this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-              timeOut: 3000,
+              timeOut: 5000,
               easeTime: 1000
             })
             return;
           }
           // Solicitud exitosa
           this.toastr.success(`${response.message}`, 'Exito', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
 
           this.getSubCategoriesDto();
         },
-        error: error => {
-          if (error instanceof HttpErrorResponse) {
-            //
-            const response = error.error as ApiResponse;
-            // BadRequest
-            if (response.isSuccess === 1 && response.statusCode === 400) {
-              this.toastr.warning(`${response.message}`, 'Atención', {
-                timeOut: 3000,
-                easeTime: 1000
-              });
-              return;
-            }
-            // InternalServerError
-            if (response.isSuccess === 3 && response.statusCode === 500) {
-              this.toastr.error(`${response.message}`, 'Error', {
-                timeOut: 3000,
-                easeTime: 1000
-              });
-            }
-          }
+        error: (error: ApiResponse) => {
+          this.toastr.error(`${error.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          });
         }
       })
     });
@@ -156,24 +138,31 @@ export class AdminSubCategoriesComponent implements AfterViewInit, OnInit {
   private getSubCategoriesDto(): void {
     this.subCategoryService.getAll().subscribe({
       next: response => {
-        //
-        if (!response) return;
-        //
-        if (response.isSuccess !== 1 && response.statusCode !== 200) {
-          console.error(`Message: ${response.message}, StatusCode: ${response.statusCode}`);
+        // Verificar si ocurrio un error
+        if (response.isSuccess !== 0 || response.statusCode !== 200) {
+          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          })
           return;
         }
-        //
-        if (response.result === null || !Array.isArray(response.result)) {
-          console.error(`Message: ${response.message}, StatusCode: ${response.statusCode}`);
+        // Verificar si el resultado es un array válido
+        const list = response.result;
+        if (!Array.isArray(list)) {
+          this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          })
           return;
         }
-        //
-        const list: SubCategoryDto[] = response.result as SubCategoryDto[];
-        this.dataSource.data = list;
+        // Asignar datos
+        this.dataSource.data = response.result as SubCategoryDto[];;
       },
-      error: error => {
-        console.error(error);
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
       }
     })
   }

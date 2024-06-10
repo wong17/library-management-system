@@ -13,7 +13,6 @@ import { SubCategoryInsertDto } from '../../../../entities/dtos/library/sub-cate
 import { DialogData, DialogOperation } from '../../../../util/dialog-data';
 import { SubCategoryService } from '../../../../services/library/sub-category.service';
 import { ToastrService } from 'ngx-toastr';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ApiResponse } from '../../../../entities/api/api-response';
 import { CategoryService } from '../../../../services/library/category.service';
 import { CategoryDto } from '../../../../entities/dtos/library/category-dto';
@@ -101,39 +100,24 @@ export class AdminSubCategoriesDialogComponent {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
         }
         // Solicitud exitosa
         this.toastr.success(`${response.message}`, 'Exito', {
-          timeOut: 3000,
+          timeOut: 5000,
           easeTime: 1000
         })
 
         this.closeDialog(true);
       },
-      error: error => {
-        if (error instanceof HttpErrorResponse) {
-          //
-          const response = error.error as ApiResponse;
-          // BadRequest
-          if (response.isSuccess === 1 && response.statusCode === 400) {
-            this.toastr.warning(`${response.message}`, 'Atención', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-            return;
-          }
-          // InternalServerError
-          if (response.isSuccess === 3 && response.statusCode === 500) {
-            this.toastr.error(`${response.message}`, 'Error', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-          }
-        }
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
       }
     })
   }
@@ -152,39 +136,24 @@ export class AdminSubCategoriesDialogComponent {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
         }
         // Solicitud exitosa
         this.toastr.info(`${response.message}`, 'Exito', {
-          timeOut: 3000,
+          timeOut: 5000,
           easeTime: 1000
         })
 
         this.closeDialog(true);
       },
-      error: error => {
-        if (error instanceof HttpErrorResponse) {
-          //
-          const response = error.error as ApiResponse;
-          // BadRequest
-          if (response.isSuccess === 1 && response.statusCode === 400) {
-            this.toastr.warning(`${response.message}`, 'Atención', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-            return;
-          }
-          // InternalServerError
-          if (response.isSuccess === 3 && response.statusCode === 500) {
-            this.toastr.error(`${response.message}`, 'Error', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-          }
-        }
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
       }
     })
   }
@@ -192,18 +161,10 @@ export class AdminSubCategoriesDialogComponent {
   private getCategoriesDto(): void {
     this.categoryService.getAll().subscribe({
       next: response => {
-        // Verificar si la respuesta es nula
-        if (!response) {
-          this.toastr.error('No se recibió respuesta del servidor', 'Error', {
-            timeOut: 3000,
-            easeTime: 1000
-          })
-          return;
-        }
         // Verificar si ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
@@ -212,7 +173,7 @@ export class AdminSubCategoriesDialogComponent {
         const list = response.result;
         if (!Array.isArray(list)) {
           this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
@@ -220,26 +181,11 @@ export class AdminSubCategoriesDialogComponent {
         // Asignar datos
         this.categories = list as CategoryDto[];
       },
-      error: error => {
-        if (error instanceof HttpErrorResponse) {
-          //
-          const response = error.error as ApiResponse;
-          // BadRequest
-          if (response.isSuccess === 1 && response.statusCode === 400) {
-            this.toastr.warning(`${response.message}`, 'Atención', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-            return;
-          }
-          // InternalServerError
-          if (response.isSuccess === 3 && response.statusCode === 500) {
-            this.toastr.error(`${response.message}`, 'Error', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-          }
-        }
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
       }
     })
   }

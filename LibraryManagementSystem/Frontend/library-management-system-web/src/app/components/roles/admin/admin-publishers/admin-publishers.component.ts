@@ -31,8 +31,6 @@ export class AdminPublishersComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
-  /* Editoriales */
-  publishers: PublisherDto[] | undefined;
 
   constructor(private publisherService: PublisherService, private dialog: MatDialog, private toastr: ToastrService) { }
 
@@ -92,14 +90,14 @@ export class AdminPublishersComponent implements AfterViewInit, OnInit {
           // Ocurrio un error
           if (response.isSuccess !== 0 || response.statusCode !== 200) {
             this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-              timeOut: 3000,
+              timeOut: 5000,
               easeTime: 1000
             })
             return;
           }
           // Solicitud exitosa
           this.toastr.success(`${response.message}`, 'Exito', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
 
@@ -107,7 +105,7 @@ export class AdminPublishersComponent implements AfterViewInit, OnInit {
         },
         error: error => {
           this.toastr.error(error.message, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           });
         }
@@ -139,18 +137,10 @@ export class AdminPublishersComponent implements AfterViewInit, OnInit {
   private getPublishersDto(): void {
     this.publisherService.getAll().subscribe({
       next: response => {
-        // Verificar si la respuesta es nula
-        if (!response) {
-          this.toastr.error('No se recibió respuesta del servidor', 'Error', {
-            timeOut: 3000,
-            easeTime: 1000
-          })
-          return;
-        }
         // Verificar si ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
@@ -159,7 +149,7 @@ export class AdminPublishersComponent implements AfterViewInit, OnInit {
         const list = response.result;
         if (!Array.isArray(list)) {
           this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
@@ -169,7 +159,7 @@ export class AdminPublishersComponent implements AfterViewInit, OnInit {
       },
       error: error => {
         this.toastr.error(error.message, 'Error', {
-          timeOut: 3000,
+          timeOut: 5000,
           easeTime: 1000
         });
       }

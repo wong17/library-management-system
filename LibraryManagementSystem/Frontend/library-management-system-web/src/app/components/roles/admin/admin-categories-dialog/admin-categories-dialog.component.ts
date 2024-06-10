@@ -13,7 +13,6 @@ import { DialogData, DialogOperation } from '../../../../util/dialog-data';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CategoryService } from '../../../../services/library/category.service';
 import { ToastrService } from 'ngx-toastr';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ApiResponse } from '../../../../entities/api/api-response';
 
 @Component({
@@ -85,39 +84,24 @@ export class AdminCategoriesDialogComponent {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
         }
         // Solicitud exitosa
         this.toastr.success(`${response.message}`, 'Exito', {
-          timeOut: 3000,
+          timeOut: 5000,
           easeTime: 1000
         })
 
         this.closeDialog(true);
       },
-      error: error => {
-        if (error instanceof HttpErrorResponse) {
-          //
-          const response = error.error as ApiResponse;
-          // BadRequest
-          if (response.isSuccess === 1 && response.statusCode === 400) {
-            this.toastr.warning(`${response.message}`, 'Atención', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-            return;
-          }
-          // InternalServerError
-          if (response.isSuccess === 3 && response.statusCode === 500) {
-            this.toastr.error(`${response.message}`, 'Error', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-          }
-        }
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
       }
     })
   }
@@ -135,39 +119,24 @@ export class AdminCategoriesDialogComponent {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
         }
         // Solicitud exitosa
         this.toastr.info(`${response.message}`, 'Exito', {
-          timeOut: 3000,
+          timeOut: 5000,
           easeTime: 1000
         })
 
         this.closeDialog(true);
       },
-      error: error => {
-        if (error instanceof HttpErrorResponse) {
-          //
-          const response = error.error as ApiResponse;
-          // BadRequest
-          if (response.isSuccess === 1 && response.statusCode === 400) {
-            this.toastr.warning(`${response.message}`, 'Atención', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-            return;
-          }
-          // InternalServerError
-          if (response.isSuccess === 3 && response.statusCode === 500) {
-            this.toastr.error(`${response.message}`, 'Error', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-          }
-        }
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
       }
     })
   }

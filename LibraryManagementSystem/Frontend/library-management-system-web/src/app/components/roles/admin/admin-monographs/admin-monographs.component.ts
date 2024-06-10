@@ -27,8 +27,6 @@ export class AdminMonographsComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
-  /* Editoriales */
-  publishers: MonographDto[] | undefined;
 
   constructor(private monographService: MonographService, private dialog: MatDialog) { }
 

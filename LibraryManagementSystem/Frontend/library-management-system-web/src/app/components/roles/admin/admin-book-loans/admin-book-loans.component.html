@@ -11,7 +11,7 @@
         />
       </mat-form-field>
       
-      <button mat-flat-button color="primary" (click)="insertNewBookLoanBtn()">
+      <button mat-flat-button color="primary" (click)="insertBookLoanClick()">
           <mat-icon>add</mat-icon>
           Nuevo
       </button>
@@ -79,4 +79,4 @@
 
 </table>
 <!-- Agregar componente de paginado -->
-<mat-paginator [pageSizeOptions]="[10, 20, 30, 50]" aria-label="Selecciona página de Préstamo de libros"></mat-paginator>
+<mat-paginator [pageSizeOptions]="[15, 30, 50, 100]" aria-label="Selecciona página de Préstamo de libros"></mat-paginator>
