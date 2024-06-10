@@ -21,7 +21,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
             SqlParameter[] parameters = [
                 new("@Classification", entity.Classification), new("@Title", entity.Title), new("@Description", entity.Description),
                 new("@Tutor", entity.Tutor), new("@PresentationDate", entity.PresentationDate), new("@Image", entity.Image),
-                new("@CareerId", entity.CareerId), new("@IsAvailable", entity.IsAvailable)
+                new("@CareerId", entity.CareerId), new("@IsActive", entity.IsActive)
             ];
 
             try
@@ -207,7 +207,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
             SqlParameter[] parameters = [
                 new("@MonographId", entity.MonographId), new("@Classification", entity.Classification), new("@Title", entity.Title),
                 new("@Description", entity.Description), new("@Tutor", entity.Tutor), new("@PresentationDate", entity.PresentationDate),
-                new("@Image", entity.Image), new("@CareerId", entity.CareerId), new("@IsAvailable", entity.IsAvailable), new("@IsActive", entity.IsActive)
+                new("@Image", entity.Image), new("@CareerId", entity.CareerId), new("@IsActive", entity.IsActive)
             ];
 
             try

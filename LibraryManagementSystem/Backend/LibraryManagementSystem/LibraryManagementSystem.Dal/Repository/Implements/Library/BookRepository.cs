@@ -22,7 +22,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                 new("@ISBN10", entity.ISBN10), new("@ISBN13", entity.ISBN13), new("@Classification", entity.Classification),
                 new("@Title", entity.Title), new("@Description", entity.Description), new("@PublicationYear", entity.PublicationYear),
                 new("@Image", entity.Image), new("@PublisherId", entity.PublisherId), new("@CategoryId", entity.CategoryId),
-                new("@NumberOfCopies", entity.NumberOfCopies), new("@IsAvailable", entity.IsAvailable)
+                new("@NumberOfCopies", entity.NumberOfCopies), new("@IsActive", entity.IsActive)
             ];
 
             try
@@ -209,7 +209,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                 new("@BookId", entity.BookId), new("@ISBN10", entity.ISBN10), new("@ISBN13", entity.ISBN13), new("@Classification", entity.Classification),
                 new("@Title", entity.Title), new("@Description", entity.Description), new("@PublicationYear", entity.PublicationYear),
                 new("@Image", entity.Image), new("@PublisherId", entity.PublisherId), new("@CategoryId", entity.CategoryId),
-                new("@NumberOfCopies", entity.NumberOfCopies), new("@IsAvailable", entity.IsAvailable)
+                new("@NumberOfCopies", entity.NumberOfCopies), new("@IsActive", entity.IsActive)
             ];
 
             try
