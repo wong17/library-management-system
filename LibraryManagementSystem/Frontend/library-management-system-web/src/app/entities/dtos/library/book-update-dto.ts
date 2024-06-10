@@ -10,5 +10,5 @@ export interface BookUpdateDto {
     publisherId: number;
     categoryId: number;
     numberOfCopies: number;
-    isAvailable: boolean;
+    isActive: boolean;
 }

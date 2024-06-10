@@ -6,5 +6,5 @@ export interface MonographInsertDto {
     presentationDate: Date;
     image: string | null;
     careerId: number;
-    isAvailable: boolean;
+    isActive: boolean;
 }
