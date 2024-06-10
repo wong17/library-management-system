@@ -9,6 +9,12 @@ import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog'
 import { MonographDto } from '../../../../entities/dtos/library/monograph-dto';
 import { MonographService } from '../../../../services/library/monograph.service';
+import { DialogData, DialogOperation } from '../../../../util/dialog-data';
+import { AdminMonographsDialogComponent } from '../admin-monographs-dialog/admin-monographs-dialog.component';
+import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
+import { ToastrService } from 'ngx-toastr';
+import { ApiResponse } from '../../../../entities/api/api-response';
+import { AdminMonographsAuthorsDialogComponent } from '../admin-monographs-authors-dialog/admin-monographs-authors-dialog.component';
 
 @Component({
   selector: 'app-admin-monographs',
@@ -19,7 +25,8 @@ import { MonographService } from '../../../../services/library/monograph.service
 })
 export class AdminMonographsComponent implements AfterViewInit, OnInit {
 
-  displayedColumns: string[] = ['monographId', 'classification', 'title', 'description', 'tutor', 'presentationDate', 'isActive', 'isAvailable', 'careerName', 'authors'];
+  displayedColumns: string[] = ['monographId', 'classification', 'title', 'description', 'tutor', 'presentationDate', 'isActive', 'isAvailable', 'careerName', 'authors', 
+    'options'];
 
   /*  */
   dataSource: MatTableDataSource<MonographDto> = new MatTableDataSource<MonographDto>();
@@ -28,10 +35,127 @@ export class AdminMonographsComponent implements AfterViewInit, OnInit {
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
 
-  constructor(private monographService: MonographService, private dialog: MatDialog) { }
+  constructor(private monographService: MonographService, private dialog: MatDialog, private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.getMonographsDto();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  insertMonographClick(): void {
+    // data
+    const dialogData: DialogData = {
+      title: 'Agregar nueva monografía',
+      operation: DialogOperation.Add
+    };
+    // Abrir el dialogo y obtener una referencia de el
+    const dialogRef = this.dialog.open(AdminMonographsDialogComponent, {
+      width: '800px',
+      disableClose: true,
+      data: dialogData
+    });
+    // Refrescar tabla despúes que el dialogo se cierre si se agrego un nuevo registro
+    dialogRef.afterClosed().subscribe((done) => {
+      if (done) {
+        this.getMonographsDto();
+      }
+    });
+  }
+
+  deleteMonographClick(element: MonographDto) {
+    // Abrir dialogo para preguntar si desea eliminar el registro
+    const dialogRef = this.dialog.open(DeleteDialogComponent, {
+      width: '300px',
+      disableClose: true,
+      data: element.title
+    });
+    //
+    dialogRef.afterClosed().subscribe((done) => {
+      if (!done)
+        return
+
+      // Realizar solicitud para eliminar registro
+      this.monographService.delete(element.monographId).subscribe({
+        next: response => {
+          // Ocurrio un error
+          if (response.isSuccess !== 0 || response.statusCode !== 200) {
+            this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+              timeOut: 5000,
+              easeTime: 1000
+            })
+            return;
+          }
+          // Solicitud exitosa
+          this.toastr.success(`${response.message}`, 'Exito', {
+            timeOut: 5000,
+            easeTime: 1000
+          })
+
+          this.getMonographsDto();
+        },
+        error: (error: ApiResponse) => {
+          this.toastr.error(`${error.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          });
+        }
+      })
+    });
+  }
+
+  editMonographClick(element: MonographDto) {
+    // data
+    const dialogData: DialogData = {
+      title: `Editar monografía ${element.title}`,
+      operation: DialogOperation.Update,
+      data: element
+    };
+    // Abrir el dialogo y obtener una referencia de el
+    const dialogRef = this.dialog.open(AdminMonographsDialogComponent, {
+      width: '800px',
+      disableClose: true,
+      data: dialogData
+    });
+    // Refrescar tabla despúes que el dialogo se cierre si se agrego un nuevo registro
+    dialogRef.afterClosed().subscribe((done) => {
+      if (done) {
+        this.getMonographsDto();
+      }
+    });
+  }
+
+  editMonographAuthorsClick(element: MonographDto) {
+    // data
+    const dialogData: DialogData = {
+      title: element.authors?.length === 0 ? `Agregar autores de ${element.title}` : `Editar autores de ${element.title}`,
+      operation: element.authors?.length === 0 ? DialogOperation.Add : DialogOperation.Update,
+      data: element
+    };
+    // Abrir el dialogo y obtener una referencia de el
+    const dialogRef = this.dialog.open(AdminMonographsAuthorsDialogComponent, {
+      width: '500px',
+      disableClose: true,
+      data: dialogData
+    });
+    // Refrescar tabla despúes que el dialogo se cierre si se agrego un nuevo registro
+    dialogRef.afterClosed().subscribe((done) => {
+      if (done) {
+        this.getMonographsDto();
+      }
+    });
   }
 
   private getMonographsDto(): void {
@@ -57,25 +181,6 @@ export class AdminMonographsComponent implements AfterViewInit, OnInit {
         console.error(error);
       }
     })
-  }
-
-
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-  }
-
-  insertNewMonographBtn() {
-
   }
 
 }
