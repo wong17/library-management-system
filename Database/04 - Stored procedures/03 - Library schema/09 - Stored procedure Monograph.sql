@@ -16,7 +16,7 @@ CREATE PROC [Library].uspInsertMonograph (
 	@PresentationDate DATE,
 	@Image VARBINARY(MAX),
 	@CareerId TINYINT,
-	@IsAvailable BIT
+	@IsActive BIT
 )
 AS
 BEGIN
@@ -83,8 +83,8 @@ BEGIN
 	--
 	BEGIN TRY
 		--
-		INSERT INTO [Library].Monograph ([Classification], Title, [Description], Tutor, PresentationDate, [Image], CareerId, IsAvailable) 
-		VALUES (@Classification, @Title, @Description, @Tutor, @PresentationDate, @Image, @CareerId, @IsAvailable)
+		INSERT INTO [Library].Monograph ([Classification], Title, [Description], Tutor, PresentationDate, [Image], CareerId, IsActive) 
+		VALUES (@Classification, @Title, @Description, @Tutor, @PresentationDate, @Image, @CareerId, @IsActive)
 		--
 		SELECT 0 AS IsSuccess, 'Monografía registrada exitosamente' AS [Message], SCOPE_IDENTITY() AS Result
 	END TRY
@@ -107,7 +107,6 @@ CREATE PROC [Library].uspUpdateMonograph (
 	@PresentationDate DATE,
 	@Image VARBINARY(MAX),
 	@CareerId TINYINT,
-	@IsAvailable BIT,
 	@IsActive BIT
 )
 AS
@@ -189,7 +188,7 @@ BEGIN
 		--
 		UPDATE [Library].Monograph 
 		SET [Classification] = @Classification, Title = @Title, [Description] = @Description, Tutor = @Tutor, PresentationDate = @PresentationDate, 
-			CareerId = @CareerId, [Image] = @Image,	IsActive = @IsActive, IsAvailable = @IsAvailable
+			CareerId = @CareerId, [Image] = @Image,	IsActive = @IsActive
 		WHERE MonographId = @MonographId
 		--
 		SELECT 0 AS IsSuccess, 'Monografía actualizada exitosamente' AS [Message]

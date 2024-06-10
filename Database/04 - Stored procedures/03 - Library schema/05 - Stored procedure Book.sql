@@ -19,7 +19,7 @@ CREATE PROC [Library].uspInsertBook (
 	@PublisherId INT,
 	@CategoryId INT,
 	@NumberOfCopies SMALLINT,
-	@IsAvailable BIT
+	@IsActive BIT
 )
 AS
 BEGIN
@@ -122,8 +122,8 @@ BEGIN
 	--
 	BEGIN TRY
 		--
-		INSERT INTO [Library].Book (ISBN10, ISBN13, [Classification], Title, [Description], PublicationYear, [Image], PublisherId, CategoryId, NumberOfCopies, IsAvailable)
-		VALUES (@ISBN10, @ISBN13, @Classification, @Title, @Description, @PublicationYear, @Image, @PublisherId, @CategoryId, @NumberOfCopies, @IsAvailable)
+		INSERT INTO [Library].Book (ISBN10, ISBN13, [Classification], Title, [Description], PublicationYear, [Image], PublisherId, CategoryId, NumberOfCopies, IsActive)
+		VALUES (@ISBN10, @ISBN13, @Classification, @Title, @Description, @PublicationYear, @Image, @PublisherId, @CategoryId, @NumberOfCopies, @IsActive)
 		--
 		SELECT 0 AS IsSuccess, 'Libro registrado exitosamente' AS [Message], SCOPE_IDENTITY() AS Result
 	END TRY
@@ -149,7 +149,7 @@ CREATE PROC [Library].uspUpdateBook (
 	@PublisherId INT,
 	@CategoryId INT,
 	@NumberOfCopies SMALLINT,
-	@IsAvailable BIT
+	@IsActive BIT
 )
 AS
 BEGIN
@@ -279,7 +279,7 @@ BEGIN
 		UPDATE [Library].Book 
 			SET ISBN10 = @ISBN10, ISBN13 = @ISBN13, [Classification] = @Classification, Title = @Title, [Description] = @Description, 
 				PublicationYear = @PublicationYear, [Image] = @Image, PublisherId = @PublisherId, CategoryId = @CategoryId, 
-				NumberOfCopies = @NumberOfCopies, IsAvailable = @IsAvailable
+				NumberOfCopies = @NumberOfCopies, IsActive = @IsActive
 		WHERE BookId = @BookId
 		--
 		SELECT 0 AS IsSuccess, 'Libro actualizado exitosamente' AS [Message]

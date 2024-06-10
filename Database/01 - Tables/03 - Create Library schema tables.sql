@@ -212,7 +212,7 @@ CREATE TABLE [Library].Monograph (
     PERIOD FOR SYSTEM_TIME(ValidFrom,ValidTo),
 
 	CONSTRAINT PK_Monograph_MonographId PRIMARY KEY(MonographId),
-	CONSTRAINT AK_Monograph_NoRegister UNIQUE([Classification]),
+	CONSTRAINT AK_Monograph_Classification UNIQUE([Classification]),
 	CONSTRAINT CK_Monograph_Title CHECK(Title NOT LIKE '%[^a-zA-Z0-9-. ]%'),
 	CONSTRAINT CK_Monograph_Topic CHECK([Description] NOT LIKE '%[^a-zA-Z0-9-. ]%'),
 	CONSTRAINT CK_Monograph_Tutor CHECK(Tutor NOT LIKE '%[^a-zA-Z. ]%'),
