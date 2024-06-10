@@ -66,9 +66,20 @@ namespace LibraryManagementSystem.Bll.Mapping
             CreateMap<BookLoan, BookLoanInsertDto>().ReverseMap();
             CreateMap<BookLoan, BookLoanDto>().ReverseMap();
 
-            CreateMap<Monograph, MonographInsertDto>().ReverseMap();
-            CreateMap<Monograph, MonographUpdateDto>().ReverseMap();
-            CreateMap<Monograph, MonographDto>().ReverseMap();
+            CreateMap<Monograph, MonographDto>()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => Convert.ToBase64String(src.Image ?? Array.Empty<byte>())))
+                .ReverseMap()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => Convert.FromBase64String(src.Image ?? string.Empty)));
+
+            CreateMap<MonographInsertDto, Monograph>()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => Convert.FromBase64String(src.Image ?? string.Empty)))
+                .ReverseMap()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => Convert.ToBase64String(src.Image ?? Array.Empty<byte>())));
+
+            CreateMap<MonographUpdateDto, Monograph>()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => Convert.FromBase64String(src.Image ?? string.Empty)))
+                .ReverseMap()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => Convert.ToBase64String(src.Image ?? Array.Empty<byte>())));
 
             CreateMap<MonographLoan, MonographLoanInsertDto>().ReverseMap();
             CreateMap<MonographLoan, MonographLoanDto>().ReverseMap();
