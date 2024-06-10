@@ -7,16 +7,13 @@ import { BookDto } from '../../../../entities/dtos/library/book-dto';
 import { CategoryDto } from '../../../../entities/dtos/library/category-dto';
 import { AuthorDto } from '../../../../entities/dtos/library/author-dto';
 import { PublisherDto } from '../../../../entities/dtos/library/publisher-dto';
-import { SubCategoryDto } from '../../../../entities/dtos/library/sub-category-dto';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { DialogData, DialogOperation } from '../../../../util/dialog-data';
-import { SubCategoryService } from '../../../../services/library/sub-category.service';
 import { CategoryService } from '../../../../services/library/category.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthorService } from '../../../../services/library/author.service';
 import { PublisherService } from '../../../../services/library/publisher.service';
 import { BookService } from '../../../../services/library/book.service';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ApiResponse } from '../../../../entities/api/api-response';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -25,6 +22,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CommonModule } from '@angular/common';
+import { BookAuthorInsertDto } from '../../../../entities/dtos/library/book-author-insert-dto';
 
 @Component({
   selector: 'app-admin-books-dialog',
@@ -44,28 +42,25 @@ export class AdminBooksDialogComponent {
     isbN10: '', isbN13: '', title: '', classification: '', description: '',
     isAvailable: false, categoryId: 0, image: null, numberOfCopies: 0, publisherId: 0, publicationYear: 0
   };
+  bookAuthorInsertDto: BookAuthorInsertDto[] = []
   bookUpdateDto: BookUpdateDto | undefined;
   bookDto: BookDto | undefined;
-
   /* Categorias */
   categories: CategoryDto[] | undefined;
-  /* Sub categorias */
-  subCategories: SubCategoryDto[] | undefined;
-  filteredSubCategories: SubCategoryDto[] | undefined;;
-  /* Autores */
-  authors: AuthorDto[] | undefined;
   /* Editoriales */
   publishers: PublisherDto[] | undefined;
-
+  /* */
   selectedFile: File | null = null;
   imagePreview: string | null = null;
 
+  /* Autores */
+  authors: AuthorDto[] | undefined;
+  
   constructor(
     public dialogRef: MatDialogRef<AdminBooksDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public dialogData: DialogData,
     private bookService: BookService,
     private categoryService: CategoryService,
-    private subCategoryService: SubCategoryService,
     private authorService: AuthorService,
     private publisherService: PublisherService,
     private formBuilder: FormBuilder,
@@ -82,15 +77,9 @@ export class AdminBooksDialogComponent {
       image: ['', []],
       publisherId: ['', [Validators.required]],
       categoryId: ['', [Validators.required]],
-      subCategoryIds: ['', [Validators.required]],
-      authorIds: ['', [Validators.required]],
       numberOfCopies: ['', [Validators.required]],
       isAvailable: ['', [Validators.required]]
     });
-    // Para filtrar sub categorias en base a la categoria seleccionada
-    this.categoryId?.valueChanges.subscribe((selectedCategoryId: number) => {
-      this.filterSubCategories(selectedCategoryId);
-    })
 
     // Cargar datos
     this.loadData();
@@ -99,7 +88,7 @@ export class AdminBooksDialogComponent {
     if (dialogData.data) {
       // Obtener dto
       this.bookDto = dialogData.data as BookDto;
-
+      // Verificar si tiene una imagen asociada
       let imageStr: string | null = this.bookDto.image
       if (imageStr) {
         // Agregar prefijo 'data:image/*;base64,'
@@ -109,10 +98,14 @@ export class AdminBooksDialogComponent {
       }
       // Setear la informacion en el formulario
       this.bookForm.patchValue({
-        isbn10: this.bookDto.isbN10, isbn13: this.bookDto.isbN13, classification: this.bookDto.classification, title: this.bookDto.title,
-        description: this.bookDto.description, publicationYear: this.bookDto.publicationYear, image: imageStr, publisherId: this.bookDto.publisher?.publisherId,
-        categoryId: this.bookDto.category?.categoryId, numberOfCopies: this.bookDto.numberOfCopies, isAvailable: this.bookDto.isAvailable
+        isbn10: this.bookDto.isbN10, isbn13: this.bookDto.isbN13,
+        classification: this.bookDto.classification, title: this.bookDto.title,
+        description: this.bookDto.description, publicationYear: this.bookDto.publicationYear,
+        image: imageStr, publisherId: this.bookDto.publisher?.publisherId,
+        categoryId: this.bookDto.category?.categoryId, numberOfCopies: this.bookDto.numberOfCopies,
+        isAvailable: this.bookDto.isAvailable
       });
+
       // Inicializar el dto para actualizar
       this.bookUpdateDto = {
         bookId: this.bookDto.bookId,
@@ -131,15 +124,7 @@ export class AdminBooksDialogComponent {
     }
   }
 
-  /* Filtra sub categorias en base a la categoria seleccionada */
-  filterSubCategories(categoryId: number): void {
-    this.filteredSubCategories = this.subCategories?.filter(
-      (subCategory) => subCategory.category?.categoryId === categoryId
-    );
-    // Resetear el valor de subCategoryIds cuando la categoría cambia
-    this.subCategoryIds?.setValue([]);
-  }
-
+  /* Para seleccionar una imagen */
   onFileSelected(event: Event) {
     const fileInput = event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files.length > 0) {
@@ -196,39 +181,23 @@ export class AdminBooksDialogComponent {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
-          return;
         }
         // Solicitud exitosa
         this.toastr.success(`${response.message}`, 'Exito', {
-          timeOut: 3000,
+          timeOut: 5000,
           easeTime: 1000
         })
-
+        //
         this.closeDialog(true);
       },
-      error: error => {
-        if (error instanceof HttpErrorResponse) {
-          //
-          const response = error.error as ApiResponse;
-          // BadRequest
-          if (response.isSuccess === 1 && response.statusCode === 400) {
-            this.toastr.warning(`${response.message}`, 'Atención', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-            return;
-          }
-          // InternalServerError
-          if (response.isSuccess === 3 && response.statusCode === 500) {
-            this.toastr.error(`${response.message}`, 'Error', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-          }
-        }
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
       }
     })
   }
@@ -267,39 +236,24 @@ export class AdminBooksDialogComponent {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
         }
         // Solicitud exitosa
         this.toastr.info(`${response.message}`, 'Exito', {
-          timeOut: 3000,
+          timeOut: 5000,
           easeTime: 1000
         })
-
-        this.closeDialog(true);
+        // 
+        this.closeDialog(true)
       },
-      error: error => {
-        if (error instanceof HttpErrorResponse) {
-          //
-          const response = error.error as ApiResponse;
-          // BadRequest
-          if (response.isSuccess === 1 && response.statusCode === 400) {
-            this.toastr.warning(`${response.message}`, 'Atención', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-            return;
-          }
-          // InternalServerError
-          if (response.isSuccess === 3 && response.statusCode === 500) {
-            this.toastr.error(`${response.message}`, 'Error', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-          }
-        }
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
       }
     })
   }
@@ -307,7 +261,6 @@ export class AdminBooksDialogComponent {
   private async loadData(): Promise<void> {
     await Promise.all([
       this.getCategoriesDto(),
-      this.getSubCategoriesDto(),
       this.getPublishersDto(),
       this.getAuthorsDto()
     ]);
@@ -319,7 +272,7 @@ export class AdminBooksDialogComponent {
         // Verificar si la respuesta es nula
         if (!response) {
           this.toastr.error('No se recibió respuesta del servidor', 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
@@ -327,7 +280,7 @@ export class AdminBooksDialogComponent {
         // Verificar si ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
@@ -336,7 +289,7 @@ export class AdminBooksDialogComponent {
         const list = response.result;
         if (!Array.isArray(list)) {
           this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
@@ -344,81 +297,11 @@ export class AdminBooksDialogComponent {
         // Asignar datos
         this.categories = list as CategoryDto[];
       },
-      error: error => {
-        if (error instanceof HttpErrorResponse) {
-          //
-          const response = error.error as ApiResponse;
-          // BadRequest
-          if (response.isSuccess === 1 && response.statusCode === 400) {
-            this.toastr.warning(`${response.message}`, 'Atención', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-            return;
-          }
-          // InternalServerError
-          if (response.isSuccess === 3 && response.statusCode === 500) {
-            this.toastr.error(`${response.message}`, 'Error', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-          }
-        }
-      }
-    })
-  }
-
-  private getSubCategoriesDto(): void {
-    this.subCategoryService.getAll().subscribe({
-      next: response => {
-        // Verificar si la respuesta es nula
-        if (!response) {
-          this.toastr.error('No se recibió respuesta del servidor', 'Error', {
-            timeOut: 3000,
-            easeTime: 1000
-          })
-          return;
-        }
-        // Verificar si ocurrio un error
-        if (response.isSuccess !== 0 || response.statusCode !== 200) {
-          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 3000,
-            easeTime: 1000
-          })
-          return;
-        }
-        // Verificar si el resultado es un array válido
-        const list = response.result;
-        if (!Array.isArray(list)) {
-          this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
-            timeOut: 3000,
-            easeTime: 1000
-          })
-          return;
-        }
-        // Asignar datos
-        this.subCategories = list as SubCategoryDto[];
-      },
-      error: error => {
-        if (error instanceof HttpErrorResponse) {
-          //
-          const response = error.error as ApiResponse;
-          // BadRequest
-          if (response.isSuccess === 1 && response.statusCode === 400) {
-            this.toastr.warning(`${response.message}`, 'Atención', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-            return;
-          }
-          // InternalServerError
-          if (response.isSuccess === 3 && response.statusCode === 500) {
-            this.toastr.error(`${response.message}`, 'Error', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-          }
-        }
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
       }
     })
   }
@@ -429,7 +312,7 @@ export class AdminBooksDialogComponent {
         // Verificar si la respuesta es nula
         if (!response) {
           this.toastr.error('No se recibió respuesta del servidor', 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
@@ -437,7 +320,7 @@ export class AdminBooksDialogComponent {
         // Verificar si ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
@@ -446,7 +329,7 @@ export class AdminBooksDialogComponent {
         const list = response.result;
         if (!Array.isArray(list)) {
           this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
@@ -454,26 +337,11 @@ export class AdminBooksDialogComponent {
         // Asignar datos
         this.publishers = list as PublisherDto[];
       },
-      error: error => {
-        if (error instanceof HttpErrorResponse) {
-          //
-          const response = error.error as ApiResponse;
-          // BadRequest
-          if (response.isSuccess === 1 && response.statusCode === 400) {
-            this.toastr.warning(`${response.message}`, 'Atención', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-            return;
-          }
-          // InternalServerError
-          if (response.isSuccess === 3 && response.statusCode === 500) {
-            this.toastr.error(`${response.message}`, 'Error', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-          }
-        }
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
       }
     })
   }
@@ -484,7 +352,7 @@ export class AdminBooksDialogComponent {
         // Verificar si la respuesta es nula
         if (!response) {
           this.toastr.error('No se recibió respuesta del servidor', 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
@@ -492,7 +360,7 @@ export class AdminBooksDialogComponent {
         // Verificar si ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
@@ -501,7 +369,7 @@ export class AdminBooksDialogComponent {
         const list = response.result;
         if (!Array.isArray(list)) {
           this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
@@ -509,26 +377,11 @@ export class AdminBooksDialogComponent {
         // Asignar datos
         this.authors = list as AuthorDto[];
       },
-      error: error => {
-        if (error instanceof HttpErrorResponse) {
-          //
-          const response = error.error as ApiResponse;
-          // BadRequest
-          if (response.isSuccess === 1 && response.statusCode === 400) {
-            this.toastr.warning(`${response.message}`, 'Atención', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-            return;
-          }
-          // InternalServerError
-          if (response.isSuccess === 3 && response.statusCode === 500) {
-            this.toastr.error(`${response.message}`, 'Error', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-          }
-        }
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
       }
     })
   }

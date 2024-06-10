@@ -198,36 +198,6 @@
       }
     </mat-form-field>
 
-    <!--Sub categorias-->
-    <mat-form-field class="form-field">
-      <mat-label>Selecciona una o varias sub categorías</mat-label>
-      <mat-select formControlName="subCategoryIds">
-        @for (subcategory of filteredSubCategories; track subcategory) {
-        <mat-option [value]="subcategory.subCategoryId">{{
-          subcategory.name
-        }}</mat-option>
-        }
-      </mat-select>
-      <!--validation-->
-      @if(subCategoryIds?.hasError('required')) {
-      <mat-error>Campo es <strong>obligatorio</strong></mat-error>
-      }
-    </mat-form-field>
-
-    <!--Autores-->
-    <mat-form-field class="form-field">
-      <mat-label>Selecciona uno o varios autores</mat-label>
-      <mat-select formControlName="authorIds">
-        @for (author of authors; track author) {
-        <mat-option [value]="author.authorId">{{ author.name }}</mat-option>
-        }
-      </mat-select>
-      <!--validation-->
-      @if(authorIds?.hasError('required')) {
-      <mat-error>Campo es <strong>obligatorio</strong></mat-error>
-      }
-    </mat-form-field>
-
     <!--Número de copias-->
     <mat-form-field class="form-field">
       <mat-label>Número de copias</mat-label>
