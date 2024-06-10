@@ -41,5 +41,7 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 
             return response;
         }
+
+        public async Task<ApiResponse> UpdateMany(IEnumerable<MonographAuthor> entities) => await _repository.UpdateMany(entities);
     }
 }
