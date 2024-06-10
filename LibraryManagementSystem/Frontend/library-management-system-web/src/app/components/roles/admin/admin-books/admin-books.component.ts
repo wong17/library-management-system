@@ -143,7 +143,7 @@ export class AdminBooksComponent implements AfterViewInit, OnInit {
   editBookAuthorsClick(element: BookDto) {
     // data
     const dialogData: DialogData = {
-      title: element.authors?.length === 0 ? `Editar autores a ${element.title}` : `Agregar autores a ${element.title}`,
+      title: element.authors?.length === 0 ? `Agregar autores de ${element.title}` : `Editar autores de ${element.title}`,
       operation: element.authors?.length === 0 ? DialogOperation.Add : DialogOperation.Update,
       data: element
     };
@@ -164,7 +164,7 @@ export class AdminBooksComponent implements AfterViewInit, OnInit {
   editBookSubCategoriesClick(element: BookDto) {
     // data
     const dialogData: DialogData = {
-      title: element.subCategories?.length === 0 ? `Agregar sub categorías de ${element.title}` : `Editar sub categorías de ${element.title}`,
+      title: element.subCategories?.length === 0 ? `Agregar sub categorías a ${element.title}` : `Editar sub categorías a ${element.title}`,
       operation: element.subCategories?.length === 0 ? DialogOperation.Add : DialogOperation.Update,
       data: element
     };

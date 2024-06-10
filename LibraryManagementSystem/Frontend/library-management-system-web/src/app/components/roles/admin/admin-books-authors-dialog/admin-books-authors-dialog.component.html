@@ -1,1 +1,39 @@
-<p>admin-books-authors-dialog works!</p>
+<!--Titulo-->
+<h2 mat-dialog-title>{{ dialogData.title }}</h2>
+<!--Contenido-->
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="bookAuthorsForm" (ngSubmit)="onSubmit()">
+
+    <!--Sub categorias-->
+    <mat-form-field class="form-field">
+      <mat-label>Selecciona uno o varios autores</mat-label>
+      <mat-select formControlName="authorIds" multiple>
+        @for (author of authors; track author) {
+        <mat-option [value]="author.authorId">{{
+          author.name
+        }}</mat-option>
+        }
+      </mat-select>
+      @if(authorIds?.hasError('required')) {
+      <mat-error>Campo es <strong>obligatorio</strong></mat-error>
+      }
+    </mat-form-field>
+
+    <!--Acciones-->
+    <mat-dialog-actions align="end" class="dialog-actions">
+      <!---->
+      <button mat-button mat-dialog-close (click)="closeDialog(false)">
+        Cancelar
+      </button>
+      <!---->
+      <button
+        mat-flat-button
+        type="submit"
+        color="primary"
+        [disabled]="bookAuthorsForm.invalid"
+      >
+        Guardar
+      </button>
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>

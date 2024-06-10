@@ -16,6 +16,7 @@ export class BookAuthorService {
   /* BookAuthor urls */
   private readonly bookAuthorCreateUrl: string = '/api/BookAuthor/Create'
   private readonly bookAuthorCreateManyUrl: string = '/api/BookAuthor/CreateMany'
+  private readonly bookAuthorUpdateManyUrl: string = '/api/BookAuthor/UpdateMany'
   private readonly bookAuthorUrl: string = '/api/BookAuthor'
 
   /* Encabezado http para solicitudes POST y PUT */
@@ -51,6 +52,18 @@ export class BookAuthorService {
    */
   createMany(bookAuthors: BookAuthorInsertDto[]): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`${this.apiUrl}${this.bookAuthorCreateManyUrl}`, bookAuthors, this.httpHeader)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
+  }
+
+  /**
+   * Actualiza varios autores de un libro
+   * @param bookAuthors
+   * @returns Observable<ApiResponse>
+   */
+  updateMany(bookAuthors: BookAuthorInsertDto[]): Observable<ApiResponse> {
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.bookAuthorUpdateManyUrl}`, bookAuthors, this.httpHeader)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
