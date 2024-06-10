@@ -248,5 +248,59 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
             return response;
         }
 
+        public async Task<ApiResponse> UpdateMany(IEnumerable<BookSubCategory> entities)
+        {
+            /* Convertir lista a DataTable */
+            DataTable table = _sqlConnector.ListToDataTable(entities);
+            ApiResponse? response;
+            try
+            {
+                /* Ejecutar procedimiento almacenado que recibe tabla por parámetro */
+                DataTable result = await _sqlConnector.ExecuteSPWithTVP(table, "[Library].BookSubcategoryType", "[Library].uspUpdateManyBookSubCategory", "@BookSubCategories");
+                /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
+                response = _sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
+                /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
+                if (response is null)
+                {
+                    response = new()
+                    {
+                        Message = "Error al obtener respuesta de la base de datos.",
+                        StatusCode = HttpStatusCode.InternalServerError
+                    };
+                    return response;
+                }
+                /* No paso una validación en el procedimiento almacenado */
+                if (response.IsSuccess == 1)
+                {
+                    response.StatusCode = HttpStatusCode.BadRequest;
+                    return response;
+                }
+                /* No existe el registro a eliminar */
+                if (response.IsSuccess == 2)
+                {
+                    response.StatusCode = HttpStatusCode.NotFound;
+                    return response;
+                }
+                /* Ocurrio algún error en el procedimiento almacenado */
+                if (response.IsSuccess == 3)
+                {
+                    response.StatusCode = HttpStatusCode.InternalServerError;
+                    return response;
+                }
+                /* Retornar código de éxito y objeto registrado */
+                response.StatusCode = HttpStatusCode.OK;
+                response.Result = entities;
+            }
+            catch (Exception ex)
+            {
+                response = new()
+                {
+                    Message = ex.Message,
+                    StatusCode = HttpStatusCode.InternalServerError
+                };
+            }
+
+            return response;
+        }
     }
 }
