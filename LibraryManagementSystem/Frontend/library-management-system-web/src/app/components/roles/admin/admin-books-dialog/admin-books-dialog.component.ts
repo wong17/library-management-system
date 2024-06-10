@@ -5,13 +5,11 @@ import { BookInsertDto } from '../../../../entities/dtos/library/book-insert-dto
 import { BookUpdateDto } from '../../../../entities/dtos/library/book-update-dto';
 import { BookDto } from '../../../../entities/dtos/library/book-dto';
 import { CategoryDto } from '../../../../entities/dtos/library/category-dto';
-import { AuthorDto } from '../../../../entities/dtos/library/author-dto';
 import { PublisherDto } from '../../../../entities/dtos/library/publisher-dto';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { DialogData, DialogOperation } from '../../../../util/dialog-data';
 import { CategoryService } from '../../../../services/library/category.service';
 import { ToastrService } from 'ngx-toastr';
-import { AuthorService } from '../../../../services/library/author.service';
 import { PublisherService } from '../../../../services/library/publisher.service';
 import { BookService } from '../../../../services/library/book.service';
 import { ApiResponse } from '../../../../entities/api/api-response';
@@ -22,7 +20,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CommonModule } from '@angular/common';
-import { BookAuthorInsertDto } from '../../../../entities/dtos/library/book-author-insert-dto';
 
 @Component({
   selector: 'app-admin-books-dialog',
@@ -40,9 +37,8 @@ export class AdminBooksDialogComponent {
   /* Dtos */
   bookInsertDto: BookInsertDto = {
     isbN10: '', isbN13: '', title: '', classification: '', description: '',
-    isAvailable: false, categoryId: 0, image: null, numberOfCopies: 0, publisherId: 0, publicationYear: 0
+    isActive: false, categoryId: 0, image: null, numberOfCopies: 0, publisherId: 0, publicationYear: 0
   };
-  bookAuthorInsertDto: BookAuthorInsertDto[] = []
   bookUpdateDto: BookUpdateDto | undefined;
   bookDto: BookDto | undefined;
   /* Categorias */
@@ -53,15 +49,11 @@ export class AdminBooksDialogComponent {
   selectedFile: File | null = null;
   imagePreview: string | null = null;
 
-  /* Autores */
-  authors: AuthorDto[] | undefined;
-  
   constructor(
     public dialogRef: MatDialogRef<AdminBooksDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public dialogData: DialogData,
     private bookService: BookService,
     private categoryService: CategoryService,
-    private authorService: AuthorService,
     private publisherService: PublisherService,
     private formBuilder: FormBuilder,
     private toastr: ToastrService
@@ -72,13 +64,13 @@ export class AdminBooksDialogComponent {
       isbn13: ['', [Validators.required, Validators.minLength(14), Validators.maxLength(17)]],
       classification: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(25)]],
       title: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(100)]],
-      description: ['', [Validators.minLength(0), Validators.maxLength(500)]],
+      description: ['', [Validators.maxLength(500)]],
       publicationYear: ['', [Validators.required]],
-      image: ['', []],
+      image: [''],
       publisherId: ['', [Validators.required]],
       categoryId: ['', [Validators.required]],
       numberOfCopies: ['', [Validators.required]],
-      isAvailable: ['', [Validators.required]]
+      isActive: ['', [Validators.required]]
     });
 
     // Cargar datos
@@ -103,7 +95,7 @@ export class AdminBooksDialogComponent {
         description: this.bookDto.description, publicationYear: this.bookDto.publicationYear,
         image: imageStr, publisherId: this.bookDto.publisher?.publisherId,
         categoryId: this.bookDto.category?.categoryId, numberOfCopies: this.bookDto.numberOfCopies,
-        isAvailable: this.bookDto.isAvailable
+        isActive: this.bookDto.isActive
       });
 
       // Inicializar el dto para actualizar
@@ -119,7 +111,7 @@ export class AdminBooksDialogComponent {
         publisherId: this.publisherId?.value,
         categoryId: this.categoryId?.value,
         numberOfCopies: this.numberOfCopies?.value,
-        isAvailable: this.isAvailable?.value
+        isActive: this.isActive?.value
       }
     }
   }
@@ -173,7 +165,7 @@ export class AdminBooksDialogComponent {
     this.bookInsertDto.publisherId = this.publisherId?.value
     this.bookInsertDto.categoryId = this.categoryId?.value
     this.bookInsertDto.numberOfCopies = this.numberOfCopies?.value
-    this.bookInsertDto.isAvailable = this.isAvailable?.value
+    this.bookInsertDto.isActive = this.isActive?.value
 
     // Realizar solicitud http
     this.bookService.create(this.bookInsertDto).subscribe({
@@ -228,7 +220,7 @@ export class AdminBooksDialogComponent {
     this.bookUpdateDto.publisherId = this.publisherId?.value
     this.bookUpdateDto.categoryId = this.categoryId?.value
     this.bookUpdateDto.numberOfCopies = this.numberOfCopies?.value
-    this.bookUpdateDto.isAvailable = this.isAvailable?.value
+    this.bookUpdateDto.isActive = this.isActive?.value
 
     // Realizar solicitud http
     this.bookService.update(this.bookUpdateDto).subscribe({
@@ -261,8 +253,7 @@ export class AdminBooksDialogComponent {
   private async loadData(): Promise<void> {
     await Promise.all([
       this.getCategoriesDto(),
-      this.getPublishersDto(),
-      this.getAuthorsDto()
+      this.getPublishersDto()
     ]);
   }
 
@@ -346,46 +337,6 @@ export class AdminBooksDialogComponent {
     })
   }
 
-  private getAuthorsDto(): void {
-    this.authorService.getAll().subscribe({
-      next: response => {
-        // Verificar si la respuesta es nula
-        if (!response) {
-          this.toastr.error('No se recibió respuesta del servidor', 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
-          })
-          return;
-        }
-        // Verificar si ocurrio un error
-        if (response.isSuccess !== 0 || response.statusCode !== 200) {
-          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
-          })
-          return;
-        }
-        // Verificar si el resultado es un array válido
-        const list = response.result;
-        if (!Array.isArray(list)) {
-          this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
-          })
-          return;
-        }
-        // Asignar datos
-        this.authors = list as AuthorDto[];
-      },
-      error: (error: ApiResponse) => {
-        this.toastr.error(`${error.message}`, 'Error', {
-          timeOut: 5000,
-          easeTime: 1000
-        });
-      }
-    })
-  }
-
   /* Getters */
   get isbn10() {
     return this.bookForm.get('isbn10');
@@ -435,8 +386,8 @@ export class AdminBooksDialogComponent {
     return this.bookForm.get('numberOfCopies');
   }
 
-  get isAvailable() {
-    return this.bookForm.get('isAvailable');
+  get isActive() {
+    return this.bookForm.get('isActive');
   }
 
   /* */
