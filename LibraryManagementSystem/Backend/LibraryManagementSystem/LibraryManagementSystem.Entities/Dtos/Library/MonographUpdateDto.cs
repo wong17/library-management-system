@@ -29,14 +29,11 @@ namespace LibraryManagementSystem.Entities.Dtos.Library
         [Required]
         public DateTime PresentationDate { get; set; }
 
-        public byte[]? Image { get; set; }
+        public string? Image { get; set; }
 
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Id de la carrera debe ser mayor que 0")]
         public int CareerId { get; set; }
-
-        [Required]
-        public bool IsAvailable { get; set; }
 
         [Required]
         public bool IsActive { get; set; }

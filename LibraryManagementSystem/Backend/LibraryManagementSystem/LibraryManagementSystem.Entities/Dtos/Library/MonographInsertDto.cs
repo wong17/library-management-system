@@ -18,20 +18,20 @@ namespace LibraryManagementSystem.Entities.Dtos.Library
         public string? Description { get; set; }
 
         [Required]
-        [StringLength(maximumLength: 100, ErrorMessage = "Tutor de la monografía debe tener un máximo de 100 caracteres")]
+        [StringLength(maximumLength: 100, ErrorMessage = "Tutor de la monografía debe tener un máximo de 100 caracteres", MinimumLength = 1)]
         [RegularExpression(@"^[a-zA-Z. ]+$", ErrorMessage = "Tutor de la monografía solo puede tener mayúsculas, minúsculas puntos y espacios")]
         public string? Tutor { get; set; }
 
         [Required]
         public DateTime PresentationDate { get; set; }
 
-        public byte[]? Image { get; set; }
+        public string? Image { get; set; }
 
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Id de la carrera debe ser mayor que 0")]
         public int CareerId { get; set; }
 
         [Required]
-        public bool IsAvailable { get; set; }
+        public bool IsActive { get; set; }
     }
 }

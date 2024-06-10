@@ -10,7 +10,7 @@ namespace LibraryManagementSystem.Entities.Dtos.Library
         public string? Description { get; set; }
         public string? Tutor { get; set; }
         public DateTime PresentationDate { get; set; }
-        public byte[]? Image { get; set; }
+        public string? Image { get; set; }
         public bool IsActive { get; set; }
         public bool IsAvailable { get; set; }
         // Career

@@ -50,6 +50,6 @@ namespace LibraryManagementSystem.Entities.Dtos.Library
         public short NumberOfCopies { get; set; }
 
         [Required]
-        public bool IsAvailable { get; set; }
+        public bool IsActive { get; set; }
     }
 }
