@@ -12,9 +12,10 @@ import { BookService } from '../../../../services/library/book.service';
 import { ToastrService } from 'ngx-toastr';
 import { DialogData, DialogOperation } from '../../../../util/dialog-data';
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ApiResponse } from '../../../../entities/api/api-response';
 import { AdminBooksDialogComponent } from '../admin-books-dialog/admin-books-dialog.component';
+import { AdminBooksSubCategoriesDialogComponent } from '../admin-books-sub-categories-dialog/admin-books-sub-categories-dialog.component';
+import { AdminBooksAuthorsDialogComponent } from '../admin-books-authors-dialog/admin-books-authors-dialog.component';
 
 @Component({
   selector: 'app-admin-books',
@@ -42,7 +43,7 @@ export class AdminBooksComponent implements AfterViewInit, OnInit {
   ngOnInit(): void {
     this.getBooksDto();
   }
-  
+
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -95,39 +96,24 @@ export class AdminBooksComponent implements AfterViewInit, OnInit {
           // Ocurrio un error
           if (response.isSuccess !== 0 || response.statusCode !== 200) {
             this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-              timeOut: 3000,
+              timeOut: 5000,
               easeTime: 1000
             })
             return;
           }
           // Solicitud exitosa
           this.toastr.success(`${response.message}`, 'Exito', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
 
           this.getBooksDto();
         },
-        error: error => {
-          if (error instanceof HttpErrorResponse) {
-            //
-            const response = error.error as ApiResponse;
-            // BadRequest
-            if (response.isSuccess === 1 && response.statusCode === 400) {
-              this.toastr.warning(`${response.message}`, 'Atención', {
-                timeOut: 3000,
-                easeTime: 1000
-              });
-              return;
-            }
-            // InternalServerError
-            if (response.isSuccess === 3 && response.statusCode === 500) {
-              this.toastr.error(`${response.message}`, 'Error', {
-                timeOut: 3000,
-                easeTime: 1000
-              });
-            }
-          }
+        error: (error: ApiResponse) => {
+          this.toastr.error(`${error.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          });
         }
       })
     });
@@ -154,21 +140,55 @@ export class AdminBooksComponent implements AfterViewInit, OnInit {
     });
   }
 
+  editBookAuthorsClick(element: BookDto) {
+    // data
+    const dialogData: DialogData = {
+      title: element.authors?.length === 0 ? `Editar autores a ${element.title}` : `Agregar autores a ${element.title}`,
+      operation: element.authors?.length === 0 ? DialogOperation.Add : DialogOperation.Update,
+      data: element
+    };
+    // Abrir el dialogo y obtener una referencia de el
+    const dialogRef = this.dialog.open(AdminBooksAuthorsDialogComponent, {
+      width: '500px',
+      disableClose: true,
+      data: dialogData
+    });
+    // Refrescar tabla despúes que el dialogo se cierre si se agrego un nuevo registro
+    dialogRef.afterClosed().subscribe((done) => {
+      if (done) {
+        this.getBooksDto();
+      }
+    });
+  }
+  
+  editBookSubCategoriesClick(element: BookDto) {
+    // data
+    const dialogData: DialogData = {
+      title: element.subCategories?.length === 0 ? `Agregar sub categorías de ${element.title}` : `Editar sub categorías de ${element.title}`,
+      operation: element.subCategories?.length === 0 ? DialogOperation.Add : DialogOperation.Update,
+      data: element
+    };
+    // Abrir el dialogo y obtener una referencia de el
+    const dialogRef = this.dialog.open(AdminBooksSubCategoriesDialogComponent, {
+      width: '500px',
+      disableClose: true,
+      data: dialogData
+    });
+    // Refrescar tabla despúes que el dialogo se cierre si se agrego un nuevo registro
+    dialogRef.afterClosed().subscribe((done) => {
+      if (done) {
+        this.getBooksDto();
+      }
+    });
+  }
+
   private getBooksDto(): void {
     this.bookService.getAll().subscribe({
       next: response => {
-        // Verificar si la respuesta es nula
-        if (!response) {
-          this.toastr.error('No se recibió respuesta del servidor', 'Error', {
-            timeOut: 3000,
-            easeTime: 1000
-          })
-          return;
-        }
         // Verificar si ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
@@ -177,7 +197,7 @@ export class AdminBooksComponent implements AfterViewInit, OnInit {
         const list = response.result;
         if (!Array.isArray(list)) {
           this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
-            timeOut: 3000,
+            timeOut: 5000,
             easeTime: 1000
           })
           return;
@@ -185,29 +205,14 @@ export class AdminBooksComponent implements AfterViewInit, OnInit {
         // Asignar datos
         this.dataSource.data = response.result as BookDto[];
       },
-      error: error => {
-        if (error instanceof HttpErrorResponse) {
-          //
-          const response = error.error as ApiResponse;
-          // BadRequest
-          if (response.isSuccess === 1 && response.statusCode === 400) {
-            this.toastr.warning(`${response.message}`, 'Atención', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-            return;
-          }
-          // InternalServerError
-          if (response.isSuccess === 3 && response.statusCode === 500) {
-            this.toastr.error(`${response.message}`, 'Error', {
-              timeOut: 3000,
-              easeTime: 1000
-            });
-          }
-        }
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
       }
     })
   }
 
-  
+
 }

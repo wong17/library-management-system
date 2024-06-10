@@ -1,20 +1,20 @@
 <h1>Libros</h1>
 
 <div class="filter-container">
-    <mat-form-field>
-        <mat-label>Filtrar</mat-label>
-        <input
-          matInput
-          (keyup)="applyFilter($event)"
-          placeholder="Ej. Enciclopedia del lenguaje C"
-          #input
-        />
-      </mat-form-field>
-      
-      <button mat-flat-button color="primary" (click)="insertBookClick()">
-          <mat-icon>add</mat-icon>
-          Nuevo
-      </button>
+  <mat-form-field>
+    <mat-label>Filtrar</mat-label>
+    <input
+      matInput
+      (keyup)="applyFilter($event)"
+      placeholder="Ej. Enciclopedia del lenguaje C"
+      #input
+    />
+  </mat-form-field>
+
+  <button mat-flat-button color="primary" (click)="insertBookClick()">
+    <mat-icon>add</mat-icon>
+    Nuevo
+  </button>
 </div>
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
@@ -114,6 +114,16 @@
     <!-- Iconos a mostrar en la columna -->
     <mat-cell *matCellDef="let element">
       <mat-icon
+        fontIcon="category"
+        matTooltip="Editar sub categorías"
+        (click)="editBookSubCategoriesClick(element)"
+      ></mat-icon>
+      <mat-icon
+        fontIcon="group"
+        matTooltip="Editar autores"
+        (click)="editBookAuthorsClick(element)"
+      ></mat-icon>
+      <mat-icon
         fontIcon="edit"
         matTooltip="Editar"
         (click)="editBookClick(element)"
@@ -136,7 +146,9 @@
       No hay datos que coincidan con el filtro "{{ input.value }}"
     </td>
   </tr>
-
 </table>
 <!-- Agregar componente de paginado -->
-<mat-paginator [pageSizeOptions]="[10, 20, 30, 50]" aria-label="Selecciona página de Libros"></mat-paginator>
+<mat-paginator
+  [pageSizeOptions]="[15, 30, 50, 100]"
+  aria-label="Selecciona página de Libros"
+></mat-paginator>
