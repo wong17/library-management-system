@@ -176,6 +176,129 @@ BEGIN
 END
 GO
 
+--DELETE MANY BookAuthor
+IF OBJECT_ID('Library.uspDeleteManyBookAuthor', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspDeleteManyBookAuthor;  
+GO
+CREATE PROC [Library].uspDeleteManyBookAuthor (
+	@BookId INT
+)
+AS
+BEGIN
+	--
+	IF (@BookId IS NULL OR @BookId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id del Libro es obligatorio' AS [Message]
+		RETURN
+	END
+	--
+	IF NOT EXISTS (SELECT 1 FROM [Library].Book WHERE BookId = @BookId)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'No existe un Libro con el Id proporcionado' AS [Message]
+		RETURN
+	END
+	--
+	BEGIN TRY
+		--
+		DELETE FROM [Library].BookAuthor WHERE BookId = @BookId
+		--
+		SELECT 0 AS IsSuccess, 'Autores del libro eliminados exitosamente' AS [Message]
+	END TRY
+	BEGIN CATCH
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+	END CATCH
+END
+GO
+
+--UPDATE MANY BookAuthor
+IF OBJECT_ID('Library.uspUpdateManyBookAuthor', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspUpdateManyBookAuthor;  
+GO
+CREATE PROC [Library].uspUpdateManyBookAuthor (
+	@BookAuthors [Library].BookAuthorType READONLY
+)
+AS
+BEGIN
+	-- Verificar que el Id del Libro no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @BookAuthors AS ba WHERE ba.BookId IS NULL OR ba.BookId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id del Libro es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que existen todos los Libros
+	IF EXISTS (SELECT 1 FROM @BookAuthors AS ba LEFT JOIN [Library].Book AS db ON ba.BookId = db.BookId WHERE db.BookId IS NULL)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'Uno o más Libros no existen en la base de datos' AS [Message];
+		RETURN
+	END
+	-- Verificar que el Id del Autor no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @BookAuthors AS ba WHERE ba.AuthorId IS NULL OR ba.AuthorId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id del Author es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que existen todos los Autores
+	IF EXISTS (SELECT 1 FROM @BookAuthors AS ba LEFT JOIN [Library].Author AS db ON ba.AuthorId = db.AuthorId WHERE db.AuthorId IS NULL)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'Uno o más Autores no existen en la base de datos' AS [Message];
+		RETURN
+	END
+	-- Verificar que no vayan relaciones de Libros-Autores repetidas
+	IF EXISTS (SELECT 1 FROM @BookAuthors AS ba GROUP BY ba.BookId, ba.AuthorId HAVING COUNT(*) > 1)
+    BEGIN
+        SELECT 1 AS IsSuccess, 'Una o más relaciones Libro-Autores están repetidos en la entrada' AS [Message];
+        RETURN;
+    END
+	-- Eliminar todas las relaciones existentes del libro
+	BEGIN TRAN
+	BEGIN TRY
+		-- Obtener Id del libro
+		DECLARE @BookId INT = (SELECT TOP 1 ba.BookId FROM @BookAuthors AS ba)
+		-- Para almacenar la respuesta del sp
+		DECLARE @SPResult TABLE (
+				IsSuccess INT,
+				[Message] VARCHAR(255)
+		)
+		-- 1) Eliminar todos los autores del libro
+		INSERT INTO @SPResult EXEC [Library].uspDeleteManyBookAuthor @BookId
+		-- Verificar si todo salio bien
+		IF ((SELECT IsSuccess FROM @SPResult) != 0)
+		BEGIN
+			--
+			SELECT IsSuccess, [Message] FROM @SPResult
+			--
+			IF @@TRANCOUNT > 0
+				ROLLBACK TRAN;
+		END
+		-- Limpiar resultados
+		DELETE FROM @SPResult 
+		-- 2) Insertar las nuevas relaciones 
+		INSERT INTO @SPResult EXEC [Library].uspInsertManyBookAuthor @BookAuthors
+		-- Verificar si todo salio bien
+		IF ((SELECT IsSuccess FROM @SPResult) != 0)
+		BEGIN
+			--
+			SELECT IsSuccess, [Message] FROM @SPResult
+			--
+			IF @@TRANCOUNT > 0
+				ROLLBACK TRAN;
+		END
+		--
+		SELECT 0 AS IsSuccess, 'Autores del libro actualizados exitosamente' AS [Message], @BookId AS Result
+		--
+		IF @@ERROR = 0
+			IF @@TRANCOUNT > 0
+				COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRAN;
+		--
+        SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message];
+    END CATCH
+END
+GO
+
 --GET BookAuthor
 IF OBJECT_ID('Library.uspGetBookAuthor', 'P') IS NOT NULL  
     DROP PROCEDURE [Library].uspGetBookAuthor;  
