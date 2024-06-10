@@ -81,13 +81,13 @@ BEGIN
 	-- Verificar que el Id de la SubCategoria no sea NULL ni ''
 	IF EXISTS (SELECT 1 FROM @BookSubCategories AS bsc WHERE bsc.SubCategoryId IS NULL OR bsc.SubCategoryId = '')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Id de la SubCategoria es obligatorio' AS [Message]
+		SELECT 1 AS IsSuccess, 'Id de la Sub Categoria es obligatorio' AS [Message]
 		RETURN
 	END
 	-- Verificar que existen todas las SubCategorias
 	IF EXISTS (SELECT 1 FROM @BookSubCategories AS bsc LEFT JOIN [Library].SubCategory AS db ON bsc.SubCategoryId = db.SubCategoryId WHERE db.SubCategoryId IS NULL)
 	BEGIN
-		SELECT 2 AS IsSuccess, 'Una o más SubCategorias no existen en la base de datos' AS [Message];
+		SELECT 2 AS IsSuccess, 'Una o más Sub Categorias no existen en la base de datos' AS [Message];
 		RETURN
 	END
 	-- Verificar que no vayan relaciones de Libros-SubCategorias repetidas
@@ -173,6 +173,129 @@ BEGIN
 	BEGIN CATCH
 		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
 	END CATCH
+END
+GO
+
+--DELETE MANY BookSubCategory
+IF OBJECT_ID('Library.uspDeleteManyBookSubCategory', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspDeleteManyBookSubCategory;  
+GO
+CREATE PROC [Library].uspDeleteManyBookSubCategory(
+	@BookId INT
+)
+AS
+BEGIN
+	--
+	IF (@BookId IS NULL OR @BookId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id del Libro es obligatorio' AS [Message]
+		RETURN
+	END
+	--
+	IF NOT EXISTS (SELECT 1 FROM [Library].Book WHERE BookId = @BookId)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'No existe un Libro con el Id proporcionado' AS [Message]
+		RETURN
+	END
+	--
+	BEGIN TRY
+		--
+		DELETE FROM [Library].BookSubCategory WHERE BookId = @BookId
+		--
+		SELECT 0 AS IsSuccess, 'Sub categorías del libro eliminadas exitosamente' AS [Message]
+	END TRY
+	BEGIN CATCH
+		SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message]
+	END CATCH
+END
+GO
+
+--UPDATE MANY BookSubCategory
+IF OBJECT_ID('Library.uspUpdateManyBookSubCategory', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspUpdateManyBookSubCategory;  
+GO
+CREATE PROC [Library].uspUpdateManyBookSubCategory (
+	@BookSubCategories [Library].BookSubCategoryType READONLY
+)
+AS
+BEGIN
+	-- Verificar que el Id del Libro no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @BookSubCategories AS bsc WHERE bsc.BookId IS NULL OR bsc.BookId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id del Libro es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que existen todos los Libros
+	IF EXISTS (SELECT 1 FROM @BookSubCategories AS bsc LEFT JOIN [Library].Book AS db ON bsc.BookId = db.BookId WHERE db.BookId IS NULL)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'Uno o más Libros no existen en la base de datos' AS [Message];
+		RETURN
+	END
+	-- Verificar que el Id de la SubCategoria no sea NULL ni ''
+	IF EXISTS (SELECT 1 FROM @BookSubCategories AS bsc WHERE bsc.SubCategoryId IS NULL OR bsc.SubCategoryId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id de la Sub Categoria es obligatorio' AS [Message]
+		RETURN
+	END
+	-- Verificar que existen todas las SubCategorias
+	IF EXISTS (SELECT 1 FROM @BookSubCategories AS bsc LEFT JOIN [Library].SubCategory AS db ON bsc.SubCategoryId = db.SubCategoryId WHERE db.SubCategoryId IS NULL)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'Una o más Sub Categorias no existen en la base de datos' AS [Message];
+		RETURN
+	END
+	-- Verificar que no vayan relaciones de Libros-SubCategorias repetidas
+	IF EXISTS (SELECT 1 FROM @BookSubCategories AS bsc GROUP BY bsc.BookId, bsc.SubCategoryId HAVING COUNT(*) > 1)
+    BEGIN
+        SELECT 1 AS IsSuccess, 'Una o más relaciones Libro-Sub categoria están repetidos en la entrada' AS [Message];
+        RETURN;
+    END
+	-- Eliminar todas las relaciones existentes del libro
+	BEGIN TRAN
+	BEGIN TRY
+		-- Obtener Id del libro
+		DECLARE @BookId INT = (SELECT TOP 1 bsc.BookId FROM @BookSubCategories AS bsc)
+		-- Para almacenar la respuesta del sp
+		DECLARE @SPResult TABLE (
+				IsSuccess INT,
+				[Message] VARCHAR(255)
+		)
+		-- 1) Eliminar todas las sub categorias del libro
+		INSERT INTO @SPResult EXEC [Library].uspDeleteManyBookSubCategory @BookId
+		-- Verificar si todo salio bien
+		IF ((SELECT IsSuccess FROM @SPResult) != 0)
+		BEGIN
+			--
+			SELECT IsSuccess, [Message] FROM @SPResult
+			--
+			IF @@TRANCOUNT > 0
+				ROLLBACK TRAN;
+		END
+		-- Limpiar resultados
+		DELETE FROM @SPResult 
+		-- 2) Insertar las nuevas relaciones 
+		INSERT INTO @SPResult EXEC [Library].uspInsertManyBookSubCategory @BookSubCategories
+		-- Verificar si todo salio bien
+		IF ((SELECT IsSuccess FROM @SPResult) != 0)
+		BEGIN
+			--
+			SELECT IsSuccess, [Message] FROM @SPResult
+			--
+			IF @@TRANCOUNT > 0
+				ROLLBACK TRAN;
+		END
+		--
+		SELECT 0 AS IsSuccess, 'Sub categorías del libro actualizadas exitosamente' AS [Message], @BookId AS Result
+		--
+		IF @@ERROR = 0
+			IF @@TRANCOUNT > 0
+				COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRAN;
+		--
+        SELECT 3 AS IsSuccess, ERROR_MESSAGE() AS [Message];
+    END CATCH
 END
 GO
 
