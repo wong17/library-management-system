@@ -1,0 +1,52 @@
+<!--Titulo-->
+<h2 mat-dialog-title>{{ dialogData.title }}</h2>
+<!--Contenido-->
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="bookSubCategoriesForm" (ngSubmit)="onSubmit()">
+    <!--Lista de categorias-->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Nombre</mat-label>
+      <input
+        matInput
+        placeholder="Nombre..."
+        formControlName="category"
+        [errorStateMatcher]="matcher"
+        maxlength="100"
+        readonly="true"
+      />
+      <mat-hint>* Puede cambiar la categoría desde el formulario principal</mat-hint>
+    </mat-form-field>
+
+    <!--Sub categorias-->
+    <mat-form-field class="form-field">
+      <mat-label>Selecciona una o varias sub categorías</mat-label>
+      <mat-select formControlName="subCategoryIds" multiple>
+        @for (subcategory of filteredSubCategories; track subcategory) {
+        <mat-option [value]="subcategory.subCategoryId">{{
+          subcategory.name
+        }}</mat-option>
+        }
+      </mat-select>
+      @if(subCategoryIds?.hasError('required')) {
+      <mat-error>Campo es <strong>obligatorio</strong></mat-error>
+      }
+    </mat-form-field>
+
+    <!--Acciones-->
+    <mat-dialog-actions align="end" class="dialog-actions">
+      <!---->
+      <button mat-button mat-dialog-close (click)="closeDialog(false)">
+        Cancelar
+      </button>
+      <!---->
+      <button
+        mat-flat-button
+        type="submit"
+        color="primary"
+        [disabled]="bookSubCategoriesForm.invalid"
+      >
+        Guardar
+      </button>
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>
