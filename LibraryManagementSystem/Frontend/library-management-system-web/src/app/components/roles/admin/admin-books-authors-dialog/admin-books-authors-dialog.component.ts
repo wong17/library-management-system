@@ -77,8 +77,7 @@ export class AdminBooksAuthorsDialogComponent {
     const bookId = this.bookDto?.bookId
     if (!bookId) {
       this.toastr.error(`Ocurrio un error al obtener Id del Libro`, 'Error', {
-        timeOut: 5000,
-        easeTime: 1000
+        timeOut: 5000
       })
       return;
     }
@@ -94,22 +93,19 @@ export class AdminBooksAuthorsDialogComponent {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
+            timeOut: 5000
           })
         }
         // Solicitud exitosa
         this.toastr.success(`${response.message}`, 'Exito', {
-          timeOut: 5000,
-          easeTime: 1000
+          timeOut: 5000
         })
         //
         this.closeDialog(true);
       },
       error: (error: ApiResponse) => {
         this.toastr.error(`${error.message}`, 'Error', {
-          timeOut: 5000,
-          easeTime: 1000
+          timeOut: 5000
         });
       }
     })
@@ -120,8 +116,7 @@ export class AdminBooksAuthorsDialogComponent {
     const bookId = this.bookDto?.bookId
     if (!bookId) {
       this.toastr.error(`Ocurrio un error al obtener Id del Libro`, 'Error', {
-        timeOut: 5000,
-        easeTime: 1000
+        timeOut: 5000
       })
       return;
     }
@@ -137,22 +132,19 @@ export class AdminBooksAuthorsDialogComponent {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
+            timeOut: 5000
           })
         }
         // Solicitud exitosa
         this.toastr.success(`${response.message}`, 'Exito', {
-          timeOut: 5000,
-          easeTime: 1000
+          timeOut: 5000
         })
         //
         this.closeDialog(true);
       },
       error: (error: ApiResponse) => {
         this.toastr.error(`${error.message}`, 'Error', {
-          timeOut: 5000,
-          easeTime: 1000
+          timeOut: 5000
         });
       }
     })
@@ -164,8 +156,7 @@ export class AdminBooksAuthorsDialogComponent {
         // Verificar si ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
+            timeOut: 5000
           })
           return;
         }
@@ -173,8 +164,7 @@ export class AdminBooksAuthorsDialogComponent {
         const list = response.result;
         if (!Array.isArray(list)) {
           this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
+            timeOut: 5000
           })
           return;
         }
@@ -183,8 +173,7 @@ export class AdminBooksAuthorsDialogComponent {
       },
       error: (error: ApiResponse) => {
         this.toastr.error(`${error.message}`, 'Error', {
-          timeOut: 5000,
-          easeTime: 1000
+          timeOut: 5000
         });
       },
       complete: () => {
