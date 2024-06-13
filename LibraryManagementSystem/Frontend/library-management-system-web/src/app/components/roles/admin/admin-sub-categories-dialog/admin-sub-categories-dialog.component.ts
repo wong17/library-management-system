@@ -100,23 +100,20 @@ export class AdminSubCategoriesDialogComponent {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
+            timeOut: 5000
           })
           return;
         }
         // Solicitud exitosa
         this.toastr.success(`${response.message}`, 'Exito', {
-          timeOut: 5000,
-          easeTime: 1000
+          timeOut: 5000
         })
 
         this.closeDialog(true);
       },
       error: (error: ApiResponse) => {
         this.toastr.error(`${error.message}`, 'Error', {
-          timeOut: 5000,
-          easeTime: 1000
+          timeOut: 5000
         });
       }
     })
@@ -136,23 +133,20 @@ export class AdminSubCategoriesDialogComponent {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
+            timeOut: 5000
           })
           return;
         }
         // Solicitud exitosa
         this.toastr.info(`${response.message}`, 'Exito', {
-          timeOut: 5000,
-          easeTime: 1000
+          timeOut: 5000
         })
 
         this.closeDialog(true);
       },
       error: (error: ApiResponse) => {
         this.toastr.error(`${error.message}`, 'Error', {
-          timeOut: 5000,
-          easeTime: 1000
+          timeOut: 5000
         });
       }
     })
@@ -164,8 +158,7 @@ export class AdminSubCategoriesDialogComponent {
         // Verificar si ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
+            timeOut: 5000
           })
           return;
         }
@@ -173,8 +166,7 @@ export class AdminSubCategoriesDialogComponent {
         const list = response.result;
         if (!Array.isArray(list)) {
           this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
+            timeOut: 5000
           })
           return;
         }
@@ -183,8 +175,7 @@ export class AdminSubCategoriesDialogComponent {
       },
       error: (error: ApiResponse) => {
         this.toastr.error(`${error.message}`, 'Error', {
-          timeOut: 5000,
-          easeTime: 1000
+          timeOut: 5000
         });
       }
     })

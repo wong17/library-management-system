@@ -93,23 +93,20 @@ export class AdminMonographsComponent implements AfterViewInit, OnInit {
           // Ocurrio un error
           if (response.isSuccess !== 0 || response.statusCode !== 200) {
             this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-              timeOut: 5000,
-              easeTime: 1000
+              timeOut: 5000
             })
             return;
           }
           // Solicitud exitosa
           this.toastr.success(`${response.message}`, 'Exito', {
-            timeOut: 5000,
-            easeTime: 1000
+            timeOut: 5000
           })
 
           this.getMonographsDto();
         },
         error: (error: ApiResponse) => {
           this.toastr.error(`${error.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
+            timeOut: 5000
           });
         }
       })
@@ -161,24 +158,28 @@ export class AdminMonographsComponent implements AfterViewInit, OnInit {
   private getMonographsDto(): void {
     this.monographService.getAll().subscribe({
       next: response => {
-        //
-        if (!response) return;
-        //
-        if (response.isSuccess !== 1 && response.statusCode !== 200) {
-          console.error(`Message: ${response.message}, StatusCode: ${response.statusCode}`);
+        // Verificar si ocurrio un error
+        if (response.isSuccess !== 0 || response.statusCode !== 200) {
+          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+            timeOut: 5000
+          })
           return;
         }
-        //
-        if (response.result === null || !Array.isArray(response.result)) {
-          console.error(`Message: ${response.message}, StatusCode: ${response.statusCode}`);
+        // Verificar si el resultado es un array válido
+        const list = response.result;
+        if (!Array.isArray(list)) {
+          this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
+            timeOut: 5000
+          })
           return;
         }
-        //
-        const list: MonographDto[] = response.result as MonographDto[];
-        this.dataSource.data = list;
+        // Asignar datos
+        this.dataSource.data = response.result as MonographDto[];
       },
-      error: error => {
-        console.error(error);
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000
+        });
       }
     })
   }

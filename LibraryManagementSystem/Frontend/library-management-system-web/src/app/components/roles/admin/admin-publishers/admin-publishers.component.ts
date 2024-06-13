@@ -90,23 +90,20 @@ export class AdminPublishersComponent implements AfterViewInit, OnInit {
           // Ocurrio un error
           if (response.isSuccess !== 0 || response.statusCode !== 200) {
             this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-              timeOut: 5000,
-              easeTime: 1000
+              timeOut: 5000
             })
             return;
           }
           // Solicitud exitosa
           this.toastr.success(`${response.message}`, 'Exito', {
-            timeOut: 5000,
-            easeTime: 1000
+            timeOut: 5000
           })
 
           this.getPublishersDto();
         },
         error: error => {
           this.toastr.error(error.message, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
+            timeOut: 5000
           });
         }
       })
@@ -140,8 +137,7 @@ export class AdminPublishersComponent implements AfterViewInit, OnInit {
         // Verificar si ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
+            timeOut: 5000
           })
           return;
         }
@@ -149,8 +145,7 @@ export class AdminPublishersComponent implements AfterViewInit, OnInit {
         const list = response.result;
         if (!Array.isArray(list)) {
           this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
+            timeOut: 5000
           })
           return;
         }
@@ -159,8 +154,7 @@ export class AdminPublishersComponent implements AfterViewInit, OnInit {
       },
       error: error => {
         this.toastr.error(error.message, 'Error', {
-          timeOut: 5000,
-          easeTime: 1000
+          timeOut: 5000
         });
       }
     });

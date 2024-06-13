@@ -86,23 +86,20 @@ export class AdminPublishersDialogComponent {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
+            timeOut: 5000
           })
           return;
         }
         // Solicitud exitosa
         this.toastr.success(`${response.message}`, 'Exito', {
-          timeOut: 5000,
-          easeTime: 1000
+          timeOut: 5000
         })
 
         this.closeDialog(true);
       },
       error: error => {
         this.toastr.error(error.message, 'Error', {
-          timeOut: 5000,
-          easeTime: 1000
+          timeOut: 5000
         });
       }
     })
@@ -121,23 +118,20 @@ export class AdminPublishersDialogComponent {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
           this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
+            timeOut: 5000
           })
           return;
         }
         // Solicitud exitosa
         this.toastr.info(`${response.message}`, 'Exito', {
-          timeOut: 5000,
-          easeTime: 1000
+          timeOut: 5000
         })
 
         this.closeDialog(true);
       },
       error: error => {
         this.toastr.error(error.message, 'Error', {
-          timeOut: 5000,
-          easeTime: 1000
+          timeOut: 5000
         });
       }
     })

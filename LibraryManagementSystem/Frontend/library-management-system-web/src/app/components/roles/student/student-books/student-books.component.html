@@ -1,1 +1,91 @@
 <h1>Libros</h1>
+
+<div class="filter-container">
+  <mat-form-field>
+    <mat-label>Filtrar</mat-label>
+    <input
+      matInput
+      (keyup)="applyFilter($event)"
+      placeholder="Ej. Enciclopedia del lenguaje C"
+      #input
+    />
+  </mat-form-field>
+</div>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <!-- Definición de la columna ISBN10 -->
+  <ng-container matColumnDef="isbN10">
+    <th mat-header-cell *matHeaderCellDef>ISBN10</th>
+    <td mat-cell *matCellDef="let element">{{ element?.isbN10 }}</td>
+  </ng-container>
+
+  <!-- Definición de la columna ISBN13 -->
+  <ng-container matColumnDef="isbN13">
+    <th mat-header-cell *matHeaderCellDef>ISBN13</th>
+    <td mat-cell *matCellDef="let element">{{ element?.isbN13 }}</td>
+  </ng-container>
+
+  <!-- Definición de la columna classification -->
+  <ng-container matColumnDef="classification">
+    <th mat-header-cell *matHeaderCellDef>Clasificación</th>
+    <td mat-cell *matCellDef="let element">{{ element?.classification }}</td>
+  </ng-container>
+
+  <!-- Definición de la columna classification -->
+  <ng-container matColumnDef="title">
+    <th mat-header-cell *matHeaderCellDef>Titulo</th>
+    <td mat-cell *matCellDef="let element">{{ element?.title }}</td>
+  </ng-container>
+
+  <!-- Definición de la columna description -->
+  <ng-container matColumnDef="description">
+    <th mat-header-cell *matHeaderCellDef>Descripción</th>
+    <td mat-cell *matCellDef="let element">{{ element?.description }}</td>
+  </ng-container>
+
+  <!-- Definición de la columna publicationYear -->
+  <ng-container matColumnDef="publicationYear">
+    <th mat-header-cell *matHeaderCellDef>Año de publicación</th>
+    <td mat-cell *matCellDef="let element">{{ element?.publicationYear }}</td>
+  </ng-container>
+
+  <!-- Definición de la columna publisherName -->
+  <ng-container matColumnDef="publisherName">
+    <th mat-header-cell *matHeaderCellDef>Editorial</th>
+    <td mat-cell *matCellDef="let element">{{ element?.publisher.name }}</td>
+  </ng-container>
+
+  <!-- Definición de la columna categoryName -->
+  <ng-container matColumnDef="categoryName">
+    <th mat-header-cell *matHeaderCellDef>Cátegoria</th>
+    <td mat-cell *matCellDef="let element">{{ element?.category.name }}</td>
+  </ng-container>
+
+  <!-- Definición de la columna authors -->
+  <ng-container matColumnDef="authors">
+    <th mat-header-cell *matHeaderCellDef>Autores</th>
+    <td mat-cell *matCellDef="let element">{{ element?.authors }}</td>
+  </ng-container>
+
+  <!-- Definición de la columna subCategories -->
+  <ng-container matColumnDef="subCategories">
+    <th mat-header-cell *matHeaderCellDef>Sub cátegorias</th>
+    <td mat-cell *matCellDef="let element">{{ element?.subCategories }}</td>
+  </ng-container>
+
+  <!-- Vincular arreglo que contiene el texto de las columnas que debe coincidir con la definición de cada una -->
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+  <!-- Row shown when there is no matching data. -->
+  <tr class="mat-row" *matNoDataRow>
+    <td class="mat-cell" colspan="4">
+      No hay datos que coincidan con el filtro "{{ input.value }}"
+    </td>
+  </tr>
+</table>
+<!-- Agregar componente de paginado -->
+<mat-paginator
+  [pageSizeOptions]="[15, 30, 50, 100]"
+  aria-label="Selecciona página de Libros"
+></mat-paginator>
