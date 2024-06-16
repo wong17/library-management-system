@@ -3,9 +3,7 @@ using LibraryManagementSystem.Bll.Interfaces.Security;
 using LibraryManagementSystem.Common.Helpers;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Dal.Repository.Interfaces.Security;
-using LibraryManagementSystem.Entities.Dtos.Library;
 using LibraryManagementSystem.Entities.Dtos.Security;
-using LibraryManagementSystem.Entities.Models.Library;
 using LibraryManagementSystem.Entities.Models.Security;
 
 namespace LibraryManagementSystem.Bll.Implements.Security

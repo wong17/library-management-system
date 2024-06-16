@@ -110,7 +110,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             var response = await _subCategoryBll.GetAll();
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
