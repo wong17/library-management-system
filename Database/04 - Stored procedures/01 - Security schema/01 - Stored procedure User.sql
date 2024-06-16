@@ -22,9 +22,21 @@ BEGIN
 		RETURN
 	END
 	--
+	IF (@UserName LIKE '%[^a-zA-Z0-9. ]%')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Nombre de usuario solo puede tener mayúsculas, minúsculas, números, puntos y espacios' AS [Message]
+		RETURN
+	END
+	--
 	IF (@Email IS NULL OR @Email = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Correo electronico del usuario es obligatorio' AS [Message]
+		RETURN
+	END
+	--
+	IF (@Email NOT LIKE '%[A-Za-z0-9][@][A-Za-z0-9]%[.][A-Za-z0-9]%')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'El correo debe contener un @ y un dominio' AS [Message]
 		RETURN
 	END
 	--
@@ -89,6 +101,12 @@ BEGIN
 		RETURN
 	END
 	--
+	IF (@Email NOT LIKE '%[A-Za-z0-9][@][A-Za-z0-9]%[.][A-Za-z0-9]%')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'El correo debe contener un @ y un dominio' AS [Message]
+		RETURN
+	END
+	--
 	IF (@Password IS NULL OR @Password = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Contraseña del usuario es obligatoria' AS [Message]
@@ -105,7 +123,7 @@ BEGIN
 		--
 		UPDATE [Security].[User] SET Email = @Email, [Password] = HASHBYTES('SHA2_512', @Password) WHERE UserId = @UserId
 		--
-		SELECT 0 AS IsSuccess, 'Usuario actualizado exitosamente' AS [Message], SCOPE_IDENTITY() AS Result
+		SELECT 0 AS IsSuccess, 'Usuario actualizado exitosamente' AS [Message], @UserId AS Result
 	END TRY
 	BEGIN CATCH
 		--

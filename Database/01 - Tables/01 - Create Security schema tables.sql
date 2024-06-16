@@ -10,7 +10,9 @@ CREATE TABLE [Security].[Role] (
 	RoleId INT NOT NULL IDENTITY(1,1),
 	[Name] VARCHAR(100) NOT NULL,
 	[Description] VARCHAR(500) NULL,
-	CONSTRAINT PK_Rol_RoleId PRIMARY KEY(RoleId)
+	CONSTRAINT PK_Rol_RoleId PRIMARY KEY(RoleId),
+	CONSTRAINT CK_Role_Name CHECK([Name] NOT LIKE '%[^a-zA-Z ]%'),
+	CONSTRAINT CK_Role_Description CHECK ([Description] NOT LIKE '%[^a-zA-Z0-9.- ]%')
 )
 GO
 
@@ -28,7 +30,9 @@ CREATE TABLE [Security].[User] (
 	RefreshTokenExpiryTime  DATETIME NULL,
 	LockoutEnabled BIT NOT NULL CONSTRAINT DF_User_LockoutEnabled DEFAULT 0,
 	AccessFailedCount INT NOT NULL CONSTRAINT DF_User_AccessFailedCount DEFAULT 0,
-	CONSTRAINT PK_User_UserId PRIMARY KEY(UserId)
+	CONSTRAINT PK_User_UserId PRIMARY KEY(UserId),
+	CONSTRAINT CK_User_UserName CHECK (UserName NOT LIKE '%[^a-zA-Z0-9. ]%'),
+	CONSTRAINT CK_User_Email CHECK (Email LIKE '%[A-Za-z0-9][@][A-Za-z0-9]%[.][A-Za-z0-9]%')
 )
 GO
 

@@ -150,7 +150,7 @@ BEGIN
 		--
 		UPDATE [Library].Category SET [Name] = @Name WHERE CategoryId = @CategoryId
 		--
-		SELECT 0 AS IsSuccess, 'Categoría actualizada exitosamente' AS [Message], SCOPE_IDENTITY() AS Result
+		SELECT 0 AS IsSuccess, 'Categoría actualizada exitosamente' AS [Message], @CategoryId AS Result
 	END TRY
 	BEGIN CATCH
 		--

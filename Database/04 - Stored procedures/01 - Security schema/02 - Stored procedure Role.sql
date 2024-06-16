@@ -21,9 +21,21 @@ BEGIN
 		RETURN
 	END
 	--
+	IF (@Name LIKE '%[^a-zA-Z ]%')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Nombre del rol solo puede tener mayúsculas, minúsculas y espacios' AS [Message]
+		RETURN
+	END
+	--
 	IF (@Description IS NULL OR @Description = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Descripción del rol es obligatorio' AS [Message]
+		RETURN
+	END
+	--
+	IF (@Description LIKE '%[^a-zA-Z0-9.- ]%')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Descripción del rol solo puede tener mayúsculas, minúsculas, números, puntos, guiones y espacios' AS [Message]
 		RETURN
 	END
 	--
@@ -76,9 +88,21 @@ BEGIN
 		RETURN
 	END
 	--
+	IF (@Name LIKE '%[^a-zA-Z ]%')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Nombre del rol solo puede tener mayúsculas, minúsculas y espacios' AS [Message]
+		RETURN
+	END
+	--
 	IF (@Description IS NULL OR @Description = '')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Descripción del rol es obligatorio' AS [Message]
+		RETURN
+	END
+	--
+	IF (@Description LIKE '%[^a-zA-Z0-9.- ]%')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Descripción del rol solo puede tener mayúsculas, minúsculas, números, puntos, guiones y espacios' AS [Message]
 		RETURN
 	END
 	--
