@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ApiResponse } from '../../entities/api/api-response';
-import { catchError, Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { MonographLoanInsertDto } from '../../entities/dtos/library/monograph-loan-insert-dto';
 import { HttpErrorHandler } from '../../util/http-error-handler';
 
@@ -15,8 +15,8 @@ export class MonographLoanService {
   private readonly apiUrl: string = environment.apiUrl;
   /* MonographLoan urls */
   private readonly monographLoanCreateUrl: string = '/api/monograph_loans/create'
-  private readonly monographLoanUpdateBorrowedMonographLoanUrl: string = '/api/monograph_loans/update_borrowed_book_loan'
-  private readonly monographLoanUpdateReturnedMonographLoanUrl: string = '/api/monograph_loans/update_returned_book_loan'
+  private readonly monographLoanUpdateBorrowedMonographLoanUrl: string = '/api/monograph_loans/update_borrowed_monograph_loan'
+  private readonly monographLoanUpdateReturnedMonographLoanUrl: string = '/api/monograph_loans/update_returned_monograph_loan'
   private readonly monographLoanDeleteUrl: string = '/api/monograph_loans/delete'
   private readonly monographLoanGetAllUrl: string = '/api/monograph_loans/get_all'
   private readonly monographLoanGetByIdUrl: string = '/api/monograph_loans/get_by_id'
@@ -53,7 +53,7 @@ export class MonographLoanService {
    * @returns Observable<ApiResponse>
    */
   updateBorrowedMonographLoan(monographLoanId: number, dueDate: Date): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.monographLoanUpdateBorrowedMonographLoanUrl}/${monographLoanId}/${dueDate}`, this.httpHeader)
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.monographLoanUpdateBorrowedMonographLoanUrl}/${monographLoanId}/${dueDate.toDateString()}`, this.httpHeader)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

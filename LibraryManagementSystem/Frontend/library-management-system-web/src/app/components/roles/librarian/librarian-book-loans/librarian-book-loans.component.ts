@@ -9,7 +9,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { BookDto } from '../../../../entities/dtos/library/book-dto';
+import { ApiResponse } from '../../../../entities/api/api-response';
+import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-librarian-book-loans',
@@ -28,38 +30,11 @@ export class LibrarianBookLoansComponent {
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
-  /* Editoriales */
-  publishers: BookLoanDto[] | undefined;
 
-  constructor(private bookLoanService: BookLoanService, private dialog: MatDialog) { }
+  constructor(private bookLoanService: BookLoanService, private toastr: ToastrService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.getBookLoansDto();
-  }
-  
-  private getBookLoansDto(): void {
-    this.bookLoanService.getAll().subscribe({
-      next: response => {
-        //
-        if (!response) return;
-        //
-        if (response.isSuccess !== 1 && response.statusCode !== 200) {
-          console.error(`Message: ${response.message}, StatusCode: ${response.statusCode}`);
-          return;
-        }
-        //
-        if (response.result === null || !Array.isArray(response.result)) {
-          console.error(`Message: ${response.message}, StatusCode: ${response.statusCode}`);
-          return;
-        }
-        //
-        const list: BookLoanDto[] = response.result as BookLoanDto[];
-        this.dataSource.data = list;
-      },
-      error: error => {
-        console.error(error);
-      }
-    })
   }
 
   ngAfterViewInit(): void {
@@ -76,16 +51,159 @@ export class LibrarianBookLoansComponent {
     }
   }
 
-  deleteBookLoanClick(book: BookDto) {
+  private getBookLoansDto(): void {
+    this.bookLoanService.getAll().subscribe({
+      next: response => {
+        // Verificar si ocurrio un error
+        if (response.isSuccess !== 0 || response.statusCode !== 200) {
+          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          })
+          return;
+        }
+        // Verificar si el resultado es un array válido
+        const list = response.result;
+        if (!Array.isArray(list)) {
+          this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          })
+          return;
+        }
+        // Asignar datos
+        this.dataSource.data = response.result as BookLoanDto[];
+      },
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error?.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
+      }
+    })
+  }
+
+  deleteBookLoanClick(bookLoan: BookLoanDto) {
+    if (bookLoan.state?.trimEnd() !== "CREADA") {
+      this.toastr.warning(`No es posible eliminar una solicitud préstada o devuelta`, 'Atención', {
+        timeOut: 5000,
+        easeTime: 1000
+      })
+      return
+    }
+
+    // Abrir dialogo para preguntar si desea eliminar el registro
+    const dialogRef = this.dialog.open(DeleteDialogComponent, {
+      width: '300px',
+      disableClose: true,
+      data: bookLoan.bookLoanId
+    });
+    //
+    dialogRef.afterClosed().subscribe((done) => {
+      if (!done)
+        return
+
+      // Realizar solicitud para eliminar registro
+      this.bookLoanService.delete(bookLoan.bookLoanId).subscribe({
+        next: response => {
+          // Ocurrio un error
+          if (response.isSuccess !== 0 || response.statusCode !== 200) {
+            this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+              timeOut: 5000,
+              easeTime: 1000
+            })
+            return;
+          }
+          // Solicitud exitosa
+          this.toastr.success(`${response.message}`, 'Exito', {
+            timeOut: 5000,
+            easeTime: 1000
+          })
+
+          this.getBookLoansDto();
+        },
+        error: (error: ApiResponse) => {
+          this.toastr.error(`${error.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          });
+        }
+      })
+    });
 
   }
-  
-  updateBorrowedBookLoanClick(book: BookDto) {
 
+  updateBorrowedBookLoanClick(bookLoan: BookLoanDto) {
+    if (bookLoan.state?.trimEnd() !== "CREADA") {
+      this.toastr.warning(`No es posible préstar el libro sino se ha solicitado un préstamo`, 'Atención', {
+        timeOut: 5000,
+        easeTime: 1000
+      })
+      return
+    }
+    // Realizar solicitud para prestar registro
+    this.bookLoanService.updateBorrowedBookLoan(bookLoan.bookLoanId, new Date()).subscribe({
+      next: response => {
+        // Ocurrio un error
+        if (response.isSuccess !== 0 || response.statusCode !== 200) {
+          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          })
+          return;
+        }
+        // Solicitud exitosa
+        this.toastr.success(`${response.message}`, 'Exito', {
+          timeOut: 5000,
+          easeTime: 1000
+        })
+
+        this.getBookLoansDto();
+      },
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
+      }
+    })
   }
 
-  updateReturnedBookLoanClick(book: BookDto) {
+  updateReturnedBookLoanClick(bookLoan: BookLoanDto) {
+    if (bookLoan.state?.trimEnd() !== "PRESTADO") {
+      this.toastr.warning(`No es posible devolver el libro si no esta PRESTADO`, 'Atención', {
+        timeOut: 5000,
+        easeTime: 1000
+      })
+      return
+    }
 
+    // Realizar solicitud para devolver registro
+    this.bookLoanService.updateReturnedBookLoan(bookLoan.bookLoanId).subscribe({
+      next: response => {
+        // Ocurrio un error
+        if (response.isSuccess !== 0 || response.statusCode !== 200) {
+          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          })
+          return;
+        }
+        // Solicitud exitosa
+        this.toastr.success(`${response.message}`, 'Exito', {
+          timeOut: 5000,
+          easeTime: 1000
+        })
+
+        this.getBookLoansDto();
+      },
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
+      }
+    })
   }
 
 }

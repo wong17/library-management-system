@@ -53,7 +53,7 @@ export class BookLoanService {
    * @returns Observable<ApiResponse>
    */
   updateBorrowedBookLoan(bookLoanId: number, dueDate: Date): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.bookLoanUpdateBorrowedBookLoanUrl}/${bookLoanId}/${dueDate}`, this.httpHeader)
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.bookLoanUpdateBorrowedBookLoanUrl}/${bookLoanId}/${dueDate.toDateString()}`, this.httpHeader)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

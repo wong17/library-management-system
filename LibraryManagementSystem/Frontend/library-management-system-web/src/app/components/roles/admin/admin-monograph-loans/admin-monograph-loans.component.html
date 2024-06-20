@@ -1,15 +1,15 @@
 <h1>Préstamo de monografías</h1>
 
 <div class="filter-container">
-    <mat-form-field>
-        <mat-label>Filtrar</mat-label>
-        <input
-          matInput
-          (keyup)="applyFilter($event)"
-          placeholder="Ej. Sistema de ventas e inventario"
-          #input
-        />
-      </mat-form-field>
+  <mat-form-field>
+    <mat-label>Filtrar</mat-label>
+    <input
+      matInput
+      (keyup)="applyFilter($event)"
+      placeholder="Ej. Sistema de ventas e inventario"
+      #input
+    />
+  </mat-form-field>
 </div>
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
@@ -61,13 +61,13 @@
     <!-- Iconos a mostrar en la columna -->
     <mat-cell *matCellDef="let element">
       <mat-icon
-        fontIcon="category"
-        matTooltip="Préstar monografía"
+        fontIcon="assignment"
+        matTooltip="Préstamo de monografía"
         (click)="updateBorrowedMonographLoanClick(element)"
       ></mat-icon>
       <mat-icon
-        fontIcon="group"
-        matTooltip="Devolver monografía"
+        fontIcon="assignment_return"
+        matTooltip="Devolución de monografía"
         (click)="updateReturnedMonographLoanClick(element)"
       ></mat-icon>
       <mat-icon
@@ -88,7 +88,9 @@
       No hay datos que coincidan con el filtro "{{ input.value }}"
     </td>
   </tr>
-
 </table>
 <!-- Agregar componente de paginado -->
-<mat-paginator [pageSizeOptions]="[15, 30, 50, 100]" aria-label="Selecciona página de Préstamo de monografías"></mat-paginator>
+<mat-paginator
+  [pageSizeOptions]="[15, 30, 50, 100]"
+  aria-label="Selecciona página de Préstamo de monografías"
+></mat-paginator>

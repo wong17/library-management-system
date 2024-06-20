@@ -9,7 +9,9 @@ import { MonographLoanDto } from '../../../../entities/dtos/library/monograph-lo
 import { MatSort } from '@angular/material/sort';
 import { MonographLoanService } from '../../../../services/library/monograph-loan.service';
 import { MatDialog } from '@angular/material/dialog';
-import { MonographDto } from '../../../../entities/dtos/library/monograph-dto';
+import { ApiResponse } from '../../../../entities/api/api-response';
+import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-librarian-monograph-loans',
@@ -28,38 +30,11 @@ export class LibrarianMonographLoansComponent {
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
-  /* Editoriales */
-  publishers: MonographLoanDto[] | undefined;
 
-  constructor(private monographLoanService: MonographLoanService, private dialog: MatDialog) { }
+  constructor(private monographLoanService: MonographLoanService, private toastr: ToastrService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.getMonographLoansDto();
-  }
-
-  private getMonographLoansDto(): void {
-    this.monographLoanService.getAll().subscribe({
-      next: response => {
-        //
-        if (!response) return;
-        //
-        if (response.isSuccess !== 1 && response.statusCode !== 200) {
-          console.error(`Message: ${response.message}, StatusCode: ${response.statusCode}`);
-          return;
-        }
-        //
-        if (response.result === null || !Array.isArray(response.result)) {
-          console.error(`Message: ${response.message}, StatusCode: ${response.statusCode}`);
-          return;
-        }
-        //
-        const list: MonographLoanDto[] = response.result as MonographLoanDto[];
-        this.dataSource.data = list;
-      },
-      error: error => {
-        console.error(error);
-      }
-    })
   }
 
   ngAfterViewInit(): void {
@@ -76,14 +51,159 @@ export class LibrarianMonographLoansComponent {
     }
   }
 
-  updateReturnedMonographLoanClick(monograph: MonographDto) {
-
+  private getMonographLoansDto(): void {
+    this.monographLoanService.getAll().subscribe({
+      next: response => {
+        // Verificar si ocurrio un error
+        if (response.isSuccess !== 0 || response.statusCode !== 200) {
+          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          })
+          return;
+        }
+        // Verificar si el resultado es un array válido
+        const list = response.result;
+        if (!Array.isArray(list)) {
+          this.toastr.error(`El resultado no es un array válido: ${response.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          })
+          return;
+        }
+        //
+        this.dataSource.data = response.result as MonographLoanDto[];
+      },
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error?.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
+      }
+    })
   }
-  updateBorrowedMonographLoanClick(monograph: MonographDto) {
 
+  deleteMonographLoanClick(monographLoan: MonographLoanDto) {
+    if (monographLoan.state?.trimEnd() !== "CREADA") {
+      this.toastr.warning(`No es posible eliminar una solicitud préstada o devuelta`, 'Atención', {
+        timeOut: 5000,
+        easeTime: 1000
+      })
+      return
+    }
+
+    // Abrir dialogo para preguntar si desea eliminar el registro
+    const dialogRef = this.dialog.open(DeleteDialogComponent, {
+      width: '300px',
+      disableClose: true,
+      data: monographLoan.monographLoanId
+    });
+    //
+    dialogRef.afterClosed().subscribe((done) => {
+      if (!done)
+        return
+
+      // Realizar solicitud para eliminar registro
+      this.monographLoanService.delete(monographLoan.monographLoanId).subscribe({
+        next: response => {
+          // Ocurrio un error
+          if (response.isSuccess !== 0 || response.statusCode !== 200) {
+            this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+              timeOut: 5000,
+              easeTime: 1000
+            })
+            return;
+          }
+          // Solicitud exitosa
+          this.toastr.success(`${response.message}`, 'Exito', {
+            timeOut: 5000,
+            easeTime: 1000
+          })
+
+          this.getMonographLoansDto();
+        },
+        error: (error: ApiResponse) => {
+          this.toastr.error(`${error.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          });
+        }
+      })
+    });
   }
-  deleteMonographLoanClick(monograph: MonographDto) {
 
+  updateBorrowedMonographLoanClick(monographLoan: MonographLoanDto) {
+    if (monographLoan.state?.trimEnd() !== "CREADA") {
+      this.toastr.warning(`No es posible préstar la monografía sino se ha solicitado un préstamo`, 'Atención', {
+        timeOut: 5000,
+        easeTime: 1000
+      })
+      return
+    }
+
+    // Realizar solicitud para prestar registro
+    this.monographLoanService.updateBorrowedMonographLoan(monographLoan.monographLoanId, new Date()).subscribe({
+      next: response => {
+        // Ocurrio un error
+        if (response.isSuccess !== 0 || response.statusCode !== 200) {
+          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          })
+          return;
+        }
+        // Solicitud exitosa
+        this.toastr.success(`${response.message}`, 'Exito', {
+          timeOut: 5000,
+          easeTime: 1000
+        })
+
+        this.getMonographLoansDto();
+      },
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
+      }
+    })
+  }
+  
+  updateReturnedMonographLoanClick(monographLoan: MonographLoanDto) {
+    if (monographLoan.state?.trimEnd() !== "PRESTADA") {
+      this.toastr.warning(`No es posible devolver la monografía si no esta PRESTADA`, 'Atención', {
+        timeOut: 5000,
+        easeTime: 1000
+      })
+      return
+    }
+
+    // Realizar solicitud para devolver registro
+    this.monographLoanService.updateReturnedMonographLoan(monographLoan.monographLoanId).subscribe({
+      next: response => {
+        // Ocurrio un error
+        if (response.isSuccess !== 0 || response.statusCode !== 200) {
+          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          })
+          return;
+        }
+        // Solicitud exitosa
+        this.toastr.success(`${response.message}`, 'Exito', {
+          timeOut: 5000,
+          easeTime: 1000
+        })
+
+        this.getMonographLoansDto();
+      },
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
+      }
+    })
   }
 
 }
