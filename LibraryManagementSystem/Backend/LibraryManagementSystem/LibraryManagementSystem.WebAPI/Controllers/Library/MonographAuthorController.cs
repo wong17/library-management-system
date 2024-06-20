@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using LibraryManagementSystem.Bll.Implements.Library;
 using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
@@ -9,7 +8,7 @@ using System.Net;
 
 namespace LibraryManagementSystem.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/monograph_authors")]
     [ApiController]
     public class MonographAuthorController(IMonographAuthorBll monographAuthorBll, IMapper mapper) : ControllerBase
     {
@@ -21,7 +20,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        [HttpPost("Create")]
+        [HttpPost("create")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -49,7 +48,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        [HttpPost("CreateMany")]
+        [HttpPost("create_many")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -79,7 +78,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("{monographId:int}/{authorId:int}")]
+        [HttpDelete("delete/{monographId:int}/{authorId:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -106,7 +105,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// Devuelve todos los autores de las monografias
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("get_all")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
@@ -123,7 +122,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{monographId:int}/{authorId:int}")]
+        [HttpGet("get_by_id/{monographId:int}/{authorId:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -148,7 +147,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        [HttpPut("UpdateMany")]
+        [HttpPut("update_many")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

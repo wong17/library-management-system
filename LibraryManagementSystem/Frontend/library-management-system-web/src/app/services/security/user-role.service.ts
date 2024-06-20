@@ -14,9 +14,11 @@ export class UserRoleService {
   /* API url base */
   private readonly apiUrl: string = environment.apiUrl;
   /* UserRole urls */
-  private readonly userRoleCreateUrl: string = '/api/UserRole/Create'
-  private readonly userRoleCreateManyUrl: string = '/api/UserRole/CreateMany'
-  private readonly userRoleUrl: string = '/api/UserRole'
+  private readonly userRoleCreateUrl: string = '/api/user_roles/create'
+  private readonly userRoleCreateManyUrl: string = '/api/user_roles/create_many'
+  private readonly userRoleDeleteUrl: string = '/api/user_roles/delete'
+  private readonly userRoleGetAllUrl: string = '/api/user_roles/get_all'
+  private readonly userRoleGetByIdUrl: string = '/api/user_roles/get_by_id'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {
@@ -62,7 +64,7 @@ export class UserRoleService {
    * @returns Observable<ApiResponse>
    */
   delete(userId: number, roleId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.userRoleUrl}/${userId}/${roleId}`)
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.userRoleDeleteUrl}/${userId}/${roleId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -73,7 +75,7 @@ export class UserRoleService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.userRoleUrl}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.userRoleGetAllUrl}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -85,7 +87,7 @@ export class UserRoleService {
    * @returns Observable<ApiResponse>
    */
   getById(userId: number, roleId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.userRoleUrl}/${userId}/${roleId}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.userRoleGetByIdUrl}/${userId}/${roleId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

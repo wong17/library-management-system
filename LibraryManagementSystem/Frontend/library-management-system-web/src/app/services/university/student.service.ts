@@ -13,7 +13,9 @@ export class StudentService {
   /* API url base */
   private readonly apiUrl: string = environment.apiUrl;
   /* Student urls */
-  private readonly studentUrl: string = '/api/Student'
+  private readonly studentGetAllUrl: string = '/api/students/get_all'
+  private readonly studentGetByIdUrl: string = '/api/students/get_by_id'
+  private readonly studentGetByCarnetUrl: string = '/api/students/get_by_carnet'
 
   /**
    * Modulo HttpClient para enviar solicitudes http
@@ -26,7 +28,7 @@ export class StudentService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.studentUrl}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.studentGetAllUrl}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -38,7 +40,7 @@ export class StudentService {
    * @returns Observable<ApiResponse>
    */
   getById(studentId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.studentUrl}/${studentId}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.studentGetByIdUrl}/${studentId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -50,7 +52,7 @@ export class StudentService {
    * @returns Observable<ApiResponse>
    */
   getByCarnet(carnet: string): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.studentUrl}/${carnet}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.studentGetByCarnetUrl}/${carnet}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

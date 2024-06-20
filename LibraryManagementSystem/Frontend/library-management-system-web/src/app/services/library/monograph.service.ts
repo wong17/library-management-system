@@ -15,9 +15,11 @@ export class MonographService {
   /* API url base */
   private readonly apiUrl: string = environment.apiUrl;
   /* Monograph urls */
-  private readonly monographCreateUrl: string = '/api/Monograph/Create'
-  private readonly monographUpdateUrl: string = '/api/Monograph/Update'
-  private readonly monographUrl: string = '/api/Monograph'
+  private readonly monographCreateUrl: string = '/api/monographs/create'
+  private readonly monographUpdateUrl: string = '/api/monographs/update'
+  private readonly monographDeleteUrl: string = '/api/monographs/delete'
+  private readonly monographGetAllUrl: string = '/api/monographs/get_all'
+  private readonly monographGetByIdUrl: string = '/api/monographs/get_by_id'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {
@@ -63,7 +65,7 @@ export class MonographService {
    * @returns Observable<ApiResponse>
    */
   delete(monographId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.monographUrl}/${monographId}`)
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.monographDeleteUrl}/${monographId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -74,7 +76,7 @@ export class MonographService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographUrl}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographGetAllUrl}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -86,7 +88,7 @@ export class MonographService {
    * @returns Observable<ApiResponse>
    */
   getById(monographId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographUrl}/${monographId}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographGetByIdUrl}/${monographId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

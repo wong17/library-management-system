@@ -16,10 +16,12 @@ export class UserService {
   /* API url base */
   private readonly apiUrl: string = environment.apiUrl;
   /* User urls */
-  private readonly userCreateUrl: string = '/api/User/Create'
-  private readonly userLogInUrl: string = '/api/User/LogIn'
-  private readonly userUpdateUrl: string = '/api/User/Update'
-  private readonly userUrl: string = '/api/User'
+  private readonly userCreateUrl: string = '/api/users/create'
+  private readonly userLogInUrl: string = '/api/users/log_in'
+  private readonly userUpdateUrl: string = '/api/users/update'
+  private readonly userDeleteUrl: string = '/api/users/delete'
+  private readonly userGetAllUrl: string = '/api/users/get_all'
+  private readonly userGetByIdUrl: string = '/api/users/get_by_id'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {
@@ -77,7 +79,7 @@ export class UserService {
    * @returns Observable<ApiResponse>
    */
   delete(userId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.userUrl}/${userId}`)
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.userDeleteUrl}/${userId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -88,7 +90,7 @@ export class UserService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.userUrl}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.userGetAllUrl}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -100,7 +102,7 @@ export class UserService {
    * @returns Observable<ApiResponse>
    */
   getById(userId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.userUrl}/${userId}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.userGetByIdUrl}/${userId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

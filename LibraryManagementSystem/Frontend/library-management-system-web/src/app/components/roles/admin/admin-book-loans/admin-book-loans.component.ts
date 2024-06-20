@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog'
 import { BookLoanDto } from '../../../../entities/dtos/library/book-loan-dto';
 import { BookLoanService } from '../../../../services/library/book-loan.service';
 import { BookDto } from '../../../../entities/dtos/library/book-dto';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-admin-book-loans',
@@ -28,10 +29,8 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
-  /* Editoriales */
-  publishers: BookLoanDto[] | undefined;
 
-  constructor(private bookLoanService: BookLoanService, private dialog: MatDialog) { }
+  constructor(private bookLoanService: BookLoanService, private toastr: ToastrService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.getBookLoansDto();
@@ -53,8 +52,7 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
           return;
         }
         //
-        const list: BookLoanDto[] = response.result as BookLoanDto[];
-        this.dataSource.data = list;
+        this.dataSource.data = response.result as BookLoanDto[];
       },
       error: error => {
         console.error(error);
@@ -76,15 +74,17 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
     }
   }
 
-  deleteBookLoanClick(book: BookDto) {
+  deleteBookLoanClick(bookLoan: BookLoanDto) {
+    if (bookLoan.state === "") {
+      
+    }
+  }
+
+  updateBorrowedBookLoanClick(bookLoan: BookLoanDto) {
 
   }
 
-  updateBorrowedBookLoanClick(book: BookDto) {
-
-  }
-
-  updateReturnedBookLoanClick(book: BookDto) {
+  updateReturnedBookLoanClick(bookLoan: BookLoanDto) {
 
   }
 

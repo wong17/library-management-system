@@ -8,7 +8,7 @@ using System.Net;
 
 namespace LibraryManagementSystem.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/book_loans")]
     [ApiController]
     public class BookLoanController(IBookLoanBll bookLoanBll, IMapper mapper) : ControllerBase
     {
@@ -20,7 +20,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        [HttpPost("Create")]
+        [HttpPost("create")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -47,7 +47,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("{id:int}")]
+        [HttpDelete("delete/{id:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -74,7 +74,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// Devuelve todos los préstamos de libros
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("get_all")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
@@ -91,7 +91,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{id:int}")]
+        [HttpGet("get_by_id/{id:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -116,7 +116,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpPut("UpdateBorrowedBookLoan/{bookLoanId:int}/{dueDate:datetime}")]
+        [HttpPut("update_borrowed_book_loan/{bookLoanId:int}/{dueDate:datetime}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -144,7 +144,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpPut("UpdateReturnedBookLoan/{bookLoanId:int}")]
+        [HttpPut("update_returned_book_loan/{bookLoanId:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

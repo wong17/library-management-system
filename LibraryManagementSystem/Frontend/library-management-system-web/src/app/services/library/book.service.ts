@@ -15,9 +15,11 @@ export class BookService {
   /* API url base */
   private readonly apiUrl: string = environment.apiUrl;
   /* Book urls */
-  private readonly bookCreateUrl: string = '/api/Book/Create'
-  private readonly bookUpdateUrl: string = '/api/Book/Update'
-  private readonly bookUrl: string = '/api/Book'
+  private readonly bookCreateUrl: string = '/api/books/create'
+  private readonly bookUpdateUrl: string = '/api/books/update'
+  private readonly bookDeleteUrl: string = '/api/books/delete'
+  private readonly bookGetAllUrl: string = '/api/books/get_all'
+  private readonly bookGetByIdUrl: string = '/api/books/get_by_id'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {
@@ -63,7 +65,7 @@ export class BookService {
    * @returns Observable<ApiResponse>
    */
   delete(bookId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.bookUrl}/${bookId}`)
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.bookDeleteUrl}/${bookId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -74,7 +76,7 @@ export class BookService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookUrl}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookGetAllUrl}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -86,7 +88,7 @@ export class BookService {
    * @returns Observable<ApiResponse>
    */
   getById(bookId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookUrl}/${bookId}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookGetByIdUrl}/${bookId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

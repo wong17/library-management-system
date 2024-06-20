@@ -8,7 +8,7 @@ using System.Net;
 
 namespace LibraryManagementSystem.WebAPI.Controllers.Security
 {
-    [Route("api/[controller]")]
+    [Route("api/roles")]
     [ApiController]
     public class RoleController(IRoleBll roleBll, IMapper mapper) : ControllerBase
     {
@@ -20,7 +20,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        [HttpPost("Create")]
+        [HttpPost("create")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -44,7 +44,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("{id:int}")]
+        [HttpDelete("delete/{id:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -71,7 +71,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
         /// Devuelve todos los Roles
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("get_all")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
@@ -88,7 +88,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{id:int}")]
+        [HttpGet("get_by_id/{id:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -113,7 +113,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        [HttpPut("Update")]
+        [HttpPut("update")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

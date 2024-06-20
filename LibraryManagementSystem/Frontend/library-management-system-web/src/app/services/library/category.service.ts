@@ -15,11 +15,13 @@ export class CategoryService {
   /* API url base */
   private readonly apiUrl: string = environment.apiUrl;
   /* Category urls */
-  private readonly categoryCreateUrl: string = '/api/Category/Create'
-  private readonly categoryCreateManyUrl: string = '/api/Category/CreateMany'
-  private readonly categoryUpdateUrl: string = '/api/Category/Update'
-  private readonly categoryUpdateManyUrl: string = '/api/Category/UpdateMany'
-  private readonly categoryUrl: string = '/api/Category'
+  private readonly categoryCreateUrl: string = '/api/categories/create'
+  private readonly categoryCreateManyUrl: string = '/api/categories/create_many'
+  private readonly categoryUpdateUrl: string = '/api/categories/update'
+  private readonly categoryUpdateManyUrl: string = '/api/categories/update_many'
+  private readonly categoryDeleteUrl: string = '/api/categories/delete'
+  private readonly categoryGetAllUrl: string = '/api/categories/get_all'
+  private readonly categoryGetByIdUrl: string = '/api/categories/get_by_id'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {
@@ -89,7 +91,7 @@ export class CategoryService {
    * @returns Observable<ApiResponse>
    */
   delete(categoryId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.categoryUrl}/${categoryId}`)
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.categoryDeleteUrl}/${categoryId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -100,7 +102,7 @@ export class CategoryService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.categoryUrl}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.categoryGetAllUrl}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -112,7 +114,7 @@ export class CategoryService {
    * @returns Observable<ApiResponse>
    */
   getById(categoryId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.categoryUrl}/${categoryId}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.categoryGetByIdUrl}/${categoryId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

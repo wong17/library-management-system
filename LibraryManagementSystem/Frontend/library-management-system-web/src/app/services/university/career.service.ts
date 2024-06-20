@@ -13,7 +13,8 @@ export class CareerService {
   /* API url base */
   private readonly apiUrl: string = environment.apiUrl;
   /* Career urls */
-  private readonly careerUrl: string = '/api/Career'
+  private readonly careerGetAllUrl: string = '/api/careers/get_all'
+  private readonly careerGetByIdUrl: string = '/api/careers/get_by_id'
 
   /**
    * Modulo HttpClient para enviar solicitudes http
@@ -26,7 +27,7 @@ export class CareerService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.careerUrl}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.careerGetAllUrl}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -38,7 +39,7 @@ export class CareerService {
    * @returns Observable<ApiResponse>
    */
   getById(careerId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.careerUrl}/${careerId}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.careerGetByIdUrl}/${careerId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

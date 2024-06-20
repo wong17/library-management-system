@@ -14,10 +14,12 @@ export class MonographLoanService {
   /* API url base */
   private readonly apiUrl: string = environment.apiUrl;
   /* MonographLoan urls */
-  private readonly monographLoanCreateUrl: string = '/api/MonographLoan/Create'
-  private readonly monographLoanUpdateBorrowedMonographLoanUrl: string = '/api/MonographLoan/UpdateBorrowedBookLoan'
-  private readonly monographLoanUpdateReturnedMonographLoanUrl: string = '/api/MonographLoan/UpdateReturnedBookLoan'
-  private readonly monographLoanUrl: string = '/api/MonographLoan'
+  private readonly monographLoanCreateUrl: string = '/api/monograph_loans/create'
+  private readonly monographLoanUpdateBorrowedMonographLoanUrl: string = '/api/monograph_loans/update_borrowed_book_loan'
+  private readonly monographLoanUpdateReturnedMonographLoanUrl: string = '/api/monograph_loans/update_returned_book_loan'
+  private readonly monographLoanDeleteUrl: string = '/api/monograph_loans/delete'
+  private readonly monographLoanGetAllUrl: string = '/api/monograph_loans/get_all'
+  private readonly monographLoanGetByIdUrl: string = '/api/monograph_loans/get_by_id'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {
@@ -75,7 +77,7 @@ export class MonographLoanService {
    * @returns Observable<ApiResponse>
    */
   delete(monographLoanId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.monographLoanUrl}/${monographLoanId}`)
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.monographLoanDeleteUrl}/${monographLoanId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -86,7 +88,7 @@ export class MonographLoanService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographLoanUrl}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographLoanGetAllUrl}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -98,7 +100,7 @@ export class MonographLoanService {
    * @returns Observable<ApiResponse>
    */
   getById(monographLoanId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographLoanUrl}/${monographLoanId}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographLoanGetByIdUrl}/${monographLoanId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

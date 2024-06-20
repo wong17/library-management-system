@@ -5,7 +5,7 @@ using System.Net;
 
 namespace LibraryManagementSystem.WebAPI.Controllers.University
 {
-    [Route("api/[controller]")]
+    [Route("api/students")]
     [ApiController]
     public class StudentController(IStudentBll studentBll) : ControllerBase
     {
@@ -15,7 +15,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.University
         /// Devuelve todos los estudiantes
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("get_all")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
@@ -32,7 +32,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.University
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{id:int}")]
+        [HttpGet("get_by_id/{id:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -57,7 +57,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.University
         /// </summary>
         /// <param name="carnet"></param>
         /// <returns></returns>
-        [HttpGet("{carnet}")]
+        [HttpGet("get_by_carnet/{carnet}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

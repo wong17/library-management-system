@@ -15,9 +15,11 @@ export class RoleService {
   /* API url base */
   private readonly apiUrl: string = environment.apiUrl;
   /* Role urls */
-  private readonly roleCreateUrl: string = '/api/Role/Create'
-  private readonly roleUpdateUrl: string = '/api/Role/Update'
-  private readonly roleUrl: string = '/api/Role'
+  private readonly roleCreateUrl: string = '/api/roles/create'
+  private readonly roleUpdateUrl: string = '/api/roles/update'
+  private readonly roleDeleteUrl: string = '/api/roles/delete'
+  private readonly roleGetAllUrl: string = '/api/roles/get_all'
+  private readonly roleGetByIdUrl: string = '/api/roles/get_by_id'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {
@@ -63,7 +65,7 @@ export class RoleService {
    * @returns Observable<ApiResponse>
    */
   delete(roleId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.roleUrl}/${roleId}`)
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.roleDeleteUrl}/${roleId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -74,7 +76,7 @@ export class RoleService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.roleUrl}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.roleGetAllUrl}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -86,7 +88,7 @@ export class RoleService {
    * @returns Observable<ApiResponse>
    */
   getById(roleId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.roleUrl}/${roleId}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.roleGetByIdUrl}/${roleId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

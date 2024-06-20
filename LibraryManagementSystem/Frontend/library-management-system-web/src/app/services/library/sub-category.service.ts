@@ -15,11 +15,13 @@ export class SubCategoryService {
   /* API url base */
   private readonly apiUrl: string = environment.apiUrl;
   /* SubCategory urls */
-  private readonly subCategoryCreateUrl: string = '/api/SubCategory/Create'
-  private readonly subCategoryCreateManyUrl: string = '/api/SubCategory/CreateMany'
-  private readonly subCategoryUpdateUrl: string = '/api/SubCategory/Update'
-  private readonly subCategoryUpdateManyUrl: string = '/api/SubCategory/UpdateMany'
-  private readonly subCategoryUrl: string = '/api/SubCategory'
+  private readonly subCategoryCreateUrl: string = '/api/subcategories/create'
+  private readonly subCategoryCreateManyUrl: string = '/api/subcategories/create_many'
+  private readonly subCategoryUpdateUrl: string = '/api/subcategories/update'
+  private readonly subCategoryUpdateManyUrl: string = '/api/subcategories/update_many'
+  private readonly subCategoryDeleteUrl: string = '/api/subcategories/delete'
+  private readonly subCategoryGetAllUrl: string = '/api/subcategories/get_all'
+  private readonly subCategoryGetByIdUrl: string = '/api/subcategories/get_by_id'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {
@@ -89,7 +91,7 @@ export class SubCategoryService {
    * @returns Observable<ApiResponse>
    */
   delete(subCategoryId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.subCategoryUrl}/${subCategoryId}`)
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.subCategoryDeleteUrl}/${subCategoryId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -100,7 +102,7 @@ export class SubCategoryService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.subCategoryUrl}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.subCategoryGetAllUrl}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -112,7 +114,7 @@ export class SubCategoryService {
    * @returns Observable<ApiResponse>
    */
   getById(subCategoryId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.subCategoryUrl}/${subCategoryId}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.subCategoryGetByIdUrl}/${subCategoryId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

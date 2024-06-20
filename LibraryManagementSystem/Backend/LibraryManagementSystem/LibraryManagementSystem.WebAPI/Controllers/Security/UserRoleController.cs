@@ -8,7 +8,7 @@ using System.Net;
 
 namespace LibraryManagementSystem.WebAPI.Controllers.Security
 {
-    [Route("api/[controller]")]
+    [Route("api/user_roles")]
     [ApiController]
     public class UserRoleController(IUserRoleBll userRoleBll, IMapper mapper) : ControllerBase
     {
@@ -20,7 +20,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        [HttpPost("Create")]
+        [HttpPost("create")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -48,7 +48,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        [HttpPost("CreateMany")]
+        [HttpPost("create_many")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -78,7 +78,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("{userId:int}/{roleId:int}")]
+        [HttpDelete("delete/{userId:int}/{roleId:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -105,7 +105,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
         /// Devuelve todos los roles del usuario
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("get_all")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
@@ -122,7 +122,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{userId:int}/{roleId:int}")]
+        [HttpGet("get_by_id/{userId:int}/{roleId:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

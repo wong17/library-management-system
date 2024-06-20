@@ -8,7 +8,7 @@ using System.Net;
 
 namespace LibraryManagementSystem.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/subcategories")]
     [ApiController]
     public class SubCategoryController(ISubCategoryBll subCategoryBll, IMapper mapper) : ControllerBase
     {
@@ -20,7 +20,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        [HttpPost("Create")]
+        [HttpPost("create")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -47,7 +47,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        [HttpPost("CreateMany")]
+        [HttpPost("create_many")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -77,7 +77,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("{id:int}")]
+        [HttpDelete("delete/{id:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -104,7 +104,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// Devuelve todas las SubCategorías
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("get_all")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
@@ -121,7 +121,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{id:int}")]
+        [HttpGet("get_by_id/{id:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -146,7 +146,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        [HttpPut("Update")]
+        [HttpPut("update")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -174,7 +174,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        [HttpPut("UpdateMany")]
+        [HttpPut("update_many")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

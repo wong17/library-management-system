@@ -14,10 +14,12 @@ export class BookLoanService {
   /* API url base */
   private readonly apiUrl: string = environment.apiUrl;
   /* BookLoan urls */
-  private readonly bookLoanCreateUrl: string = '/api/BookLoan/Create'
-  private readonly bookLoanUpdateBorrowedBookLoanUrl: string = '/api/BookLoan/UpdateBorrowedBookLoan'
-  private readonly bookLoanUpdateReturnedBookLoanUrl: string = '/api/BookLoan/UpdateReturnedBookLoan'
-  private readonly bookLoanUrl: string = '/api/BookLoan'
+  private readonly bookLoanCreateUrl: string = '/api/book_loans/create'
+  private readonly bookLoanUpdateBorrowedBookLoanUrl: string = '/api/book_loans/update_borrowed_book_loan'
+  private readonly bookLoanUpdateReturnedBookLoanUrl: string = '/api/book_loans/update_returned_book_loan'
+  private readonly bookLoanDeleteUrl: string = '/api/book_loans/delete'
+  private readonly bookLoanGetAllUrl: string = '/api/book_loans/get_all'
+  private readonly bookLoanGetByIdUrl: string = '/api/book_loans/get_by_id'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {
@@ -75,7 +77,7 @@ export class BookLoanService {
    * @returns Observable<ApiResponse>
    */
   delete(bookLoanId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.bookLoanUrl}/${bookLoanId}`)
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.bookLoanDeleteUrl}/${bookLoanId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -86,7 +88,7 @@ export class BookLoanService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookLoanUrl}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookLoanGetAllUrl}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -98,7 +100,7 @@ export class BookLoanService {
    * @returns Observable<ApiResponse>
    */
   getById(bookLoanId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookLoanUrl}/${bookLoanId}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookLoanGetByIdUrl}/${bookLoanId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

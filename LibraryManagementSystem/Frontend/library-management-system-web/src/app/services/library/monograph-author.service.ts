@@ -14,10 +14,12 @@ export class MonographAuthorService {
   /* API url base */
   private readonly apiUrl: string = environment.apiUrl;
   /* MonographAuthor urls */
-  private readonly monographAuthorCreateUrl: string = '/api/MonographAuthor/Create'
-  private readonly monographAuthorCreateManyUrl: string = '/api/MonographAuthor/CreateMany'
-  private readonly monographAuthorUpdateManyUrl: string = '/api/MonographAuthor/UpdateMany'
-  private readonly monographAuthorUrl: string = '/api/MonographAuthor'
+  private readonly monographAuthorCreateUrl: string = '/api/monograph_authors/create'
+  private readonly monographAuthorCreateManyUrl: string = '/api/monograph_authors/create_many'
+  private readonly monographAuthorUpdateManyUrl: string = '/api/monograph_authors/update_many'
+  private readonly monographAuthorDeleteUrl: string = '/api/monograph_authors/delete'
+  private readonly monographAuthorGetAllUrl: string = '/api/monograph_authors/get_all'
+  private readonly monographAuthorGetByIdUrl: string = '/api/monograph_authors/get_by_id'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {
@@ -75,7 +77,7 @@ export class MonographAuthorService {
    * @returns Observable<ApiResponse>
    */
   delete(monographId: number, authorId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.monographAuthorUrl}/${monographId}/${authorId}`)
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.monographAuthorDeleteUrl}/${monographId}/${authorId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -86,7 +88,7 @@ export class MonographAuthorService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographAuthorUrl}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographAuthorGetAllUrl}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -98,7 +100,7 @@ export class MonographAuthorService {
    * @returns Observable<ApiResponse>
    */
   getById(monographId: number, authorId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographAuthorUrl}/${monographId}/${authorId}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographAuthorGetByIdUrl}/${monographId}/${authorId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

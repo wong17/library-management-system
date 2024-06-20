@@ -15,11 +15,13 @@ export class PublisherService {
   /* API url base */
   private readonly apiUrl: string = environment.apiUrl;
   /* Publisher urls */
-  private readonly publisherCreateUrl: string = '/api/Publisher/Create'
-  private readonly publisherCreateManyUrl: string = '/api/Publisher/CreateMany'
-  private readonly publisherUpdateUrl: string = '/api/Publisher/Update'
-  private readonly publisherUpdateManyUrl: string = '/api/Publisher/UpdateMany'
-  private readonly publisherUrl: string = '/api/Publisher'
+  private readonly publisherCreateUrl: string = '/api/publishers/create'
+  private readonly publisherCreateManyUrl: string = '/api/publishers/create_many'
+  private readonly publisherUpdateUrl: string = '/api/publishers/update'
+  private readonly publisherUpdateManyUrl: string = '/api/publishers/update_many'
+  private readonly publisherDeleteUrl: string = '/api/publishers/delete'
+  private readonly publisherGetAllUrl: string = '/api/publishers/get_all'
+  private readonly publisherGetByIdUrl: string = '/api/publishers/get_by_id'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {
@@ -89,7 +91,7 @@ export class PublisherService {
    * @returns Observable<ApiResponse>
    */
   delete(publisherId: number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.publisherUrl}/${publisherId}`)
+    return this.http.delete<ApiResponse>(`${this.apiUrl}${this.publisherDeleteUrl}/${publisherId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -100,7 +102,7 @@ export class PublisherService {
    * @returns Observable<ApiResponse>
    */
   getAll(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.publisherUrl}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.publisherGetAllUrl}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -112,7 +114,7 @@ export class PublisherService {
    * @returns Observable<ApiResponse>
    */
   getById(publisherId: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.apiUrl}${this.publisherUrl}/${publisherId}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.publisherGetByIdUrl}/${publisherId}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

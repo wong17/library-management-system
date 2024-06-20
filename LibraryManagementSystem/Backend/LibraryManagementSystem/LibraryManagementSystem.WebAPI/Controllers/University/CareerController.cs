@@ -5,7 +5,7 @@ using System.Net;
 
 namespace LibraryManagementSystem.WebAPI.Controllers.University
 {
-    [Route("api/[controller]")]
+    [Route("api/careers")]
     [ApiController]
     public class CareerController(ICareerBll carrerBll) : ControllerBase
     {
@@ -15,7 +15,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.University
         /// Devuelve todas las carreras
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("get_all")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
@@ -32,7 +32,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.University
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{id:int}")]
+        [HttpGet("get_by_id/{id:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
