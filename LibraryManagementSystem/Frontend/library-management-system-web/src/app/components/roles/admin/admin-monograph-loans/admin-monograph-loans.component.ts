@@ -75,8 +75,4 @@ export class AdminMonographLoansComponent implements AfterViewInit, OnInit {
     }
   }
 
-  insertMonographLoanClick() {
-
-  }
-
 }

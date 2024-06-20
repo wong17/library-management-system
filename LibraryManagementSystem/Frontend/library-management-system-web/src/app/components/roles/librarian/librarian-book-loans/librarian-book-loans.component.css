@@ -1,0 +1,28 @@
+table {
+    width: 100%;
+}
+
+.mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+.mat-column-bookLoanId {
+    width: 32px;
+    border-right: 1px solid currentColor;
+    padding-right: 24px;
+    text-align: center;
+}
+
+.filter-container {
+    display: flex;
+    align-items: center;
+}
+
+.filter-input {
+    margin-right: 30px;
+}
+
+.add-button {
+    min-width: auto;
+}

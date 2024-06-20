@@ -75,8 +75,4 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
     }
   }
 
-  insertBookLoanClick() {
-    
-  }
-
 }
