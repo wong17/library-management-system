@@ -22,7 +22,7 @@ import { LibrarianBookLoansComponent } from './components/roles/librarian/librar
 import { LibrarianMonographLoansComponent } from './components/roles/librarian/librarian-monograph-loans/librarian-monograph-loans.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'student-home', pathMatch: 'full' }, // Se activará cuando la URL sea la raíz de la aplicación (Redirige a LoginComponent por defecto)
+    { path: '', redirectTo: 'login', pathMatch: 'full' }, // Se activará cuando la URL sea la raíz de la aplicación (Redirige a LoginComponent por defecto)
     { path: 'login', component: LoginComponent },
     /* Componentes Admin */
     { path: 'admin-home', component: AdminHomeComponent, children: [

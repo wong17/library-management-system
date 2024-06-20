@@ -1,0 +1,155 @@
+<!--Titulo-->
+<h2 mat-dialog-title>{{ dialogData.title }}</h2>
+<!--Contenido-->
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="studentBookLoanForm" (ngSubmit)="onSubmit()">
+    <!--Carnet del estudiante-->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Carnet</mat-label>
+      <input
+        matInput
+        placeholder="2014-0876U..."
+        formControlName="carnet"
+        [errorStateMatcher]="matcher"
+        maxlength="10"
+      />
+      <!--validations-->
+      @if(carnet?.hasError('required')) {
+      <mat-error>Campo es <strong>obligatorio</strong></mat-error>
+      } @else if(carnet?.hasError('minlength')) {
+      <mat-error
+        >Carnet del estudiante debe 10 caracteres ej. ####-####X</mat-error
+      >
+      }
+    </mat-form-field>
+
+    <!--Tipo de prestamo-->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Tipo de préstamo</mat-label>
+      <input
+        matInput
+        placeholder=""
+        formControlName="typeOfLoan"
+        [errorStateMatcher]="matcher"
+        maxlength="10"
+        readonly="true"
+      />
+    </mat-form-field>
+
+    <!--Boton para buscar al estudiante-->
+    <button mat-button mat-stroked-button (click)="searchStudent()">
+      Buscar...
+    </button>
+
+    <!------------------------------------------------------------------------------------->
+
+    <!--Nombre del solicitante-->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Nombre del solicitante</mat-label>
+      <input
+        matInput
+        placeholder=""
+        formControlName="fullName"
+        [errorStateMatcher]="matcher"
+        maxlength="60"
+        readonly="true"
+      />
+    </mat-form-field>
+
+    <!--Carrera-->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Carrera</mat-label>
+      <input
+        matInput
+        placeholder=""
+        formControlName="career"
+        [errorStateMatcher]="matcher"
+        maxlength="50"
+        readonly="true"
+      />
+    </mat-form-field>
+
+    <!--Sexo-->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Sexo</mat-label>
+      <input
+        matInput
+        placeholder=""
+        formControlName="sex"
+        [errorStateMatcher]="matcher"
+        maxlength="1"
+        readonly="true"
+      />
+    </mat-form-field>
+
+    <!--Turno-->
+    <mat-form-field class="form-field">
+      <mat-label>Turno</mat-label>
+      <input
+        matInput
+        placeholder=""
+        formControlName="shift"
+        [errorStateMatcher]="matcher"
+        maxlength="10"
+        readonly="true"
+      />
+    </mat-form-field>
+
+    <!--Clasificacion del libro-->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Clasificación</mat-label>
+      <input
+        matInput
+        placeholder=""
+        formControlName="classification"
+        [errorStateMatcher]="matcher"
+        maxlength="25"
+        readonly="true"
+      />
+    </mat-form-field>
+
+    <!--Titulo del libro-->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Titulo</mat-label>
+      <input
+        matInput
+        placeholder=""
+        formControlName="title"
+        [errorStateMatcher]="matcher"
+        maxlength="100"
+        readonly="true"
+      />
+    </mat-form-field>
+
+    <!--Año de publicación-->
+    <mat-form-field class="form-field">
+      <mat-label>Año de publicación</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="publicationYear"
+        [errorStateMatcher]="matcher"
+        min="1900"
+        max="9999"
+        readonly="true"
+      />
+    </mat-form-field>
+
+    <!--Acciones-->
+    <mat-dialog-actions align="end" class="dialog-actions">
+      <!---->
+      <button mat-button mat-dialog-close (click)="closeDialog(false)">
+        Cancelar
+      </button>
+      <!---->
+      <button
+        mat-flat-button
+        type="submit"
+        color="primary"
+        [disabled]="studentBookLoanForm.invalid"
+      >
+        Solicitar
+      </button>
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>

@@ -33,12 +33,24 @@ export class StudentService {
   }
 
   /**
-   * Devuelve un estudiante
+   * Devuelve un estudiante por su id
    * @param studentId
    * @returns Observable<ApiResponse>
    */
   getById(studentId: number): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(`${this.apiUrl}${this.studentUrl}/${studentId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
+  }
+
+  /**
+   * Devuelve un estudiante por su carnet
+   * @param carnet
+   * @returns Observable<ApiResponse>
+   */
+  getByCarnet(carnet: string): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.studentUrl}/${carnet}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

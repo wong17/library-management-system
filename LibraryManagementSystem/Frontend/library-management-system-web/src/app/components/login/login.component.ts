@@ -13,6 +13,8 @@ import { UserLogInDto } from '../../entities/dtos/security/user-log-in-dto';
 import { UserService } from '../../services/security/user.service';
 import { Router } from '@angular/router';
 import { UserDto } from '../../entities/dtos/security/user-dto';
+import { ApiResponse } from '../../entities/api/api-response';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -30,11 +32,11 @@ export class LoginComponent {
   /* Mapea un rol a un componente */
   private roleRoutes: { [key: string]: string } = {
     'ADMIN': '/admin-home',
-    'ESTUDIANTE': '/student-home',
-    'BIBLIOTECARIO': '/librarian-home'
+    'STUDENT': '/student-home',
+    'LIBRARIAN': '/librarian-home'
   };
 
-  constructor(private formBuilder: FormBuilder, private userService: UserService, private router: Router) {
+  constructor(private formBuilder: FormBuilder, private userService: UserService, private toastr: ToastrService, private router: Router) {
     /* Agrupar controles, crear formulario y agregar validaciones */
     this.loginForm = this.formBuilder.group({
       username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
@@ -48,30 +50,42 @@ export class LoginComponent {
       next: response => {
         // Comprobar si se pudo iniciar sesión
         if (response.isSuccess !== 0 && response.statusCode !== 200) {
-          console.log(response);
+          this.toastr.warning(`${response.message}`, 'Atención', {
+            timeOut: 5000
+          })
           return;
         }
         // Obtener rol del usuario
         var userDto: UserDto = response.result as UserDto;
         if (!userDto.roles || userDto.roles.length === 0) {
-          console.error('El usuario no tiene ningún rol asociado');
+          this.toastr.warning(`${response.message}`, 'Atención', {
+            timeOut: 5000
+          })
           return;
         }
         // Redirigir según el rol del usuario 
         const role = userDto.roles[0].name;
         if (!role) {
-          console.error('Rol del usuario es nulo');
+          this.toastr.error(`${response.message}`, 'Error', {
+            timeOut: 5000
+          })
           return;
         }
         
         const route = this.roleRoutes[role];
         if (route) {
           this.router.navigate([route]);
+
+          this.toastr.success(`${response.message}`, 'Exito', {
+            timeOut: 5000
+          })
         }
 
       },
-      error: error => {
-        console.log(error);
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000
+        });
       }
     })
   }

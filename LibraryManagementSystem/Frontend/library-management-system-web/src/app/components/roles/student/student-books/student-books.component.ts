@@ -10,6 +10,9 @@ import { ApiResponse } from '../../../../entities/api/api-response';
 import { BookService } from '../../../../services/library/book.service';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort } from '@angular/material/sort';
+import { DialogData, DialogOperation } from '../../../../util/dialog-data';
+import { StudentBooksLoansDialogComponent } from '../student-books-loans-dialog/student-books-loans-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-student-books',
@@ -20,7 +23,8 @@ import { MatSort } from '@angular/material/sort';
 })
 export class StudentBooksComponent {
 
-  displayedColumns: string[] = ['isbN10', 'isbN13', 'classification', 'title', 'description', 'publicationYear', 'publisherName', 'categoryName', 'authors', 'subCategories'];
+  displayedColumns: string[] = ['isbN10', 'isbN13', 'classification', 'title', 'description', 'publicationYear', 'publisherName', 
+    'categoryName', 'authors', 'subCategories', 'options'];
 
   /*  */
   dataSource: MatTableDataSource<BookDto> = new MatTableDataSource<BookDto>();
@@ -31,7 +35,7 @@ export class StudentBooksComponent {
   /* Libros */
   books: BookDto[] = [];
 
-  constructor(private bookService: BookService, private toastr: ToastrService) { }
+  constructor(private bookService: BookService, private dialog: MatDialog, private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.getBooksDto();
@@ -78,6 +82,21 @@ export class StudentBooksComponent {
         });
       }
     })
+  }
+
+  requestBookClick(book: BookDto) {
+    // data
+    const dialogData: DialogData = {
+      title: 'Préstamo de libro',
+      operation: DialogOperation.Add,
+      data: book
+    };
+    // Abrir el dialogo y obtener una referencia de el
+    const dialogRef = this.dialog.open(StudentBooksLoansDialogComponent, {
+      width: '800px',
+      disableClose: true,
+      data: dialogData
+    });
   }
 
 }

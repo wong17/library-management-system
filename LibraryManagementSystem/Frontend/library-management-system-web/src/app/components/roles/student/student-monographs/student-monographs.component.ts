@@ -10,6 +10,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { DialogData, DialogOperation } from '../../../../util/dialog-data';
+import { StudentMonographLoansDialogComponent } from '../student-monograph-loans-dialog/student-monograph-loans-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-student-monographs',
@@ -20,7 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class StudentMonographsComponent {
 
-  displayedColumns: string[] = ['classification', 'title', 'description', 'tutor', 'presentationDate', 'careerName', 'authors'];
+  displayedColumns: string[] = ['classification', 'title', 'description', 'tutor', 'presentationDate', 'careerName', 'authors', 'options'];
 
   /*  */
   dataSource: MatTableDataSource<MonographDto> = new MatTableDataSource<MonographDto>();
@@ -29,7 +32,7 @@ export class StudentMonographsComponent {
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
 
-  constructor(private monographService: MonographService, private toastr: ToastrService) { }
+  constructor(private monographService: MonographService, private dialog: MatDialog, private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.getMonographsDto();
@@ -76,6 +79,21 @@ export class StudentMonographsComponent {
         });
       }
     })
+  }
+
+  requestMonographClick(monograph: MonographDto) {
+    // data
+    const dialogData: DialogData = {
+      title: 'Préstamo de monografía',
+      operation: DialogOperation.Add,
+      data: monograph
+    };
+    // Abrir el dialogo y obtener una referencia de el
+    const dialogRef = this.dialog.open(StudentMonographLoansDialogComponent, {
+      width: '800px',
+      disableClose: true,
+      data: dialogData
+    });
   }
 
 }
