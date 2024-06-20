@@ -55,6 +55,29 @@
     <td mat-cell *matCellDef="let element">{{ element.monograph }}</td>
   </ng-container>
 
+  <!-- Columna de opciones -->
+  <ng-container matColumnDef="options">
+    <th mat-header-cell *matHeaderCellDef>Opciones</th>
+    <!-- Iconos a mostrar en la columna -->
+    <mat-cell *matCellDef="let element">
+      <mat-icon
+        fontIcon="category"
+        matTooltip="Préstar monografía"
+        (click)="updateBorrowedMonographLoanClick(element)"
+      ></mat-icon>
+      <mat-icon
+        fontIcon="group"
+        matTooltip="Devolver monografía"
+        (click)="updateReturnedMonographLoanClick(element)"
+      ></mat-icon>
+      <mat-icon
+        fontIcon="delete"
+        matTooltip="Eliminar"
+        (click)="deleteMonographLoanClick(element)"
+      ></mat-icon>
+    </mat-cell>
+  </ng-container>
+
   <!-- Vincular arreglo que contiene el texto de las columnas que debe coincidir con la definición de cada una -->
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>

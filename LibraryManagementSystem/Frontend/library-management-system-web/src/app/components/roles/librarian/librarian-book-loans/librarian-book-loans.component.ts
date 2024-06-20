@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { BookDto } from '../../../../entities/dtos/library/book-dto';
 
 @Component({
   selector: 'app-librarian-book-loans',
@@ -19,7 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class LibrarianBookLoansComponent {
 
-  displayedColumns: string[] = ['bookLoanId', 'typeOfLoan', 'state', 'loanDate', 'dueDate', 'returnDate', 'student', 'book'];
+  displayedColumns: string[] = ['bookLoanId', 'typeOfLoan', 'state', 'loanDate', 'dueDate', 'returnDate', 'student', 'book', 'options'];
 
   /*  */
   dataSource: MatTableDataSource<BookLoanDto> = new MatTableDataSource<BookLoanDto>();
@@ -73,6 +74,18 @@ export class LibrarianBookLoansComponent {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  deleteBookLoanClick(book: BookDto) {
+
+  }
+  
+  updateBorrowedBookLoanClick(book: BookDto) {
+
+  }
+
+  updateReturnedBookLoanClick(book: BookDto) {
+
   }
 
 }

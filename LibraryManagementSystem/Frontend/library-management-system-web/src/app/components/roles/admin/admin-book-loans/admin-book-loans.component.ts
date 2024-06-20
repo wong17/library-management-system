@@ -9,6 +9,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog'
 import { BookLoanDto } from '../../../../entities/dtos/library/book-loan-dto';
 import { BookLoanService } from '../../../../services/library/book-loan.service';
+import { BookDto } from '../../../../entities/dtos/library/book-dto';
 
 @Component({
   selector: 'app-admin-book-loans',
@@ -19,7 +20,7 @@ import { BookLoanService } from '../../../../services/library/book-loan.service'
 })
 export class AdminBookLoansComponent implements AfterViewInit, OnInit {
 
-  displayedColumns: string[] = ['bookLoanId', 'typeOfLoan', 'state', 'loanDate', 'dueDate', 'returnDate', 'student', 'book'];
+  displayedColumns: string[] = ['bookLoanId', 'typeOfLoan', 'state', 'loanDate', 'dueDate', 'returnDate', 'student', 'book', 'options'];
 
   /*  */
   dataSource: MatTableDataSource<BookLoanDto> = new MatTableDataSource<BookLoanDto>();
@@ -35,7 +36,7 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
   ngOnInit(): void {
     this.getBookLoansDto();
   }
-  
+
   private getBookLoansDto(): void {
     this.bookLoanService.getAll().subscribe({
       next: response => {
@@ -73,6 +74,18 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  deleteBookLoanClick(book: BookDto) {
+
+  }
+
+  updateBorrowedBookLoanClick(book: BookDto) {
+
+  }
+
+  updateReturnedBookLoanClick(book: BookDto) {
+
   }
 
 }

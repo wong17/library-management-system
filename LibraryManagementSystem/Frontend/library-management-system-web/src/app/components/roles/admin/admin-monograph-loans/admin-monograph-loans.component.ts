@@ -9,6 +9,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog'
 import { MonographLoanDto } from '../../../../entities/dtos/library/monograph-loan-dto';
 import { MonographLoanService } from '../../../../services/library/monograph-loan.service';
+import { MonographDto } from '../../../../entities/dtos/library/monograph-dto';
 
 @Component({
   selector: 'app-admin-monograph-loans',
@@ -19,7 +20,7 @@ import { MonographLoanService } from '../../../../services/library/monograph-loa
 })
 export class AdminMonographLoansComponent implements AfterViewInit, OnInit {
 
-  displayedColumns: string[] = ['monographLoanId', 'state', 'loanDate', 'dueDate', 'returnDate', 'student', 'monograph'];
+  displayedColumns: string[] = ['monographLoanId', 'state', 'loanDate', 'dueDate', 'returnDate', 'student', 'monograph', 'options'];
 
   /*  */
   dataSource: MatTableDataSource<MonographLoanDto> = new MatTableDataSource<MonographLoanDto>();
@@ -73,6 +74,16 @@ export class AdminMonographLoansComponent implements AfterViewInit, OnInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  updateReturnedMonographLoanClick(monograph: MonographDto) {
+
+  }
+  updateBorrowedMonographLoanClick(monograph: MonographDto) {
+
+  }
+  deleteMonographLoanClick(monograph: MonographDto) {
+
   }
 
 }
