@@ -225,9 +225,9 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
                     return response;
                 }
                 /* Convertir fila a un objeto */
-                UserRole? bookAuthors = _sqlConnector.DataRowToObject<UserRole>(result.Rows[0]);
+                UserRole? userRole = _sqlConnector.DataRowToObject<UserRole>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto */
-                if (bookAuthors is null)
+                if (userRole is null)
                 {
                     response.Message = "Error al obtener respuesta de la base de datos.";
                     response.StatusCode = HttpStatusCode.InternalServerError;
@@ -235,7 +235,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
                 }
                 /* Retorna código de éxito y registro encontrado */
                 response.IsSuccess = 0;
-                response.Result = bookAuthors;
+                response.Result = userRole;
                 response.StatusCode = HttpStatusCode.OK;
                 response.Message = "Registro encontrado.";
             }

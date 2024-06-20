@@ -9,5 +9,6 @@ namespace LibraryManagementSystem.Bll.Interfaces.University
         Task<ApiResponse> GetAll();
         /* Para obtener un solo registro */
         Task<ApiResponse> GetById(int id);
+        Task<ApiResponse> GetByCarnet(string? carnet);
     }
 }

@@ -51,5 +51,30 @@ namespace LibraryManagementSystem.WebAPI.Controllers.University
 
             return Ok(response);
         }
+
+        /// <summary>
+        /// Devuelve un estudiante por su carnet
+        /// </summary>
+        /// <param name="carnet"></param>
+        /// <returns></returns>
+        [HttpGet("{carnet}")]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetByCarnet(string? carnet)
+        {
+            if (string.IsNullOrEmpty(carnet))
+                return BadRequest(new ApiResponse() { Message = "Carnet no puede null.", StatusCode = HttpStatusCode.BadRequest });
+
+            var response = await _studentBll.GetByCarnet(carnet);
+            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
+                return NotFound(response);
+
+            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            return Ok(response);
+        }
     }
 }

@@ -319,3 +319,20 @@ BEGIN
 	END
 END
 GO
+
+-- GET Student by carnet
+IF OBJECT_ID('University.uspGetStudentByCarnet', 'P') IS NOT NULL  
+    DROP PROCEDURE University.uspGetStudentByCarnet;  
+GO 
+CREATE PROC University.uspGetStudentByCarnet (
+	@Carnet CHAR(10)
+)
+AS
+BEGIN
+	--
+	SELECT [StudentId], [FirstName], [SecondName], [FirstLastname], [SecondLastname], [Carnet], [PhoneNumber], [Sex], [Email], 
+			[Shift], [BorrowedBooks], [HasBorrowedMonograph], [Fine], [CreatedOn], [ModifiedOn], [CareerId]
+	FROM [University].Student 
+	WHERE Carnet = @Carnet
+END
+GO

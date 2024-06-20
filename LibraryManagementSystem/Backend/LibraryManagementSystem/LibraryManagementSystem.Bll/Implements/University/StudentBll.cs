@@ -50,6 +50,30 @@ namespace LibraryManagementSystem.Bll.Implements.University
             return response;
         }
 
+        public async Task<ApiResponse> GetByCarnet(string? carnet)
+        {
+            // Comprobar si existe el estudiante
+            var response = await _repository.GetByCarnet(carnet);
+            if (response.Result is null || response.Result is not Student student)
+                return response;
+
+            // Obtener ids de carreras de los estudiantes
+            var careerId = student.CareerId;
+            var studentDto = _mapper.Map<StudentDto>(student);
+
+            // Comprobar si hay carreras registradas
+            var careerResponse = await _careerBll.GetById(careerId);
+            if (careerResponse.Result is null || careerResponse.Result is not CareerDto career)
+                return response;
+
+            studentDto.Career = career;
+
+            // Actualizar el resultado en la respuesta
+            response.Result = studentDto;
+
+            return response;
+        }
+
         public async Task<ApiResponse> GetById(int id)
         {
             // Comprobar si existe el estudiante

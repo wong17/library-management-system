@@ -38,6 +38,45 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.University
             return response;
         }
 
+        public async Task<ApiResponse> GetByCarnet(string? carnet)
+        {
+            ApiResponse response = new();
+            SqlParameter[] parameters = [new("@Carnet", carnet)];
+            try
+            {
+                /* Ejecutar procedimiento almacenado */
+                DataTable result = await _sqlConnector.ExecuteDataTableAsync("University.uspGetStudentByCarnet", CommandType.StoredProcedure, parameters);
+                if (result.Rows.Count <= 0)
+                {
+                    response.IsSuccess = 2;
+                    response.StatusCode = HttpStatusCode.NotFound;
+                    response.Message = "No se encontro un registro con el Carnet ingresado.";
+                    return response;
+                }
+                /* Convertir fila a un objeto */
+                Student? student = _sqlConnector.DataRowToObject<Student>(result.Rows[0]);
+                /* Sino se pudo convertir la fila a un objeto */
+                if (student is null)
+                {
+                    response.Message = "Error al obtener respuesta de la base de datos.";
+                    response.StatusCode = HttpStatusCode.InternalServerError;
+                    return response;
+                }
+                /* Retorna código de éxito y registro encontrado */
+                response.IsSuccess = 0;
+                response.Result = student;
+                response.StatusCode = HttpStatusCode.OK;
+                response.Message = "Registro encontrado.";
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.InternalServerError;
+            }
+
+            return response;
+        }
+
         /* Para obtener a un estudiante de la base de datos */
 
         public async Task<ApiResponse> GetById(int id)
