@@ -13,6 +13,8 @@ import { ToastrService } from 'ngx-toastr';
 import { ApiResponse } from '../../../../entities/api/api-response';
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
 import { MonographLoanSignalRService } from '../../../../services/signalr-hubs/monograph-loan-signal-r.service';
+import { UpdateBorrowedMonographLoanDto } from '../../../../entities/dtos/library/update-borrowed-monograph-loan-dto';
+import { UpdateReturnedMonographLoanDto } from '../../../../entities/dtos/library/update-returned-monograph-loan-dto';
 
 @Component({
   selector: 'app-admin-monograph-loans',
@@ -147,9 +149,14 @@ export class AdminMonographLoansComponent implements AfterViewInit, OnInit {
       })
       return
     }
-
+    //
+    const loanDto: UpdateBorrowedMonographLoanDto = {
+      monographLoanId: monographLoan.monographLoanId,
+      dueDate: new Date(),
+      borrowedUserId: 1
+    }
     // Realizar solicitud para prestar registro
-    this.monographLoanService.updateBorrowedMonographLoan(monographLoan.monographLoanId, new Date()).subscribe({
+    this.monographLoanService.updateBorrowedMonographLoan(loanDto).subscribe({
       next: response => {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
@@ -184,9 +191,13 @@ export class AdminMonographLoansComponent implements AfterViewInit, OnInit {
       })
       return
     }
-
+    //
+    const loanDto: UpdateReturnedMonographLoanDto = {
+      monographLoanId: monographLoan.monographLoanId,
+      returnedUserId: 1
+    }
     // Realizar solicitud para devolver registro
-    this.monographLoanService.updateReturnedMonographLoan(monographLoan.monographLoanId).subscribe({
+    this.monographLoanService.updateReturnedMonographLoan(loanDto).subscribe({
       next: response => {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {

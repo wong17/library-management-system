@@ -1,5 +1,6 @@
 ﻿using LibraryManagementSystem.Bll.Interfaces.Base;
 using LibraryManagementSystem.Common.Runtime;
+using LibraryManagementSystem.Entities.Dtos.Library;
 using LibraryManagementSystem.Entities.Models.Library;
 
 namespace LibraryManagementSystem.Bll.Interfaces.Library
@@ -14,8 +15,8 @@ namespace LibraryManagementSystem.Bll.Interfaces.Library
         /* Para obtener un solo registro */
         Task<ApiResponse> GetById(int id);
         /* Para aprobar una solicitud de préstamo de libro, estado de la solicitud: CREADA -> PRESTADO */
-        Task<ApiResponse> UpdateBorrowedBookLoan(int bookLoanId, DateTime dueDate);
+        Task<ApiResponse> UpdateBorrowedBookLoan(UpdateBorrowedBookLoanDto updateBorrowedBookLoanDto);
         /* Para hacer la devolución de un libro, estado de la solicitud: PRESTADO -> DEVUELTO */
-        Task<ApiResponse> UpdateReturnedBookLoan(int bookLoanId);
+        Task<ApiResponse> UpdateReturnedBookLoan(UpdateReturnedBookLoanDto updateReturnedBookLoanDto);
     }
 }

@@ -5,6 +5,8 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Net;
 using LibraryManagementSystem.Dal.Repository.Interfaces.Library;
+using Microsoft.VisualBasic;
+using LibraryManagementSystem.Entities.Dtos.Library;
 
 namespace LibraryManagementSystem.Dal.Repository.Implements.Library
 {
@@ -198,12 +200,13 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
 
         /* Para aprobar una Solicitud de prestamo de libro en la base de datos */
 
-        public async Task<ApiResponse> UpdateBorrowedBookLoan(int bookLoanId, DateTime dueDate)
+        public async Task<ApiResponse> UpdateBorrowedBookLoan(UpdateBorrowedBookLoanDto updateBorrowedBookLoanDto)
         {
             ApiResponse? response;
             /* Lista de parámetros que recibe el procedimiento almacenado */
             SqlParameter[] parameters = [
-                new("@BookLoanId", bookLoanId), new("@DueDate", dueDate)
+                new("@BookLoanId", updateBorrowedBookLoanDto.BookLoanId), new("@DueDate", updateBorrowedBookLoanDto.DueDate), 
+                new("@UserId", updateBorrowedBookLoanDto.BorrowedUserId)
             ];
 
             try
@@ -257,11 +260,11 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
 
         /* Para hacer una devolucion a una Solicitud de prestamo de libro en la base de datos */
 
-        public async Task<ApiResponse> UpdateReturnedBookLoan(int bookLoanId)
+        public async Task<ApiResponse> UpdateReturnedBookLoan(UpdateReturnedBookLoanDto updateReturnedBookLoanDto)
         {
             ApiResponse? response;
             /* Lista de parámetros que recibe el procedimiento almacenado */
-            SqlParameter[] parameters = [new("@BookLoanId", bookLoanId)];
+            SqlParameter[] parameters = [new("@BookLoanId", updateReturnedBookLoanDto.BookLoanId), new("@UserId", updateReturnedBookLoanDto.ReturnedUserId)];
 
             try
             {

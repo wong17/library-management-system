@@ -121,19 +121,19 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// <summary>
         /// Para aprobar una solicitud de préstamo de monografía, estado de la solicitud: CREADA -> PRESTADA
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="updateBorrowedMonographLoanDto"></param>
         /// <returns></returns>
-        [HttpPut("update_borrowed_monograph_loan/{monographLoanId:int}/{dueDate:datetime}")]
+        [HttpPut("update_borrowed_monograph_loan")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateBorrowedMonographLoan(int monographLoanId, DateTime dueDate)
+        public async Task<IActionResult> UpdateBorrowedMonographLoan(UpdateBorrowedMonographLoanDto updateBorrowedMonographLoanDto)
         {
-            if (monographLoanId <= 0)
-                return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
+            if (updateBorrowedMonographLoanDto is null)
+                return BadRequest(new ApiResponse() { Message = "Dto es null", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _monographLoanBll.UpdateBorrowedMonographLoan(monographLoanId, dueDate);
+            var response = await _monographLoanBll.UpdateBorrowedMonographLoan(updateBorrowedMonographLoanDto);
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
                 return BadRequest(response);
 
@@ -151,17 +151,17 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpPut("update_returned_monograph_loan/{monographLoanId:int}")]
+        [HttpPut("update_returned_monograph_loan")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateReturnedMonographLoan(int monographLoanId)
+        public async Task<IActionResult> UpdateReturnedMonographLoan(UpdateReturnedMonographLoanDto updateReturnedMonographLoanDto)
         {
-            if (monographLoanId <= 0)
-                return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
+            if (updateReturnedMonographLoanDto is null)
+                return BadRequest(new ApiResponse() { Message = "Dto es null", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _monographLoanBll.UpdateReturnedMonographLoan(monographLoanId);
+            var response = await _monographLoanBll.UpdateReturnedMonographLoan(updateReturnedMonographLoanDto);
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
                 return BadRequest(response);
 

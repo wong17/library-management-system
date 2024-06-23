@@ -1,4 +1,5 @@
-﻿using LibraryManagementSystem.Entities.Dtos.University;
+﻿using LibraryManagementSystem.Entities.Dtos.Security;
+using LibraryManagementSystem.Entities.Dtos.University;
 
 namespace LibraryManagementSystem.Entities.Dtos.Library
 {
@@ -14,5 +15,9 @@ namespace LibraryManagementSystem.Entities.Dtos.Library
         public StudentDto? Student { get; set; }
         // Book
         public BookDto? Book { get; set; }
+        // BorrowedUser
+        public UserDto? BorrowedUser { get; set; }
+        // ReturnedUser
+        public UserDto? ReturnedUser { get; set; }
     }
 }

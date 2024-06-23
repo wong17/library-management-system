@@ -1,19 +1,22 @@
 ﻿using AutoMapper;
 using LibraryManagementSystem.Bll.Interfaces.Library;
+using LibraryManagementSystem.Bll.Interfaces.Security;
 using LibraryManagementSystem.Bll.Interfaces.University;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Dal.Repository.Interfaces.Library;
 using LibraryManagementSystem.Entities.Dtos.Library;
+using LibraryManagementSystem.Entities.Dtos.Security;
 using LibraryManagementSystem.Entities.Dtos.University;
 using LibraryManagementSystem.Entities.Models.Library;
 
 namespace LibraryManagementSystem.Bll.Implements.Library
 {
-    public class BookLoanBll(IBookLoanRepository repository, IBookBll bookBll, IStudentBll studentBll, IMapper mapper) : IBookLoanBll
+    public class BookLoanBll(IBookLoanRepository repository, IBookBll bookBll, IStudentBll studentBll, IUserBll userBll, IMapper mapper) : IBookLoanBll
     {
         private readonly IBookLoanRepository _repository = repository;
         private readonly IBookBll _bookBll = bookBll;
         private readonly IStudentBll _studentBll = studentBll;
+        private readonly IUserBll _userBll = userBll;
         private readonly IMapper _mapper = mapper;
 
         public async Task<ApiResponse> Create(BookLoan entity) => await _repository.Create(entity);
@@ -28,9 +31,13 @@ namespace LibraryManagementSystem.Bll.Implements.Library
                 return response;
 
             // Obtener ids de los estudiantes de todos los prestamos
-            var studentIds = bookLoans.Select(s => s.StudentId).ToList();
+            var studentIds = bookLoans.Select(b => b.StudentId).ToList();
             // Obtener ids de los libros de todos los prestamos
             var bookIds = bookLoans.Select(b => b.BookId).ToList();
+            // Obtener ids de los usuarios que aprobaron el prestamo del libro
+            var borrowedUserIds = bookLoans.Select(b => b.BorrowedUserId).ToList();
+            // Obtener ids de los usuarios que recibieron el libro
+            var returnedUserIds = bookLoans.Select(b => b.ReturnedUserId).ToList();
             // Convertir bookloans a BookLoanDto
             var bookLoansDto = _mapper.Map<IEnumerable<BookLoanDto>>(bookLoans).ToList();
 
@@ -70,6 +77,30 @@ namespace LibraryManagementSystem.Bll.Implements.Library
                 }
             }
 
+            // 3. Borrowed users y Returned users
+            var usersResponse = await _userBll.GetAll();
+            if (usersResponse.Result is not null && usersResponse.Result is IEnumerable<UserDto> users)
+            {
+                var usersDictionary = users.ToDictionary(u => u.UserId);
+
+                for (int i = 0; i < bookLoansDto.Count; i++)
+                {
+                    var bookLoanDto = bookLoansDto[i];
+
+                    var borrowedUserId = borrowedUserIds[i];
+                    var returnedUserId = returnedUserIds[i];
+
+                    if (usersDictionary.TryGetValue(borrowedUserId, out var borrowedUserDto))
+                    {
+                        bookLoanDto.BorrowedUser = borrowedUserDto;
+                    }
+                    if (usersDictionary.TryGetValue(returnedUserId, out var returnedUserDto))
+                    {
+                        bookLoanDto.ReturnedUser = returnedUserDto;
+                    }
+                }
+            }
+
             // Retornar Dtos
             response.Result = bookLoansDto;
 
@@ -87,6 +118,10 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             var studentId = bookLoan.StudentId;
             // Obtener id del libro que se presto
             var bookId = bookLoan.BookId;
+            // Obtener id del usuario que presto el libro
+            var borrowedUserId = bookLoan.BorrowedUserId;
+            // Obtener id del usuario que recibio el libro
+            var returnedUserId = bookLoan.ReturnedUserId;
             // Convertir bookloans a BookLoanDto
             var bookLoanDto = _mapper.Map<BookLoanDto>(bookLoan);
 
@@ -104,13 +139,28 @@ namespace LibraryManagementSystem.Bll.Implements.Library
                 bookLoanDto.Book = book;
             }
 
+            // 3. Borrowed user y returned user
+            var borrowedUserResponse = await _userBll.GetById(borrowedUserId);
+            if (borrowedUserResponse.Result is not null && borrowedUserResponse.Result is UserDto borrowedUserDto)
+            {
+                bookLoanDto.BorrowedUser = borrowedUserDto;
+            }
+
+            var returnedUserResponse = await _userBll.GetById(returnedUserId);
+            if (returnedUserResponse.Result is not null && returnedUserResponse.Result is UserDto returnedUserDto)
+            {
+                bookLoanDto.ReturnedUser = returnedUserDto;
+            }
+
             response.Result = bookLoanDto;
 
             return response;
         }
 
-        public async Task<ApiResponse> UpdateBorrowedBookLoan(int bookLoanId, DateTime dueDate) => await _repository.UpdateBorrowedBookLoan(bookLoanId, dueDate);
+        public async Task<ApiResponse> UpdateBorrowedBookLoan(UpdateBorrowedBookLoanDto updateBorrowedBookLoanDto) => 
+            await _repository.UpdateBorrowedBookLoan(updateBorrowedBookLoanDto);
 
-        public async Task<ApiResponse> UpdateReturnedBookLoan(int bookLoanId) => await _repository.UpdateReturnedBookLoan(bookLoanId);
+        public async Task<ApiResponse> UpdateReturnedBookLoan(UpdateReturnedBookLoanDto updateReturnedBookLoanDto) => 
+            await _repository.UpdateReturnedBookLoan(updateReturnedBookLoanDto);
     }
 }

@@ -166,6 +166,8 @@ CREATE TABLE [Library].BookLoan (
 	LoanDate DATETIME NOT NULL CONSTRAINT DF_BookLoan_LoanDate DEFAULT GETDATE(),
 	DueDate DATETIME NULL,
 	ReturnDate DATETIME NULL,
+	BorrowedUserId INT NULL,
+	ReturnedUserId INT NULL,
 
 	ValidFrom datetime2(7) GENERATED ALWAYS AS ROW START NOT NULL,
     ValidTo datetime2(7) GENERATED ALWAYS AS ROW END NOT NULL,
@@ -175,7 +177,9 @@ CREATE TABLE [Library].BookLoan (
 	CONSTRAINT FK_BookLoan_Student_StudentId FOREIGN KEY(StudentId) REFERENCES [University].Student(StudentId),
 	CONSTRAINT FK_BookLoan_Book_BookId FOREIGN KEY(BookId) REFERENCES [Library].Book(BookId),
 	CONSTRAINT CK_BookLoan_TypeOfLoan CHECK(TypeOfLoan IN('SALA','DOMICILIO')),
-	CONSTRAINT CK_BookLoan_State CHECK([State] IN('CREADA', 'ELIMINADA', 'PRESTADO', 'DEVUELTO'))
+	CONSTRAINT CK_BookLoan_State CHECK([State] IN('CREADA', 'ELIMINADA', 'PRESTADO', 'DEVUELTO')),
+	CONSTRAINT FK_BookLoan_User_BorrowedUserId FOREIGN KEY (BorrowedUserId) REFERENCES [Security].[User] (UserId),
+	CONSTRAINT FK_BookLoan_User_ReturnedUserId FOREIGN KEY (ReturnedUserId) REFERENCES [Security].[User] (UserId)
 )
 WITH
 (
@@ -244,6 +248,8 @@ CREATE TABLE [Library].MonographLoan (
 	LoanDate DATETIME NOT NULL CONSTRAINT DF_MonographLoan_LoanDate DEFAULT GETDATE(),
 	DueDate DATETIME NULL,
 	ReturnDate DATETIME NULL,
+	BorrowedUserId INT NULL,
+	ReturnedUserId INT NULL,
 
 	ValidFrom datetime2(7) GENERATED ALWAYS AS ROW START NOT NULL,
     ValidTo datetime2(7) GENERATED ALWAYS AS ROW END NOT NULL,
@@ -252,7 +258,9 @@ CREATE TABLE [Library].MonographLoan (
 	CONSTRAINT PK_MonographLoan_MonographLoanId PRIMARY KEY(MonographLoanId),
 	CONSTRAINT FK_MonographLoan_Student_StudentId FOREIGN KEY(StudentId) REFERENCES [University].Student(StudentId),
 	CONSTRAINT FK_MonographLoan_Monograph_MonographId FOREIGN KEY(MonographId) REFERENCES [Library].Monograph(MonographId),
-	CONSTRAINT CK_MonographLoan_State CHECK([State] IN('CREADA', 'ELIMINADA', 'PRESTADA', 'DEVUELTA'))
+	CONSTRAINT CK_MonographLoan_State CHECK([State] IN('CREADA', 'ELIMINADA', 'PRESTADA', 'DEVUELTA')),
+	CONSTRAINT FK_MonographLoan_User_BorrowedUserId FOREIGN KEY (BorrowedUserId) REFERENCES [Security].[User] (UserId),
+	CONSTRAINT FK_MonographLoan_User_ReturnedUserId FOREIGN KEY (ReturnedUserId) REFERENCES [Security].[User] (UserId)
 )
 WITH
 (

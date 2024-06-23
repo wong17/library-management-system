@@ -93,7 +93,8 @@ IF OBJECT_ID('Library.uspUpdateBorrowedMonographLoan', 'P') IS NOT NULL
 GO
 CREATE PROC [Library].uspUpdateBorrowedMonographLoan (
 	@MonographLoanId INT,
-	@DueDate DATETIME
+	@DueDate DATETIME,
+	@UserId INT
 )
 AS
 BEGIN
@@ -113,6 +114,18 @@ BEGIN
 	IF (@DueDate IS NULL)
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Fecha de vencimiento del préstamo es obligatoria' AS [Message]
+		RETURN
+	END
+	-- VERIFICAR ID DEL USUARIO 
+	IF (@UserId IS NULL OR @UserId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id del usuario que aprobó el préstamo del libro es obligatorio' AS [Message]
+		RETURN
+	END
+	--
+	IF NOT EXISTS (SELECT 1 FROM [Security].[User] WHERE UserId = @UserId)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'No existe un usuario con el Id proporcionado' AS [Message]
 		RETURN
 	END
 	-- VERIFICAR QUE LA SOLICITUD A APROBAR TENGA POR ESTADO 'CREADA'
@@ -142,7 +155,7 @@ BEGIN
 				ROLLBACK TRAN;
 		END
 		-- ACTUALIZAR ESTADO DE LA SOLICITUD A 'PRESTADA'
-		UPDATE [Library].MonographLoan SET [State] = 'PRESTADA', DueDate = @DueDate WHERE MonographLoanId = @MonographLoanId
+		UPDATE [Library].MonographLoan SET [State] = 'PRESTADA', DueDate = @DueDate, BorrowedUserId = @UserId WHERE MonographLoanId = @MonographLoanId
 		-- RETORNAR MENSAJE DE EXITO SI TODO SALIO BIEN
 		SELECT 0 AS IsSuccess, 'Solicitud de préstamo actualizada exitosamente' AS [Message]
 		--
@@ -165,7 +178,8 @@ IF OBJECT_ID('Library.uspUpdateReturnedMonographLoan', 'P') IS NOT NULL
     DROP PROCEDURE [Library].uspUpdateReturnedMonographLoan;  
 GO
 CREATE PROC [Library].uspUpdateReturnedMonographLoan (
-	@MonographLoanId INT
+	@MonographLoanId INT,
+	@UserId INT
 )
 AS
 BEGIN
@@ -179,6 +193,18 @@ BEGIN
 	IF NOT EXISTS (SELECT 1 FROM [Library].MonographLoan WHERE MonographLoanId = @MonographLoanId)
 	BEGIN
 		SELECT 2 AS IsSuccess, 'No existe una solicitud de préstamo con el Id proporcionado' AS [Message]
+		RETURN
+	END
+	-- VERIFICAR ID DEL USUARIO 
+	IF (@UserId IS NULL OR @UserId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id del usuario que aprobó el préstamo del libro es obligatorio' AS [Message]
+		RETURN
+	END
+	--
+	IF NOT EXISTS (SELECT 1 FROM [Security].[User] WHERE UserId = @UserId)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'No existe un usuario con el Id proporcionado' AS [Message]
 		RETURN
 	END
 	-- VERIFICAR QUE LA SOLICITUD PARA HACER LA DEVOLUCION TENGA POR ESTADO 'PRESTADA'
@@ -222,7 +248,7 @@ BEGIN
 				ROLLBACK TRAN;
 		END
 		-- ACTUALIZAR ESTADO DE LA SOLICITUD A 'DEVUELTO'
-		UPDATE [Library].MonographLoan SET [State] = 'DEVUELTA', ReturnDate = GETDATE() WHERE MonographLoanId = @MonographLoanId
+		UPDATE [Library].MonographLoan SET [State] = 'DEVUELTA', ReturnDate = GETDATE(), ReturnedUserId = @UserId WHERE MonographLoanId = @MonographLoanId
 		-- RETORNAR MENSAJE DE EXITO SI TODO SALIO BIEN
 		SELECT 0 AS IsSuccess, 'Solicitud de préstamo actualizada exitosamente' AS [Message]
 		--
@@ -319,13 +345,13 @@ BEGIN
 	--
 	IF (@MonographLoanId IS NULL OR @MonographLoanId = '')
 	BEGIN
-		SELECT MonographLoanId, StudentId, MonographId, [State], LoanDate, DueDate, ReturnDate FROM [Library].MonographLoan
+		SELECT MonographLoanId, StudentId, MonographId, [State], LoanDate, DueDate, ReturnDate, BorrowedUserId, ReturnedUserId FROM [Library].MonographLoan
 		ORDER BY LoanDate DESC
 	END
 	ELSE
 	BEGIN
-		SELECT MonographLoanId, StudentId, MonographId, [State], LoanDate, DueDate, ReturnDate FROM [Library].MonographLoan WHERE MonographLoanId = @MonographLoanId
-		ORDER BY LoanDate DESC
+		SELECT MonographLoanId, StudentId, MonographId, [State], LoanDate, DueDate, ReturnDate, BorrowedUserId, ReturnedUserId FROM [Library].MonographLoan 
+		WHERE MonographLoanId = @MonographLoanId ORDER BY LoanDate DESC
 	END
 END
 GO

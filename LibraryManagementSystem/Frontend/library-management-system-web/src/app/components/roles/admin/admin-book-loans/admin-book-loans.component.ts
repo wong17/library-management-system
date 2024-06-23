@@ -13,6 +13,8 @@ import { ToastrService } from 'ngx-toastr';
 import { ApiResponse } from '../../../../entities/api/api-response';
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
 import { BookLoanSignalRService } from '../../../../services/signalr-hubs/book-loan-signal-r.service';
+import { UpdateBorrowedBookLoanDto } from '../../../../entities/dtos/library/update-borrowed-book-loan-dto';
+import { UpdateReturnedBookLoanDto } from '../../../../entities/dtos/library/update-returned-book-loan-dto';
 
 @Component({
   selector: 'app-admin-book-loans',
@@ -148,8 +150,15 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
       })
       return
     }
+    // 
+    const loanDto: UpdateBorrowedBookLoanDto = {
+      bookLoanId: bookLoan.bookLoanId,
+      dueDate: new Date(),
+      borrowedUserId: 1
+    }
+
     // Realizar solicitud para prestar registro
-    this.bookLoanService.updateBorrowedBookLoan(bookLoan.bookLoanId, new Date()).subscribe({
+    this.bookLoanService.updateBorrowedBookLoan(loanDto).subscribe({
       next: response => {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
@@ -184,9 +193,13 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
       })
       return
     }
-
+    //
+    const loanDto: UpdateReturnedBookLoanDto = {
+      bookLoanId: bookLoan.bookLoanId,
+      returnedUserId: 1
+    }
     // Realizar solicitud para devolver registro
-    this.bookLoanService.updateReturnedBookLoan(bookLoan.bookLoanId).subscribe({
+    this.bookLoanService.updateReturnedBookLoan(loanDto).subscribe({
       next: response => {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {

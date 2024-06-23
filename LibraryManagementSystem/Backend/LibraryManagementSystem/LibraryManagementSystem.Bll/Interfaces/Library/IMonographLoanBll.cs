@@ -1,5 +1,6 @@
 ﻿using LibraryManagementSystem.Bll.Interfaces.Base;
 using LibraryManagementSystem.Common.Runtime;
+using LibraryManagementSystem.Entities.Dtos.Library;
 using LibraryManagementSystem.Entities.Models.Library;
 
 namespace LibraryManagementSystem.Bll.Interfaces.Library
@@ -14,8 +15,8 @@ namespace LibraryManagementSystem.Bll.Interfaces.Library
         /* Para obtener un solo registro */
         Task<ApiResponse> GetById(int id);
         /* Para aprobar una solicitud de préstamo de monografía, estado de la solicitud: CREADA -> PRESTADA */
-        Task<ApiResponse> UpdateBorrowedMonographLoan(int monographLoanId, DateTime dueDate);
+        Task<ApiResponse> UpdateBorrowedMonographLoan(UpdateBorrowedMonographLoanDto updateBorrowedMonographLoanDto);
         /* Para hacer la devolución de una monografía, estado de la solicitud: PRESTADA -> DEVUELTA */
-        Task<ApiResponse> UpdateReturnedMonographLoan(int monographLoanId);
+        Task<ApiResponse> UpdateReturnedMonographLoan(UpdateReturnedMonographLoanDto updateReturnedMonographLoanDto);
     }
 }

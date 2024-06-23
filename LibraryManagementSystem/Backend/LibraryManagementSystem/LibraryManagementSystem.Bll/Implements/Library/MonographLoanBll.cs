@@ -1,19 +1,23 @@
 ﻿using AutoMapper;
 using LibraryManagementSystem.Bll.Interfaces.Library;
+using LibraryManagementSystem.Bll.Interfaces.Security;
 using LibraryManagementSystem.Bll.Interfaces.University;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Dal.Repository.Interfaces.Library;
 using LibraryManagementSystem.Entities.Dtos.Library;
+using LibraryManagementSystem.Entities.Dtos.Security;
 using LibraryManagementSystem.Entities.Dtos.University;
 using LibraryManagementSystem.Entities.Models.Library;
 
 namespace LibraryManagementSystem.Bll.Implements.Library
 {
-    public class MonographLoanBll(IMonographLoanRepository repository, IMonographBll monographBll, IStudentBll studentBll, IMapper mapper) : IMonographLoanBll
+    public class MonographLoanBll(IMonographLoanRepository repository, IMonographBll monographBll, IStudentBll studentBll,
+        IUserBll userBll, IMapper mapper) : IMonographLoanBll
     {
         private readonly IMonographLoanRepository _repository = repository;
         private readonly IMonographBll _monographBll = monographBll;
         private readonly IStudentBll _studentBll = studentBll;
+        private readonly IUserBll _userBll = userBll;
         private readonly IMapper _mapper = mapper;
 
         public async Task<ApiResponse> Create(MonographLoan entity) => await _repository.Create(entity);
@@ -28,9 +32,13 @@ namespace LibraryManagementSystem.Bll.Implements.Library
                 return response;
 
             // Obtener ids de los estudiantes de todos los prestamos
-            var studentIds = monographLoans.Select(s => s.StudentId).ToList();
+            var studentIds = monographLoans.Select(m => m.StudentId).ToList();
             // Obtener ids de las monografias de todos los prestamos
-            var monographIds = monographLoans.Select(b => b.MonographLoanId).ToList();
+            var monographIds = monographLoans.Select(m => m.MonographLoanId).ToList();
+            // Obtener ids de los usuarios que aprobaron el prestamo del libro
+            var borrowedUserIds = monographLoans.Select(m => m.BorrowedUserId).ToList();
+            // Obtener ids de los usuarios que recibieron el libro
+            var returnedUserIds = monographLoans.Select(m => m.ReturnedUserId).ToList();
             // Convertir bookloans a BookLoanDto
             var monographLoansDto = _mapper.Map<IEnumerable<MonographLoanDto>>(monographLoans).ToList();
 
@@ -70,6 +78,30 @@ namespace LibraryManagementSystem.Bll.Implements.Library
                 }
             }
 
+            // 3. Borrowed users y Returned users
+            var usersResponse = await _userBll.GetAll();
+            if (usersResponse.Result is not null && usersResponse.Result is IEnumerable<UserDto> users)
+            {
+                var usersDictionary = users.ToDictionary(u => u.UserId);
+
+                for (int i = 0; i < monographLoansDto.Count; i++)
+                {
+                    var monographLoanDto = monographLoansDto[i];
+
+                    var borrowedUserId = borrowedUserIds[i];
+                    var returnedUserId = returnedUserIds[i];
+
+                    if (usersDictionary.TryGetValue(borrowedUserId, out var borrowedUserDto))
+                    {
+                        monographLoanDto.BorrowedUser = borrowedUserDto;
+                    }
+                    if (usersDictionary.TryGetValue(returnedUserId, out var returnedUserDto))
+                    {
+                        monographLoanDto.ReturnedUser = returnedUserDto;
+                    }
+                }
+            }
+
             response.Result = monographLoansDto;
 
             return response;
@@ -86,6 +118,10 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             var studentId = monographLoan.StudentId;
             // Obtener id de la monografia que se presto
             var monographId = monographLoan.MonographLoanId;
+            // Obtener id del usuario que presto el libro
+            var borrowedUserId = monographLoan.BorrowedUserId;
+            // Obtener id del usuario que recibio el libro
+            var returnedUserId = monographLoan.ReturnedUserId;
             // Convertir monographLoan a MonographLoanDto
             var monographLoanDto = _mapper.Map<MonographLoanDto>(monographLoan);
 
@@ -103,14 +139,28 @@ namespace LibraryManagementSystem.Bll.Implements.Library
                 monographLoanDto.Monograph = monograph;
             }
 
+            // 3. Borrowed user y returned user
+            var borrowedUserResponse = await _userBll.GetById(borrowedUserId);
+            if (borrowedUserResponse.Result is not null && borrowedUserResponse.Result is UserDto borrowedUserDto)
+            {
+                monographLoanDto.BorrowedUser = borrowedUserDto;
+            }
+
+            var returnedUserResponse = await _userBll.GetById(returnedUserId);
+            if (returnedUserResponse.Result is not null && returnedUserResponse.Result is UserDto returnedUserDto)
+            {
+                monographLoanDto.ReturnedUser = returnedUserDto;
+            }
+
             response.Result = monographLoanDto;
 
             return response;
         }
 
-        public async Task<ApiResponse> UpdateBorrowedMonographLoan(int monographLoanId, DateTime dueDate) =>
-            await _repository.UpdateBorrowedMonographLoan(monographLoanId, dueDate);
+        public async Task<ApiResponse> UpdateBorrowedMonographLoan(UpdateBorrowedMonographLoanDto updateBorrowedMonographLoanDto) =>
+            await _repository.UpdateBorrowedMonographLoan(updateBorrowedMonographLoanDto);
 
-        public async Task<ApiResponse> UpdateReturnedMonographLoan(int monographLoanId) => await _repository.UpdateReturnedMonographLoan(monographLoanId);
+        public async Task<ApiResponse> UpdateReturnedMonographLoan(UpdateReturnedMonographLoanDto updateReturnedMonographLoanDto) => 
+            await _repository.UpdateReturnedMonographLoan(updateReturnedMonographLoanDto);
     }
 }

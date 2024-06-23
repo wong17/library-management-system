@@ -2,9 +2,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { BookLoanInsertDto } from '../../entities/dtos/library/book-loan-insert-dto';
+import { UpdateBorrowedBookLoanDto } from '../../entities/dtos/library/update-borrowed-book-loan-dto'
 import { ApiResponse } from '../../entities/api/api-response';
 import { catchError, Observable } from 'rxjs';
 import { HttpErrorHandler } from '../../util/http-error-handler';
+import { UpdateReturnedBookLoanDto } from '../../entities/dtos/library/update-returned-book-loan-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -49,11 +51,11 @@ export class BookLoanService {
 
   /**
    * Actualiza la fecha de devolución de una solicitud préstamo de libro
-   * @param (bookLoanId dueDate)
+   * @param loanDto
    * @returns Observable<ApiResponse>
    */
-  updateBorrowedBookLoan(bookLoanId: number, dueDate: Date): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.bookLoanUpdateBorrowedBookLoanUrl}/${bookLoanId}/${dueDate.toDateString()}`, this.httpHeader)
+  updateBorrowedBookLoan(loanDto: UpdateBorrowedBookLoanDto): Observable<ApiResponse> {
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.bookLoanUpdateBorrowedBookLoanUrl}`, loanDto, this.httpHeader)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));
@@ -61,11 +63,11 @@ export class BookLoanService {
 
   /**
    * Actualiza una solicitud de préstamo de libro cambiando su estado a DEVUELTO
-   * @param bookLoanId
+   * @param loanDto
    * @returns Observable<ApiResponse>
    */
-  updateReturnedBookLoan(bookLoanId: number): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.apiUrl}${this.bookLoanUpdateReturnedBookLoanUrl}/${bookLoanId}`, this.httpHeader)
+  updateReturnedBookLoan(loanDto: UpdateReturnedBookLoanDto): Observable<ApiResponse> {
+    return this.http.put<ApiResponse>(`${this.apiUrl}${this.bookLoanUpdateReturnedBookLoanUrl}`, loanDto, this.httpHeader)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

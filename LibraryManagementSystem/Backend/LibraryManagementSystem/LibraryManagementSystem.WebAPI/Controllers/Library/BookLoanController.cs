@@ -121,19 +121,19 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// <summary>
         /// Para aprobar una solicitud de préstamo de libro, estado de la solicitud: CREADA -> PRESTADO
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="updateBorrowedBookLoanDto"></param>
         /// <returns></returns>
-        [HttpPut("update_borrowed_book_loan/{bookLoanId:int}/{dueDate:datetime}")]
+        [HttpPut("update_borrowed_book_loan")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateBorrowedBookLoan(int bookLoanId, DateTime dueDate)
+        public async Task<IActionResult> UpdateBorrowedBookLoan(UpdateBorrowedBookLoanDto updateBorrowedBookLoanDto)
         {
-            if (bookLoanId <= 0)
-                return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
+            if (updateBorrowedBookLoanDto is null)
+                return BadRequest(new ApiResponse() { Message = "Dto es null", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookLoanBll.UpdateBorrowedBookLoan(bookLoanId, dueDate);
+            var response = await _bookLoanBll.UpdateBorrowedBookLoan(updateBorrowedBookLoanDto);
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
                 return BadRequest(response);
 
@@ -149,19 +149,19 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         /// <summary>
         /// Para hacer la devolución de un libro, estado de la solicitud: PRESTADO -> DEVUELTO
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="updateReturnedBookLoanDto"></param>
         /// <returns></returns>
-        [HttpPut("update_returned_book_loan/{bookLoanId:int}")]
+        [HttpPut("update_returned_book_loan")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateReturnedBookLoan(int bookLoanId)
+        public async Task<IActionResult> UpdateReturnedBookLoan(UpdateReturnedBookLoanDto updateReturnedBookLoanDto)
         {
-            if (bookLoanId <= 0)
-                return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
+            if (updateReturnedBookLoanDto is null)
+                return BadRequest(new ApiResponse() { Message = "Dto es null", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookLoanBll.UpdateReturnedBookLoan(bookLoanId);
+            var response = await _bookLoanBll.UpdateReturnedBookLoan(updateReturnedBookLoanDto);
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
                 return BadRequest(response);
 

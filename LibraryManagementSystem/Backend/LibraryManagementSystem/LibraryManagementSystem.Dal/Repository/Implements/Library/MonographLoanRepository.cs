@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Net;
 using LibraryManagementSystem.Dal.Repository.Interfaces.Library;
+using LibraryManagementSystem.Entities.Dtos.Library;
 
 namespace LibraryManagementSystem.Dal.Repository.Implements.Library
 {
@@ -198,12 +199,13 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
 
         /* Para aprobar una Solicitud de prestamo de monografia en la base de datos */
 
-        public async Task<ApiResponse> UpdateBorrowedMonographLoan(int monographLoanId, DateTime dueDate)
+        public async Task<ApiResponse> UpdateBorrowedMonographLoan(UpdateBorrowedMonographLoanDto updateBorrowedMonographLoanDto)
         {
             ApiResponse? response;
             /* Lista de parámetros que recibe el procedimiento almacenado */
             SqlParameter[] parameters = [
-                new("@MonographLoanId", monographLoanId), new("@DueDate", dueDate)
+                new("@MonographLoanId", updateBorrowedMonographLoanDto.MonographLoanId), new("@DueDate", updateBorrowedMonographLoanDto.DueDate),
+                new("@UserId", updateBorrowedMonographLoanDto.BorrowedUserId)
             ];
 
             try
@@ -257,11 +259,12 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
 
         /* Para hacer una devolucion a una Solicitud de prestamo de monografia en la base de datos */
 
-        public async Task<ApiResponse> UpdateReturnedMonographLoan(int monographLoanId)
+        public async Task<ApiResponse> UpdateReturnedMonographLoan(UpdateReturnedMonographLoanDto updateReturnedMonographLoanDto)
         {
             ApiResponse? response;
             /* Lista de parámetros que recibe el procedimiento almacenado */
-            SqlParameter[] parameters = [new("@MonographLoanId", monographLoanId)];
+            SqlParameter[] parameters = [new("@MonographLoanId", updateReturnedMonographLoanDto.MonographLoanId),
+                                        new("@UserId", updateReturnedMonographLoanDto.ReturnedUserId)];
 
             try
             {
