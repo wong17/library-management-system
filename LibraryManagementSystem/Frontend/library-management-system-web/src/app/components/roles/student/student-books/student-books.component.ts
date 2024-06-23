@@ -10,7 +10,7 @@ import { ApiResponse } from '../../../../entities/api/api-response';
 import { BookService } from '../../../../services/library/book.service';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort } from '@angular/material/sort';
-import { DialogData, DialogOperation } from '../../../../util/dialog-data';
+import { DialogData, DialogOperation, LoanDialogData, TypeOfLoan } from '../../../../util/dialog-data';
 import { StudentBooksLoansDialogComponent } from '../student-books-loans-dialog/student-books-loans-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -84,18 +84,33 @@ export class StudentBooksComponent {
     })
   }
 
-  requestBookClick(book: BookDto) {
+  requestBookHomeClick(book: BookDto) {
     // data
-    const dialogData: DialogData = {
-      title: 'Préstamo de libro',
-      operation: DialogOperation.Add,
+    const loanDialogData: LoanDialogData = {
+      title: 'Préstamo de libro a domicilio',
+      typeOfLoan: TypeOfLoan.Home,
       data: book
     };
     // Abrir el dialogo y obtener una referencia de el
-    const dialogRef = this.dialog.open(StudentBooksLoansDialogComponent, {
+    this.dialog.open(StudentBooksLoansDialogComponent, {
       width: '800px',
       disableClose: true,
-      data: dialogData
+      data: loanDialogData
+    });
+  }
+
+  requestBookLibraryRoomClick(book: BookDto) {
+    // data
+    const loanDialogData: LoanDialogData = {
+      title: 'Préstamo de libro para sala',
+      typeOfLoan: TypeOfLoan.Library,
+      data: book
+    };
+    // Abrir el dialogo y obtener una referencia de el
+    this.dialog.open(StudentBooksLoansDialogComponent, {
+      width: '800px',
+      disableClose: true,
+      data: loanDialogData
     });
   }
 

@@ -1,5 +1,5 @@
 <!--Titulo-->
-<h2 mat-dialog-title>{{ dialogData.title }}</h2>
+<h2 mat-dialog-title>{{ loanDialogData.title }}</h2>
 <!--Contenido-->
 <mat-dialog-content class="dialog-content">
   <form [formGroup]="studentMonographLoanForm" (ngSubmit)="onSubmit()">
@@ -114,7 +114,7 @@
       <input
         matInput
         placeholder=""
-        formControlName="author"
+        formControlName="authors"
         [errorStateMatcher]="matcher"
         maxlength="200"
         readonly="true"

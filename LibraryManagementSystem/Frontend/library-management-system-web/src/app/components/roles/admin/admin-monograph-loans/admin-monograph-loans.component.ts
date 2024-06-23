@@ -12,6 +12,7 @@ import { MonographLoanService } from '../../../../services/library/monograph-loa
 import { ToastrService } from 'ngx-toastr';
 import { ApiResponse } from '../../../../entities/api/api-response';
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
+import { MonographLoanSignalRService } from '../../../../services/signalr-hubs/monograph-loan-signal-r.service';
 
 @Component({
   selector: 'app-admin-monograph-loans',
@@ -31,10 +32,16 @@ export class AdminMonographLoansComponent implements AfterViewInit, OnInit {
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
 
-  constructor(private monographLoanService: MonographLoanService, private toastr: ToastrService, private dialog: MatDialog) { }
+  constructor(private monographLoanService: MonographLoanService, private toastr: ToastrService, private dialog: MatDialog, private mlSignalR: MonographLoanSignalRService) { }
 
   ngOnInit(): void {
     this.getMonographLoansDto();
+    // Conectarse al Hub de monografias
+    this.mlSignalR.monographLoanNotification.subscribe((loanCreated: boolean) => {
+      if (loanCreated) {
+        this.getMonographLoansDto();
+      }
+    });
   }
 
   ngAfterViewInit(): void {

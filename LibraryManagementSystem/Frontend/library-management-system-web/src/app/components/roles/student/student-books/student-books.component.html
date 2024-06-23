@@ -79,9 +79,14 @@
     <!-- Iconos a mostrar en la columna -->
     <mat-cell *matCellDef="let element">
       <mat-icon
-        fontIcon="category"
-        matTooltip="Solicitar libro"
-        (click)="requestBookClick(element)"
+        fontIcon="home"
+        matTooltip="Solicitar libro para domicilio"
+        (click)="requestBookHomeClick(element)"
+      ></mat-icon>
+      <mat-icon
+        fontIcon="local_library"
+        matTooltip="Solicitar libro para sala"
+        (click)="requestBookLibraryRoomClick(element)"
       ></mat-icon>
     </mat-cell>
   </ng-container>

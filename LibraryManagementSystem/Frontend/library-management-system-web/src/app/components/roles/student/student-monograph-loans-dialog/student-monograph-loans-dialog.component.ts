@@ -10,7 +10,7 @@ import { ControlStateMatcher } from '../../../../util/control-state-matcher';
 import { MonographLoanInsertDto } from '../../../../entities/dtos/library/monograph-loan-insert-dto';
 import { StudentDto } from '../../../../entities/dtos/university/student-dto';
 import { MonographDto } from '../../../../entities/dtos/library/monograph-dto';
-import { DialogData, DialogOperation } from '../../../../util/dialog-data';
+import { LoanDialogData } from '../../../../util/dialog-data';
 import { MonographLoanService } from '../../../../services/library/monograph-loan.service';
 import { StudentService } from '../../../../services/university/student.service';
 import { ToastrService } from 'ngx-toastr';
@@ -36,7 +36,7 @@ export class StudentMonographLoansDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<StudentMonographLoansDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public dialogData: DialogData,
+    @Inject(MAT_DIALOG_DATA) public loanDialogData: LoanDialogData,
     private monographLoanService: MonographLoanService,
     private studentService: StudentService,
     private formBuilder: FormBuilder,
@@ -54,8 +54,8 @@ export class StudentMonographLoansDialogComponent {
       authors: ['']
     });
 
-    if (dialogData.data) {
-      this.monographDto = this.dialogData.data as MonographDto
+    if (loanDialogData.data) {
+      this.monographDto = this.loanDialogData.data as MonographDto
 
       this.studentMonographLoanForm.patchValue({
         classification: this.monographDto.classification,
@@ -70,13 +70,10 @@ export class StudentMonographLoansDialogComponent {
     }
   }
 
-  /* Guardar o actualizar */
+  /* Guardar */
   onSubmit() {
     // save 
-    if (this.dialogData.operation === DialogOperation.Add) {
-      this.save();
-      return;
-    }
+    this.save();
   }
 
   /* Guardar */

@@ -1,10 +1,25 @@
 using Microsoft.OpenApi.Models;
 using LibraryManagementSystem.Bll.Configuration;
+using LibraryManagementSystem.WebAPI.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add SignalR service
+builder.Services.AddSignalR();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularApp", policy =>
+    {
+        policy.WithOrigins(
+            "http://localhost:4200",    // admin 
+            "http://localhost:4201",    // bibliotecario
+            "http://localhost:4202")    // estudiante
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // Permite las credenciales (necesario para WebSockets)
+    });
+});
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -39,12 +54,16 @@ if (app.Environment.IsDevelopment())
 }
 
 /* Habilitar CORS */
-app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+app.UseCors("AllowAngularApp");
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+/* Hubs */
+app.MapHub<BookLoanNotificationHub>("/hubs/bookloan_hub");
+app.MapHub<MonographLoanNotificationHub>("/hubs/monographloan_hub");
 
 app.Run();

@@ -12,6 +12,7 @@ import { BookLoanService } from '../../../../services/library/book-loan.service'
 import { ToastrService } from 'ngx-toastr';
 import { ApiResponse } from '../../../../entities/api/api-response';
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
+import { BookLoanSignalRService } from '../../../../services/signalr-hubs/book-loan-signal-r.service';
 
 @Component({
   selector: 'app-admin-book-loans',
@@ -31,10 +32,16 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
 
-  constructor(private bookLoanService: BookLoanService, private toastr: ToastrService, private dialog: MatDialog) { }
+  constructor(private bookLoanService: BookLoanService, private toastr: ToastrService, private dialog: MatDialog, private blSignalR: BookLoanSignalRService) { }
 
   ngOnInit(): void {
     this.getBookLoansDto();
+    // Conectarse al Hub de libros
+    this.blSignalR.bookLoanNotification.subscribe((loanCreated: boolean) => {
+      if (loanCreated) {
+        this.getBookLoansDto();
+      }
+    });
   }
 
   ngAfterViewInit(): void {

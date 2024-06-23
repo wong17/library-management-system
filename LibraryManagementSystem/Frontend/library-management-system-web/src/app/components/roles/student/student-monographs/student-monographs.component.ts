@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MonographDto } from '../../../../entities/dtos/library/monograph-dto';
 import { ApiResponse } from '../../../../entities/api/api-response';
 import { MonographService } from '../../../../services/library/monograph.service';
@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { DialogData, DialogOperation } from '../../../../util/dialog-data';
+import { DialogData, DialogOperation, LoanDialogData, TypeOfLoan } from '../../../../util/dialog-data';
 import { StudentMonographLoansDialogComponent } from '../student-monograph-loans-dialog/student-monograph-loans-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -21,7 +21,7 @@ import { MatDialog } from '@angular/material/dialog';
   templateUrl: './student-monographs.component.html',
   styleUrl: './student-monographs.component.css'
 })
-export class StudentMonographsComponent {
+export class StudentMonographsComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['classification', 'title', 'description', 'tutor', 'presentationDate', 'careerName', 'authors', 'options'];
 
@@ -81,18 +81,18 @@ export class StudentMonographsComponent {
     })
   }
 
-  requestMonographClick(monograph: MonographDto) {
+  requestMonographLibraryRoomClick(monograph: MonographDto) {
     // data
-    const dialogData: DialogData = {
-      title: 'Préstamo de monografía',
-      operation: DialogOperation.Add,
+    const loanDialogData: LoanDialogData = {
+      title: 'Préstamo de monografía en sala',
+      typeOfLoan: TypeOfLoan.Library,
       data: monograph
     };
     // Abrir el dialogo y obtener una referencia de el
-    const dialogRef = this.dialog.open(StudentMonographLoansDialogComponent, {
+    this.dialog.open(StudentMonographLoansDialogComponent, {
       width: '800px',
       disableClose: true,
-      data: dialogData
+      data: loanDialogData
     });
   }
 

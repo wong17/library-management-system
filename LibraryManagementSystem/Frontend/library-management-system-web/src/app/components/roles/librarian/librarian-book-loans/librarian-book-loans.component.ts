@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { BookLoanDto } from '../../../../entities/dtos/library/book-loan-dto';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ApiResponse } from '../../../../entities/api/api-response';
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
 import { ToastrService } from 'ngx-toastr';
+import { BookLoanSignalRService } from '../../../../services/signalr-hubs/book-loan-signal-r.service';
 
 @Component({
   selector: 'app-librarian-book-loans',
@@ -20,7 +21,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './librarian-book-loans.component.html',
   styleUrl: './librarian-book-loans.component.css'
 })
-export class LibrarianBookLoansComponent {
+export class LibrarianBookLoansComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['bookLoanId', 'typeOfLoan', 'state', 'loanDate', 'dueDate', 'returnDate', 'student', 'book', 'options'];
 
@@ -31,10 +32,16 @@ export class LibrarianBookLoansComponent {
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
 
-  constructor(private bookLoanService: BookLoanService, private toastr: ToastrService, private dialog: MatDialog) { }
+  constructor(private bookLoanService: BookLoanService, private toastr: ToastrService, private dialog: MatDialog, private blSignalR: BookLoanSignalRService) { }
 
   ngOnInit(): void {
     this.getBookLoansDto();
+    // Conectarse al Hub de libros
+    this.blSignalR.bookLoanNotification.subscribe((loanCreated: boolean) => {
+      if (loanCreated) {
+        this.getBookLoansDto();
+      }
+    });
   }
 
   ngAfterViewInit(): void {

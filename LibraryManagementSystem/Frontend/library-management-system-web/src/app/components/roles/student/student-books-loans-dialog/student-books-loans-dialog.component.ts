@@ -9,7 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ControlStateMatcher } from '../../../../util/control-state-matcher';
 import { BookLoanInsertDto } from '../../../../entities/dtos/library/book-loan-insert-dto';
 import { ToastrService } from 'ngx-toastr';
-import { DialogData, DialogOperation } from '../../../../util/dialog-data';
+import { LoanDialogData, TypeOfLoan } from '../../../../util/dialog-data';
 import { BookLoanService } from '../../../../services/library/book-loan.service';
 import { ApiResponse } from '../../../../entities/api/api-response';
 import { StudentDto } from '../../../../entities/dtos/university/student-dto';
@@ -36,7 +36,7 @@ export class StudentBooksLoansDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<StudentBooksLoansDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public dialogData: DialogData,
+    @Inject(MAT_DIALOG_DATA) public loanDialogData: LoanDialogData,
     private bookLoanService: BookLoanService,
     private studentService: StudentService,
     private formBuilder: FormBuilder,
@@ -55,17 +55,19 @@ export class StudentBooksLoansDialogComponent {
       publicationYear: ['']
     });
 
-    if (dialogData.data) {
-      this.bookDto = this.dialogData.data as BookDto
+    if (loanDialogData.data) {
+      this.bookDto = this.loanDialogData.data as BookDto
 
       this.studentBookLoanForm.patchValue({
-        typeOfLoan: 'DOMICILIO', classification: this.bookDto.classification,
-        title: this.bookDto.title, publicationYear: this.bookDto.publicationYear
+        typeOfLoan: loanDialogData.typeOfLoan === TypeOfLoan.Home ? 'DOMICILIO' : 'SALA', 
+        classification: this.bookDto.classification,
+        title: this.bookDto.title, 
+        publicationYear: this.bookDto.publicationYear
       })
 
       this.bookLoanInsertDto = {
         bookId: this.bookDto.bookId,
-        typeOfLoan: 'DOMICILIO',
+        typeOfLoan: loanDialogData.typeOfLoan === TypeOfLoan.Home ? 'DOMICILIO' : 'SALA',
         studentId: 0 // default
       }
 
@@ -75,10 +77,7 @@ export class StudentBooksLoansDialogComponent {
   /* Guardar o actualizar */
   onSubmit() {
     // save 
-    if (this.dialogData.operation === DialogOperation.Add) {
-      this.save();
-      return;
-    }
+    this.save()
   }
 
   /* Guardar */
@@ -116,6 +115,42 @@ export class StudentBooksLoansDialogComponent {
       }
     })
   }
+
+  private saveLibraryRoomRequest(): void {
+    // Obtener informacion del estudiante
+    if (!this.studentDto?.studentId) {
+      this.toastr.error(`Estudiante es obligatorio`, 'Error', {
+        timeOut: 5000
+      });
+      return;
+    }
+    // Obtener id del estudiante
+    this.bookLoanInsertDto.studentId = this.studentDto.studentId
+    // Realizar solicitud http
+    this.bookLoanService.create(this.bookLoanInsertDto).subscribe({
+      next: response => {
+        // Ocurrio un error
+        if (response.isSuccess !== 0 || response.statusCode !== 200) {
+          this.toastr.error(`${response.message}`, 'Error', {
+            timeOut: 5000
+          })
+          return;
+        }
+        // Solicitud exitosa
+        this.toastr.success(`${response.message}`, 'Exito', {
+          timeOut: 5000
+        })
+
+        this.closeDialog(true);
+      },
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
+          timeOut: 5000
+        });
+      }
+    })
+  }
+
 
   searchStudent() {
     // Obtener informacion de los campos

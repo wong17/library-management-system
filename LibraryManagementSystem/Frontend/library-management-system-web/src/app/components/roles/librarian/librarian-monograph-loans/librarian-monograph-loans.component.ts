@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ApiResponse } from '../../../../entities/api/api-response';
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
 import { ToastrService } from 'ngx-toastr';
+import { MonographLoanSignalRService } from '../../../../services/signalr-hubs/monograph-loan-signal-r.service';
 
 @Component({
   selector: 'app-librarian-monograph-loans',
@@ -20,7 +21,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './librarian-monograph-loans.component.html',
   styleUrl: './librarian-monograph-loans.component.css'
 })
-export class LibrarianMonographLoansComponent {
+export class LibrarianMonographLoansComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['monographLoanId', 'state', 'loanDate', 'dueDate', 'returnDate', 'student', 'monograph', 'options'];
 
@@ -31,10 +32,16 @@ export class LibrarianMonographLoansComponent {
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
 
-  constructor(private monographLoanService: MonographLoanService, private toastr: ToastrService, private dialog: MatDialog) { }
+  constructor(private monographLoanService: MonographLoanService, private toastr: ToastrService, private dialog: MatDialog, private mlSignalR: MonographLoanSignalRService) { }
 
   ngOnInit(): void {
     this.getMonographLoansDto();
+    // Conectarse al Hub de monografias
+    this.mlSignalR.monographLoanNotification.subscribe((loanCreated: boolean) => {
+      if (loanCreated) {
+        this.getMonographLoansDto();
+      }
+    });
   }
 
   ngAfterViewInit(): void {

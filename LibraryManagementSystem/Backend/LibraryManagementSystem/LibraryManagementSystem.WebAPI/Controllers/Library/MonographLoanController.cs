@@ -3,17 +3,21 @@ using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
 using LibraryManagementSystem.Entities.Models.Library;
+using LibraryManagementSystem.WebAPI.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 
 namespace LibraryManagementSystem.WebAPI.Controllers
 {
     [Route("api/monograph_loans")]
     [ApiController]
-    public class MonographLoanController(IMonographLoanBll monographLoanBll, IMapper mapper) : ControllerBase
+    public class MonographLoanController(IMonographLoanBll monographLoanBll, IMapper mapper,
+        IHubContext<MonographLoanNotificationHub, ILoanNotification> hubContext) : ControllerBase
     {
         private readonly IMonographLoanBll _monographLoanBll = monographLoanBll;
         private readonly IMapper _mapper = mapper;
+        private readonly IHubContext<MonographLoanNotificationHub, ILoanNotification> _hubContext = hubContext;
 
         /// <summary>
         /// Inserta un préstamo de monografia
@@ -38,6 +42,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notifica a clientes con rol admin o bibliotecario
+            await _hubContext.Clients.All.SendLoanNotification(true);
 
             return Ok(response);
         }
