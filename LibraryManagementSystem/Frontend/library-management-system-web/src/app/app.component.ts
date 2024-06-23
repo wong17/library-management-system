@@ -12,11 +12,4 @@ import { LoginComponent } from "./components/login/login.component";
 export class AppComponent {
   
   title = 'Biblioteca Universitaria';
-  /* 
-  Librerias de componentes a usar
-  https://getbootstrap.com/
-  https://ng-bootstrap.github.io/#/home
-  https://valor-software.com/ngx-bootstrap/#/
-  https://material.angular.io/
-  */
 }

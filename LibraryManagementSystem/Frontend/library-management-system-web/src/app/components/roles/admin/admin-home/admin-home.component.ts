@@ -4,12 +4,15 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule } from '@angular/router';
+import { MatMenuModule } from '@angular/material/menu';
+import { Router, RouterModule } from '@angular/router';
+import { UserService } from '../../../../services/security/user.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-admin-home',
   standalone: true,
-  imports: [MatSidenavModule, MatListModule, MatIconModule, MatToolbarModule, MatButtonModule, RouterModule],
+  imports: [MatSidenavModule, MatListModule, MatIconModule, MatToolbarModule, MatButtonModule, RouterModule, MatMenuModule],
   templateUrl: './admin-home.component.html',
   styleUrl: './admin-home.component.css'
 })
@@ -27,4 +30,17 @@ export class AdminHomeComponent {
     { label: 'Subcategorías', link: '/admin-home/admin-sub-categories', icon: 'subdirectory_arrow_right' }
   ];
 
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private toastr: ToastrService
+  ) {}
+
+  logout() {
+    this.userService.logout();
+    this.router.navigate(['/login']);
+    this.toastr.success('Cerró sesión exitosamente', 'Success', {
+      timeOut: 5000
+    });
+  }
 }

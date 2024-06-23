@@ -8,6 +8,19 @@
       <mat-icon>menu</mat-icon>
     </button>
     <span>Home</span>
+
+    <span class="spacer"></span>
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+  
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Cerrar sesión</span>
+    </button>
+  </mat-menu>
+
   </mat-toolbar>
   
   <mat-sidenav-container class="sidenav-container">

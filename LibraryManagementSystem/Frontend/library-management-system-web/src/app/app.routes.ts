@@ -20,12 +20,13 @@ import { LibrarianBooksComponent } from './components/roles/librarian/librarian-
 import { LibrarianMonographsComponent } from './components/roles/librarian/librarian-monographs/librarian-monographs.component';
 import { LibrarianBookLoansComponent } from './components/roles/librarian/librarian-book-loans/librarian-book-loans.component';
 import { LibrarianMonographLoansComponent } from './components/roles/librarian/librarian-monograph-loans/librarian-monograph-loans.component';
+import { AdminGuard, LibrarianGuard, StudentGuard } from './services/auth-guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' }, // Se activará cuando la URL sea la raíz de la aplicación (Redirige a LoginComponent por defecto)
     { path: 'login', component: LoginComponent },
     /* Componentes Admin */
-    { path: 'admin-home', component: AdminHomeComponent, children: [
+    { path: 'admin-home', component: AdminHomeComponent, canActivate: [AdminGuard], children: [
         { path: '', redirectTo: 'admin-dashboard', pathMatch: 'full' }, // Redirige automáticamente a admin-dashboard al carga admin-home
         { path: 'admin-dashboard', component: AdminDashboardComponent },
         { path: 'admin-books', component: AdminBooksComponent },
@@ -39,7 +40,7 @@ export const routes: Routes = [
     ]},
     
     /* Componentes Bibliotecario */
-    { path: 'librarian-home', component: LibrarianHomeComponent, children: [
+    { path: 'librarian-home', component: LibrarianHomeComponent, canActivate: [LibrarianGuard], children: [
         { path: '', redirectTo: 'librarian-dashboard', pathMatch: 'full' }, // Redirige automáticamente a librarian-dashboard al carga librarian-home
         { path: 'librarian-dashboard', component: LibrarianDashboardComponent },
         { path: 'librarian-books', component: LibrarianBooksComponent },
@@ -49,7 +50,7 @@ export const routes: Routes = [
     ]},
 
     /* Componentes Estudiante */
-    { path: 'student-home', component: StudentHomeComponent, children: [
+    { path: 'student-home', component: StudentHomeComponent, canActivate: [StudentGuard], children: [
         { path: '', redirectTo: 'student-books', pathMatch: 'full' }, // Redirige automáticamente a student-books al carga student-home
         { path: 'student-books', component: StudentBooksComponent },
         { path: 'student-monographs', component: StudentMonographsComponent }

@@ -2,11 +2,12 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../../entities/api/api-response';
-import { catchError, Observable } from 'rxjs';
+import { catchError, map, Observable } from 'rxjs';
 import { UserInsertDto } from '../../entities/dtos/security/user-insert-dto';
 import { UserUpdateDto } from '../../entities/dtos/security/user-update-dto';
 import { UserLogInDto } from '../../entities/dtos/security/user-log-in-dto';
 import { HttpErrorHandler } from '../../util/http-error-handler';
+import { UserDto } from '../../entities/dtos/security/user-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -50,15 +51,38 @@ export class UserService {
   }
 
   /**
-   * Inserta un nuevo usuario
+   * Para iniciar sesión
    * @param user
    * @returns Observable<ApiResponse>
    */
   login(user: UserLogInDto): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`${this.apiUrl}${this.userLogInUrl}`, user, this.httpHeader)
-      .pipe<ApiResponse>(catchError(error => {
-        return HttpErrorHandler.handlerError(error);
-      }));
+      .pipe(
+        map(response => {
+          if (response.isSuccess === 0 && response.statusCode === 200) {
+            const userDto = response.result as UserDto;
+            this.setCurrentUser(userDto);
+          }
+          return response;
+        }),
+        catchError(error => HttpErrorHandler.handlerError(error))
+      );
+  }
+
+  /* Guardar informacion del usuario que inicio sesion */
+  private setCurrentUser(user: UserDto): void {
+    localStorage.setItem('currentUser', JSON.stringify(user));
+  }
+
+  /* Para cerrar la sesión actual */
+  logout() {
+    localStorage.removeItem('currentUser');
+  }
+
+  /* Para obtener la información del usuario que inició sesión */
+  get currentUser(): UserDto | null {
+    const userJson = localStorage.getItem('currentUser');
+    return userJson ? JSON.parse(userJson) : null;
   }
 
   /**
