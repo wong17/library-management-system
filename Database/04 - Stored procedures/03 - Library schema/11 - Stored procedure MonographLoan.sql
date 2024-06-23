@@ -320,10 +320,12 @@ BEGIN
 	IF (@MonographLoanId IS NULL OR @MonographLoanId = '')
 	BEGIN
 		SELECT MonographLoanId, StudentId, MonographId, [State], LoanDate, DueDate, ReturnDate FROM [Library].MonographLoan
+		ORDER BY LoanDate DESC
 	END
 	ELSE
 	BEGIN
 		SELECT MonographLoanId, StudentId, MonographId, [State], LoanDate, DueDate, ReturnDate FROM [Library].MonographLoan WHERE MonographLoanId = @MonographLoanId
+		ORDER BY LoanDate DESC
 	END
 END
 GO

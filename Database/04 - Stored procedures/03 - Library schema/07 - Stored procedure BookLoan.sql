@@ -333,10 +333,12 @@ BEGIN
 	IF (@BookLoanId IS NULL OR @BookLoanId = '')
 	BEGIN
 		SELECT BookLoanId, StudentId, BookId, TypeOfLoan, [State], LoanDate, DueDate, ReturnDate FROM [Library].BookLoan
+		ORDER BY LoanDate DESC
 	END
 	ELSE
 	BEGIN
 		SELECT BookLoanId, StudentId, BookId, TypeOfLoan, [State], LoanDate, DueDate, ReturnDate FROM [Library].BookLoan WHERE BookLoanId = @BookLoanId
+		ORDER BY LoanDate DESC
 	END
 END
 GO
