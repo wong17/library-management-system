@@ -25,7 +25,7 @@ import { UpdateReturnedBookLoanDto } from '../../../../entities/dtos/library/upd
 })
 export class AdminBookLoansComponent implements AfterViewInit, OnInit {
 
-  displayedColumns: string[] = ['bookLoanId', 'typeOfLoan', 'state', 'loanDate', 'dueDate', 'returnDate', 'student', 'book', 'options'];
+  displayedColumns: string[] = ['bookLoanId', 'typeOfLoan', 'state', 'loanDate', 'dueDate', 'returnDate', 'student', 'book', 'borrowedUser', 'returnedUser', 'options'];
 
   /*  */
   dataSource: MatTableDataSource<BookLoanDto> = new MatTableDataSource<BookLoanDto>();

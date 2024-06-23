@@ -25,7 +25,7 @@ import { UpdateBorrowedMonographLoanDto } from '../../../../entities/dtos/librar
 })
 export class LibrarianMonographLoansComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['monographLoanId', 'state', 'loanDate', 'dueDate', 'returnDate', 'student', 'monograph', 'options'];
+  displayedColumns: string[] = ['monographLoanId', 'state', 'loanDate', 'dueDate', 'returnDate', 'student', 'monograph', 'borrowedUser', 'returnedUser', 'options'];
 
   /*  */
   dataSource: MatTableDataSource<MonographLoanDto> = new MatTableDataSource<MonographLoanDto>();

@@ -61,6 +61,16 @@
     <td mat-cell *matCellDef="let element">{{ element.book }}</td>
   </ng-container>
 
+  <ng-container matColumnDef="borrowedUser">
+    <th mat-header-cell *matHeaderCellDef>Aprobado por</th>
+    <td mat-cell *matCellDef="let element">{{ element.borrowedUser }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="returnedUser">
+    <th mat-header-cell *matHeaderCellDef>Recibido por</th>
+    <td mat-cell *matCellDef="let element">{{ element.returnedUser }}</td>
+  </ng-container>
+
   <!-- Columna de opciones -->
   <ng-container matColumnDef="options">
     <th mat-header-cell *matHeaderCellDef>Opciones</th>
