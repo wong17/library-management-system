@@ -11,7 +11,8 @@ GO
 CREATE PROC [Security].uspInsertUser (
 	@UserName VARCHAR(50),
 	@Email VARCHAR(250),
-	@Password VARCHAR(64)
+	@Password VARCHAR(64),
+	@RoleId INT
 )
 AS
 BEGIN
@@ -22,7 +23,7 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@UserName LIKE '%[^a-zA-Z0-9. ]%')
+	IF (@UserName LIKE '%[^a-zA-Z0-9\. ]%')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Nombre de usuario solo puede tener mayúsculas, minúsculas, números, puntos y espacios' AS [Message]
 		RETURN
@@ -46,6 +47,18 @@ BEGIN
 		RETURN
 	END
 	--
+	IF (@RoleId IS NULL OR @RoleId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id del rol del usuario es obligatorio' AS [Message]
+		RETURN
+	END
+	--
+	IF NOT EXISTS (SELECT 1 FROM [Security].[Role] AS r WHERE r.RoleId = @RoleId)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'No existe un rol con el id ingresado' AS [Message]
+		RETURN
+	END
+	--
 	IF EXISTS (SELECT 1 FROM [Security].[User] WHERE UserName = @UserName)
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Ya existe un usuario con el mismo nombre en la base de datos' AS [Message]
@@ -62,7 +75,25 @@ BEGIN
 		--
 		INSERT INTO [Security].[User] (UserName, Email, [Password]) VALUES (@UserName, @Email, HASHBYTES('SHA2_512', @Password))
 		--
-		SELECT 0 AS IsSuccess, 'Usuario registrado exitosamente' AS [Message], SCOPE_IDENTITY() AS Result
+		DECLARE @SPResult TABLE (
+			IsSuccess INT,
+			[Message] VARCHAR(255)
+		)
+		--
+		DECLARE @LastInsertedId INT = SCOPE_IDENTITY()
+		--
+		INSERT INTO @SPResult EXEC [Security].uspInsertUserRole @LastInsertedId, @RoleId
+		--
+		IF ((SELECT IsSuccess FROM @SPResult) != 0)
+		BEGIN
+			--
+			SELECT IsSuccess, [Message] FROM @SPResult
+			--
+			IF @@TRANCOUNT > 0
+				ROLLBACK TRAN;
+		END
+		--
+		SELECT 0 AS IsSuccess, 'Usuario registrado exitosamente' AS [Message], @LastInsertedId AS Result
 	END TRY
 	BEGIN CATCH
 		--
@@ -78,7 +109,8 @@ GO
 CREATE PROC [Security].uspUpdateUser (
 	@UserId INT,
 	@Email VARCHAR(250),
-	@Password VARCHAR(64)
+	@Password VARCHAR(64),
+	@RoleId INT
 )
 AS
 BEGIN
@@ -113,7 +145,19 @@ BEGIN
 		RETURN
 	END
 	--
-	IF EXISTS (SELECT 1 FROM [Security].[User] WHERE Email = @Email)
+	IF (@RoleId IS NULL OR @RoleId = '')
+	BEGIN
+		SELECT 1 AS IsSuccess, 'Id del rol del usuario es obligatorio' AS [Message]
+		RETURN
+	END
+	--
+	IF NOT EXISTS (SELECT 1 FROM [Security].[Role] AS r WHERE r.RoleId = @RoleId)
+	BEGIN
+		SELECT 2 AS IsSuccess, 'No existe un rol con el id ingresado' AS [Message]
+		RETURN
+	END
+	--
+	IF EXISTS (SELECT 1 FROM [Security].[User] WHERE Email = @Email AND UserId != @UserId)
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Ya existe un usuario con el mismo correo electronico en la base de datos' AS [Message]
 		RETURN
@@ -123,7 +167,11 @@ BEGIN
 		--
 		UPDATE [Security].[User] SET Email = @Email, [Password] = HASHBYTES('SHA2_512', @Password) WHERE UserId = @UserId
 		--
-		SELECT 0 AS IsSuccess, 'Usuario actualizado exitosamente' AS [Message], @UserId AS Result
+		DELETE FROM [Security].UserRole WHERE UserId = @UserId
+		--
+		INSERT INTO [Security].[UserRole] (UserId, RoleId) VALUES (@UserId, @RoleId)
+		--
+		SELECT 0 AS IsSuccess, 'Usuario actualizado exitosamente' AS [Message], SCOPE_IDENTITY() AS Result
 	END TRY
 	BEGIN CATCH
 		--
@@ -156,21 +204,23 @@ BEGIN
 	--
 	BEGIN TRY
 		-- ELIMINAR TODOS LOS ROLES
-		DECLARE @SPResult TABLE (
-			IsSuccess INT,
-			[Message] VARCHAR(255)
-		)
-		INSERT INTO @SPResult EXEC [Security].uspDeleteAllUserRole @UserId
-		IF ((SELECT IsSuccess FROM @SPResult) != 0)
-		BEGIN
-			--
-			SELECT IsSuccess, [Message] FROM @SPResult
-			--
-			IF @@TRANCOUNT > 0
-				ROLLBACK TRAN;
-		END
-		-- ELIMINAR AL USUARIO
-		DELETE FROM [Security].[User] WHERE UserId = @UserId
+		--DECLARE @SPResult TABLE (
+		--	IsSuccess INT,
+		--	[Message] VARCHAR(255)
+		--)
+		--INSERT INTO @SPResult EXEC [Security].uspDeleteAllUserRole @UserId
+		--IF ((SELECT IsSuccess FROM @SPResult) != 0)
+		--BEGIN
+		--	--
+		--	SELECT IsSuccess, [Message] FROM @SPResult
+		--	--
+		--	IF @@TRANCOUNT > 0
+		--		ROLLBACK TRAN;
+		--END
+		---- ELIMINAR AL USUARIO
+		--DELETE FROM [Security].[User] WHERE UserId = @UserId
+		-- Desactivar el usuario
+		UPDATE [Security].[User] SET Active = 0 WHERE UserId = @UserId
 		--
 		SELECT 0 AS IsSuccess, 'Usuario eliminado exitosamente' AS [Message]
 	END TRY
@@ -193,11 +243,11 @@ BEGIN
 	--
 	IF (@UserId IS NULL OR @UserId = '')
 	BEGIN
-		SELECT UserId, UserName, Email FROM [Security].[User]
+		SELECT UserId, UserName, Email, Active FROM [Security].[User]
 	END
 	ELSE
 	BEGIN
-		SELECT UserId, UserName, Email FROM [Security].[User] WHERE UserId = @UserId
+		SELECT UserId, UserName, Email, Active FROM [Security].[User] WHERE UserId = @UserId
 	END
 END
 GO
@@ -225,7 +275,7 @@ BEGIN
 		RETURN
 	END
 	--
-	IF NOT EXISTS (SELECT 1 FROM [Security].[User] WHERE UserName = @UserName COLLATE Latin1_General_BIN2)
+	IF NOT EXISTS (SELECT 1 FROM [Security].[User] WHERE UserName = @UserName COLLATE Latin1_General_BIN2 AND Active = 1)
 	BEGIN
 		SELECT 2 AS IsSuccess, 'No existe un usuario con el nombre ingresado' AS [Message]
 		RETURN

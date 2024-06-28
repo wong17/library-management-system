@@ -33,9 +33,9 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Name LIKE '%[^a-zA-Z- ]%')
+	IF (@Name LIKE '%[^a-zA-Z0-9\-\. ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Nombre de la Sub Categoría solo puede tener mayúsculas, minúsculas, guiones y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Nombre de la Sub Categoría solo puede tener letras, números, guiones, puntos y espacios' AS [Message]
 		RETURN
 	END
 	--
@@ -85,10 +85,10 @@ BEGIN
 		SELECT 1 AS IsSuccess, 'Nombre de la SubCategoria es obligatorio' AS [Message]
 		RETURN
 	END
-	-- Verificar que el nombre todas las SubCategorias solo tenga mayúsculas, minúsculas, guiones y espacios
-	IF EXISTS (SELECT 1 FROM @SubCategories AS sc WHERE sc.[Name] LIKE '%[^a-zA-Z- ]%')
+	-- Verificar que el nombre todas las SubCategorias solo tenga mayúsculas, minúsculas, guiones, puntos y espacios
+	IF EXISTS (SELECT 1 FROM @SubCategories AS sc WHERE sc.[Name] LIKE '%[^a-zA-Z0-9\-\. ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Nombre de la SubCategoria solo puede tener mayúsculas, minúsculas, guiones y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Nombre de la SubCategoria solo puede tener mayúsculas, minúsculas, guiones, puntos y espacios' AS [Message]
 		RETURN
 	END
 	-- Verificar que no vayan nombres de SubCategorias repetidos
@@ -172,9 +172,9 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Name LIKE '%[^a-zA-Z- ]%')
+	IF (@Name LIKE '%[^a-zA-Z0-9\-\. ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Nombre de la Sub Categoría solo puede tener mayúsculas, minúsculas, guiones y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Nombre de la Sub Categoría solo puede tener letras, números, guiones, puntos y espacios' AS [Message]
 		RETURN
 	END
 	--
@@ -236,10 +236,10 @@ BEGIN
 		SELECT 1 AS IsSuccess, 'Nombre de la SubCategoria es obligatorio' AS [Message]
 		RETURN
 	END
-	-- Verificar que el nombre todas las SubCategorias solo tenga mayúsculas, minúsculas, guiones y espacios
-	IF EXISTS (SELECT 1 FROM @SubCategories AS sc WHERE sc.[Name] LIKE '%[^a-zA-Z- ]%')
+	-- Verificar que el nombre todas las SubCategorias solo tenga letras, números, guiones y espacios
+	IF EXISTS (SELECT 1 FROM @SubCategories AS sc WHERE sc.[Name] LIKE '%[^a-zA-Z0-9\-\. ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Nombre de la SubCategoria solo puede tener mayúsculas, minúsculas, guiones y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Nombre de la SubCategoria solo puede tener mayúsculas, minúsculas, guiones, puntos y espacios' AS [Message]
 		RETURN
 	END
 	-- Verificar que no vayan nombres de SubCategorias repetidos

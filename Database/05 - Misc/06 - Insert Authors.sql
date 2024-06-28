@@ -12,6 +12,10 @@ EXEC [Library].uspInsertAuthor 'Aurelio Baldor', 0
 GO
 EXEC [Library].uspInsertAuthor 'James Stewart', 0
 GO
+EXEC [Library].uspInsertAuthor 'Raymond A. Serway', 0
+GO
+EXEC [Library].uspInsertAuthor 'John W. Jewett, Jr.', 0
+GO
 
 EXEC [Library].uspInsertAuthor 'Br. William Perez', 1
 GO

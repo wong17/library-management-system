@@ -20,9 +20,9 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Name LIKE '%[^a-zA-Z- ]%')
+	IF (@Name LIKE '%[^a-zA-Z0-9\-\. ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Nombre de la Categoría solo puede tener mayúsculas, minúsculas, guiones y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Nombre de la Categoría solo puede tener letras, números, guiones, puntos y espacios' AS [Message]
 		RETURN
 	END
 	--
@@ -61,9 +61,9 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que el nombre todas las Categorias solo tenga mayúsculas, minúsculas, guiones y espacios
-	IF EXISTS (SELECT 1 FROM @Categories AS c WHERE c.[Name] LIKE '%[^a-zA-Z- ]%')
+	IF EXISTS (SELECT 1 FROM @Categories AS c WHERE c.[Name] LIKE '%[^a-zA-Z0-9\-\. ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Nombre de la Categoria solo puede tener mayúsculas, minúsculas, guiones y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Nombre de la Categoria solo puede tener letras, números, guiones, puntos y espacios' AS [Message]
 		RETURN
 	END
 	-- Verificar que no vayan nombres de Categorias repetidos
@@ -134,9 +134,9 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Name LIKE '%[^a-zA-Z- ]%')
+	IF (@Name LIKE '%[^a-zA-Z0-9\-\. ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Nombre de la Categoría solo puede tener mayúsculas, minúsculas, guiones y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Nombre de la Categoría solo puede tener letras, números, puntos, guiones y espacios' AS [Message]
 		RETURN
 	END
 	--
@@ -187,9 +187,9 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que el nombre todas las Categorias solo tenga mayúsculas, minúsculas, guiones y espacios
-	IF EXISTS (SELECT 1 FROM @Categories AS c WHERE c.[Name] LIKE '%[^a-zA-Z- ]%')
+	IF EXISTS (SELECT 1 FROM @Categories AS c WHERE c.[Name] LIKE '%[^a-zA-Z0-9\-\. ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Nombre de la Categoria solo puede tener mayúsculas, minúsculas, guiones y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Nombre de la Categoria solo puede tener letras, números, guiones, puntos y espacios' AS [Message]
 		RETURN
 	END
 	-- Verificar que no vayan nombres de Categorias repetidos

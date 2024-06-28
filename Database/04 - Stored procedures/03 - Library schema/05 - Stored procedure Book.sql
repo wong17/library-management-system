@@ -30,7 +30,7 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@ISBN10 LIKE '%[^0-9-]%')
+	IF (@ISBN10 LIKE '%[^0-9\-]%')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'ISBN10 del libro solo puede tener números y guiones' AS [Message]
 		RETURN
@@ -42,7 +42,7 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@ISBN13 LIKE '%[^0-9-]%')
+	IF (@ISBN13 LIKE '%[^0-9\-]%')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'ISBN13 del libro solo puede tener números y guiones' AS [Message]
 		RETURN
@@ -54,9 +54,9 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Classification LIKE '%[^a-zA-Z0-9-. ]%')
+	IF (@Classification LIKE '%[^a-zA-Z0-9\-\. ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Clasificación del libro solo puede tener mayúsculas, minúsculas, números, guiones, puntos y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Clasificación del libro solo puede tener letras, números, guiones, puntos y espacios' AS [Message]
 		RETURN
 	END
 	--
@@ -72,9 +72,9 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Title LIKE '%[^a-zA-Z0-9-. ]%')
+	IF (@Title LIKE '%[^a-zA-Z0-9\-\.\, ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Titulo del libro solo puede tener mayúsculas, minúsculas, números, guiones, puntos y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Titulo del libro solo puede tener letras, números, guiones, puntos. comas y espacios' AS [Message]
 		RETURN
 	END
 	--
@@ -172,7 +172,7 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@ISBN10 LIKE '%[^0-9-]%')
+	IF (@ISBN10 LIKE '%[^0-9\-]%')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'ISBN10 del libro solo puede tener números y guiones' AS [Message]
 		RETURN
@@ -190,7 +190,7 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@ISBN13 LIKE '%[^0-9-]%')
+	IF (@ISBN13 LIKE '%[^0-9\-]%')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'ISBN13 del libro solo puede tener números y guiones' AS [Message]
 		RETURN
@@ -208,9 +208,9 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Classification LIKE '%[^a-zA-Z0-9-. ]%')
+	IF (@Classification LIKE '%[^a-zA-Z0-9\-\. ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Clasificación del libro solo puede tener mayúsculas, minúsculas, números, guiones, puntos y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Clasificación del libro solo puede tener letras, números, guiones, puntos y espacios' AS [Message]
 		RETURN
 	END
 	--
@@ -226,9 +226,9 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Title LIKE '%[^a-zA-Z0-9-. ]%')
+	IF (@Title LIKE '%[^a-zA-Z0-9\-\.\, ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Titulo del libro solo puede tener mayúsculas, minúsculas, números, guiones, puntos y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Titulo del libro solo puede tener letras, números, guiones, puntos, comas y espacios' AS [Message]
 		RETURN
 	END
 	--

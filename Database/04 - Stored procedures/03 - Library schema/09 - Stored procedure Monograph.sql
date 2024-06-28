@@ -27,9 +27,9 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Classification LIKE '%[^a-zA-Z0-9-. ]%')
+	IF (@Classification LIKE '%[^a-zA-Z0-9\-\. ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Clasificación de la monografía solo puede tener mayúsculas, minúsculas, guiones, puntos y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Clasificación de la monografía solo puede tener letras, guiones, puntos y espacios' AS [Message]
 		RETURN
 	END
 	--
@@ -45,9 +45,9 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Title LIKE '%[^a-zA-Z0-9-. ]%')
+	IF (@Title LIKE '%[^a-zA-Z0-9\-\.\, ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Titulo de la monografía solo puede tener mayúsculas, minúsculas, números, guiones, puntos y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Titulo de la monografía solo puede tener letras, números, guiones, puntos, comas y espacios' AS [Message]
 		RETURN
 	END
 	--
@@ -57,9 +57,9 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Tutor LIKE '%[^a-zA-Z. ]%')
+	IF (@Tutor LIKE '%[^a-zA-Z\.\, ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Tutor de la monografía solo puede tener mayúsculas, minúsculas puntos y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Tutor de la monografía solo puede tener letras, puntos, comas y espacios' AS [Message]
 		RETURN
 	END
 	--
@@ -130,9 +130,9 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Classification LIKE '%[^a-zA-Z0-9-. ]%')
+	IF (@Classification LIKE '%[^a-zA-Z0-9\-\. ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Clasificación de la monografía solo puede tener mayúsculas, minúsculas, guiones, puntos y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Clasificación de la monografía solo puede tener letras, guiones, puntos y espacios' AS [Message]
 		RETURN
 	END
 	--
@@ -148,9 +148,9 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Title LIKE '%[^a-zA-Z0-9-. ]%')
+	IF (@Title LIKE '%[^a-zA-Z0-9\-\.\, ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Titulo de la monografía solo puede tener mayúsculas, minúsculas, números, guiones, puntos y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Titulo de la monografía solo puede tener letras, números, guiones, puntos y espacios' AS [Message]
 		RETURN
 	END
 	-- Tutor
@@ -160,9 +160,9 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Tutor LIKE '%[^a-zA-Z. ]%')
+	IF (@Tutor LIKE '%[^a-zA-Z\.\, ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Tutor de la monografía solo puede tener mayúsculas, minúsculas puntos y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Tutor de la monografía solo puede tener letras, puntos, comas y espacios' AS [Message]
 		RETURN
 	END
 	-- PresentationDate

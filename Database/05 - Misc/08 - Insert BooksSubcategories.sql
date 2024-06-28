@@ -18,3 +18,22 @@ EXEC [Library].uspInsertBookSubCategory 4, 1
 GO
 EXEC [Library].uspInsertBookSubCategory 5, 5
 GO
+
+EXEC [Library].uspInsertBookSubCategory 6, 6
+GO
+EXEC [Library].uspInsertBookSubCategory 6, 7
+GO
+EXEC [Library].uspInsertBookSubCategory 6, 8
+GO
+EXEC [Library].uspInsertBookSubCategory 6, 14
+GO
+EXEC [Library].uspInsertBookSubCategory 7, 15
+GO
+EXEC [Library].uspInsertBookSubCategory 7, 16
+GO
+EXEC [Library].uspInsertBookSubCategory 7, 11
+GO
+EXEC [Library].uspInsertBookSubCategory 7, 12
+GO
+EXEC [Library].uspInsertBookSubCategory 7, 13
+GO

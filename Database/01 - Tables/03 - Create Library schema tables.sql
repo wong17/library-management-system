@@ -11,7 +11,7 @@ CREATE TABLE [Library].Publisher (
 	PublisherId INT IDENTITY(1,1) NOT NULL,
 	[Name] VARCHAR(100) NOT NULL,
 	CONSTRAINT PK_Publisher_PublisherId PRIMARY KEY(PublisherId),
-	CONSTRAINT CK_Publisher_Name CHECK([NAME] NOT LIKE '%[^a-zA-Z-. ]%'),
+	CONSTRAINT CK_Publisher_Name CHECK([NAME] NOT LIKE '%[^a-zA-Z\-\. ]%'),
 	CONSTRAINT AK_Publisher_Name UNIQUE([Name])
 )
 GO
@@ -25,7 +25,7 @@ CREATE TABLE [Library].Category (
 	CategoryId INT IDENTITY(1,1) NOT NULL,
 	[Name] VARCHAR(100) NOT NULL,
 	CONSTRAINT PK_Category_CategoryId PRIMARY KEY(CategoryId),
-	CONSTRAINT CK_Category_Name CHECK([Name] NOT LIKE '%[^a-zA-Z0-9- ]%'),
+	CONSTRAINT CK_Category_Name CHECK([Name] NOT LIKE '%[^a-zA-Z0-9\-\. ]%'),
 	CONSTRAINT AK_Category_Name UNIQUE([Name])
 )
 GO
@@ -41,7 +41,7 @@ CREATE TABLE [Library].SubCategory (
 	[Name] VARCHAR(100) NOT NULL,
 	CONSTRAINT PK_Subcategory_SubCategoryId PRIMARY KEY(SubCategoryId),
 	CONSTRAINT FK_Subcategory_Category_CategoryId FOREIGN KEY(CategoryId) REFERENCES [Library].Category(CategoryId),
-	CONSTRAINT CK_SubCategory_Name CHECK([Name] NOT LIKE '%[^a-zA-Z0-9- ]%'),
+	CONSTRAINT CK_SubCategory_Name CHECK([Name] NOT LIKE '%[^a-zA-Z0-9\-\. ]%'),
 	CONSTRAINT AK_SubCategory_Name UNIQUE([Name])
 )
 GO
@@ -56,7 +56,7 @@ CREATE TABLE [Library].Author (
 	[Name] VARCHAR(100) NOT NULL,
 	IsFormerGraduated BIT NOT NULL CONSTRAINT DF_Author_IsFormerGraduated DEFAULT 0,
 	CONSTRAINT PK_Author_AuthorId PRIMARY KEY(AuthorId),
-	CONSTRAINT CK_Author_Name CHECK([Name] NOT LIKE '%[^a-zA-Z. ]%'),
+	CONSTRAINT CK_Author_Name CHECK([Name] NOT LIKE '%[^a-zA-Z\.\, ]%'),
 	CONSTRAINT AK_Author_Name UNIQUE([Name])
 )
 GO
@@ -79,7 +79,7 @@ CREATE TABLE [Library].Book (
 	ISBN13 VARCHAR(17) NOT NULL,
 	[Classification] VARCHAR(25) NOT NULL,
 	Title NVARCHAR(100) NOT NULL,
-	[Description] NVARCHAR(500),
+	[Description] NVARCHAR(500) NULL,
 	PublicationYear SMALLINT NOT NULL,
 	[Image] VARBINARY(MAX),
 	IsActive BIT NOT NULL CONSTRAINT DF_Book_Active DEFAULT 1,
@@ -94,13 +94,13 @@ CREATE TABLE [Library].Book (
     PERIOD FOR SYSTEM_TIME(ValidFrom,ValidTo),
 
 	CONSTRAINT PK_Book_BookId PRIMARY KEY(BookId),
-	CONSTRAINT CK_Book_ISBN10 CHECK(ISBN10 NOT LIKE '%[^0-9-]%'),
+	CONSTRAINT CK_Book_ISBN10 CHECK(ISBN10 NOT LIKE '%[^0-9\-]%'),
 	CONSTRAINT AK_Book_ISBN10 UNIQUE(ISBN10),
-	CONSTRAINT CK_Book_ISBN13 CHECK(ISBN13 NOT LIKE '%[^0-9-]%'),
+	CONSTRAINT CK_Book_ISBN13 CHECK(ISBN13 NOT LIKE '%[^0-9\-]%'),
 	CONSTRAINT AK_Book_ISBN13 UNIQUE(ISBN13),
-	CONSTRAINT CK_Book_Classification CHECK([Classification] NOT LIKE '%[^a-zA-Z0-9-. ]%'),
+	CONSTRAINT CK_Book_Classification CHECK([Classification] NOT LIKE '%[^a-zA-Z0-9\-\. ]%'),
 	CONSTRAINT AK_Book_Classification UNIQUE([Classification]),
-	CONSTRAINT CK_Book_Title CHECK(Title NOT LIKE '%[^a-zA-Z0-9-. ]%'),
+	CONSTRAINT CK_Book_Title CHECK(Title NOT LIKE '%[^a-zA-Z0-9\-\.\, ]%'),
 	CONSTRAINT AK_Book_Title UNIQUE(Title),
 	CONSTRAINT CK_Book_PublicationYear CHECK (PublicationYear > 0),
 	CONSTRAINT FK_Book_Publisher_PublisherId FOREIGN KEY(PublisherId) REFERENCES [Library].Publisher(PublisherId),
@@ -203,7 +203,7 @@ CREATE TABLE [Library].Monograph (
 	MonographId INT IDENTITY(1,1) NOT NULL,
 	[Classification] VARCHAR(25) NOT NULL,
 	Title NVARCHAR(250) NOT NULL,
-	[Description] NVARCHAR(500) NOT NULL,
+	[Description] NVARCHAR(500) NULL,
 	Tutor NVARCHAR(100) NOT NULL,
 	PresentationDate DATE NOT NULL,
 	[Image] VARBINARY(MAX),
@@ -216,10 +216,10 @@ CREATE TABLE [Library].Monograph (
     PERIOD FOR SYSTEM_TIME(ValidFrom,ValidTo),
 
 	CONSTRAINT PK_Monograph_MonographId PRIMARY KEY(MonographId),
+	CONSTRAINT CK_Monograph_Classification CHECK([Classification] NOT LIKE '%[^a-zA-Z0-9\-\. ]%'),
 	CONSTRAINT AK_Monograph_Classification UNIQUE([Classification]),
-	CONSTRAINT CK_Monograph_Title CHECK(Title NOT LIKE '%[^a-zA-Z0-9-. ]%'),
-	CONSTRAINT CK_Monograph_Topic CHECK([Description] NOT LIKE '%[^a-zA-Z0-9-. ]%'),
-	CONSTRAINT CK_Monograph_Tutor CHECK(Tutor NOT LIKE '%[^a-zA-Z. ]%'),
+	CONSTRAINT CK_Monograph_Title CHECK(Title NOT LIKE '%[^a-zA-Z0-9\-\.\, ]%'),
+	CONSTRAINT CK_Monograph_Tutor CHECK(Tutor NOT LIKE '%[^a-zA-Z\.\, ]%'),
 	CONSTRAINT FK_Monograph_Career_CareerId FOREIGN KEY(CareerId) REFERENCES [University].Career(CareerId)
 )
 WITH

@@ -15,5 +15,9 @@ namespace LibraryManagementSystem.Entities.Dtos.Security
         [Required]
         [StringLength(maximumLength: 64, ErrorMessage = "Contraseña debe tener entre 1 y 64 caracteres", MinimumLength = 1)]
         public string? Password { get; set; }
+
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Id rol del usuario debe ser mayor que 0")]
+        public int RoleId { get; set; }
     }
 }

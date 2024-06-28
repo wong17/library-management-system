@@ -33,7 +33,7 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Description LIKE '%[^a-zA-Z0-9.- ]%')
+	IF (@Description LIKE '%[^a-zA-Z0-9\.\- ]%')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Descripción del rol solo puede tener mayúsculas, minúsculas, números, puntos, guiones y espacios' AS [Message]
 		RETURN
@@ -100,7 +100,7 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Description LIKE '%[^a-zA-Z0-9.- ]%')
+	IF (@Description LIKE '%[^a-zA-Z0-9\.\- ]%')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Descripción del rol solo puede tener mayúsculas, minúsculas, números, puntos, guiones y espacios' AS [Message]
 		RETURN

@@ -20,7 +20,7 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Name LIKE '%[^a-zA-Z-. ]%')
+	IF (@Name LIKE '%[^a-zA-Z\-\. ]%')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Nombre de la Editorial solo puede tener mayúsculas, minúsculas, guiones, puntos y espacios' AS [Message]
 		RETURN
@@ -61,7 +61,7 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que el nombre todas las Editoriales solo tenga mayúsculas, minúsculas, guiones, puntos y espacios
-	IF EXISTS (SELECT 1 FROM @Publishers AS p WHERE p.[Name] LIKE '%[^a-zA-Z-. ]%')
+	IF EXISTS (SELECT 1 FROM @Publishers AS p WHERE p.[Name] LIKE '%[^a-zA-Z\-\. ]%')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Nombre de la Editorial solo puede tener mayúsculas, minúsculas, guiones, puntos y espacios' AS [Message]
 		RETURN
@@ -134,7 +134,7 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Name LIKE '%[^a-zA-Z-. ]%')
+	IF (@Name LIKE '%[^a-zA-Z\-\. ]%')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Nombre de la Editorial solo puede tener mayúsculas, minúsculas, guiones, puntos y espacios' AS [Message]
 		RETURN
@@ -187,7 +187,7 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que el nombre todas las Editoriales solo tenga mayúsculas, minúsculas, guiones, puntos y espacios
-	IF EXISTS (SELECT 1 FROM @Publishers AS p WHERE p.[Name] LIKE '%[^a-zA-Z-. ]%')
+	IF EXISTS (SELECT 1 FROM @Publishers AS p WHERE p.[Name] LIKE '%[^a-zA-Z\-\. ]%')
 	BEGIN
 		SELECT 1 AS IsSuccess, 'Nombre de la Editorial solo puede tener mayúsculas, minúsculas, guiones, puntos y espacios' AS [Message]
 		RETURN

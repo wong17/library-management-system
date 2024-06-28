@@ -14,3 +14,11 @@ EXEC [Library].uspInsertBookAuthor 4, 4
 GO
 EXEC [Library].uspInsertBookAuthor 5, 5 
 GO
+EXEC [Library].uspInsertBookAuthor 6, 6 
+GO
+EXEC [Library].uspInsertBookAuthor 6, 7 
+GO
+EXEC [Library].uspInsertBookAuthor 7, 6 
+GO
+EXEC [Library].uspInsertBookAuthor 7, 7 
+GO

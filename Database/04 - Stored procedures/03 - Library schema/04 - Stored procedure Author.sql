@@ -21,9 +21,9 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Name LIKE '%[^a-zA-Z. ]%')
+	IF (@Name LIKE '%[^a-zA-Z\.\, ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Nombre del Autor solo puede tener mayúsculas, minúsculas, puntos y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Nombre del Autor solo puede tener letras, puntos, comas y espacios' AS [Message]
 		RETURN
 	END
 	--
@@ -62,9 +62,9 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que el nombre todos los Autores solo tenga mayúsculas, minúsculas, guiones y espacios
-	IF EXISTS (SELECT 1 FROM @Authors AS a WHERE a.[Name] LIKE '%[^a-zA-Z. ]%')
+	IF EXISTS (SELECT 1 FROM @Authors AS a WHERE a.[Name] LIKE '%[^a-zA-Z\.\, ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Nombre del Autor solo puede tener mayúsculas, minúsculas, puntos y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Nombre del Autor solo puede tener letras, puntos, comas y espacios' AS [Message]
 		RETURN
 	END
 	-- Verificar que no vayan nombres de Autores repetidos
@@ -136,9 +136,9 @@ BEGIN
 		RETURN
 	END
 	--
-	IF (@Name LIKE '%[^a-zA-Z. ]%')
+	IF (@Name LIKE '%[^a-zA-Z\.\, ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Nombre del Autor solo puede tener mayúsculas, minúsculas, puntos y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Nombre del Autor solo puede tener letras, puntos, comas y espacios' AS [Message]
 		RETURN
 	END
 	--
@@ -189,9 +189,9 @@ BEGIN
 		RETURN
 	END
 	-- Verificar que el nombre todos los Autores solo tenga mayúsculas, minúsculas, guiones y espacios
-	IF EXISTS (SELECT 1 FROM @Authors AS a WHERE a.[Name] LIKE '%[^a-zA-Z. ]%')
+	IF EXISTS (SELECT 1 FROM @Authors AS a WHERE a.[Name] LIKE '%[^a-zA-Z\.\, ]%')
 	BEGIN
-		SELECT 1 AS IsSuccess, 'Nombre del Autor solo puede tener mayúsculas, minúsculas, puntos y espacios' AS [Message]
+		SELECT 1 AS IsSuccess, 'Nombre del Autor solo puede tener letras, puntos, comas y espacios' AS [Message]
 		RETURN
 	END
 	-- Verificar que no vayan nombres de Autores repetidos
