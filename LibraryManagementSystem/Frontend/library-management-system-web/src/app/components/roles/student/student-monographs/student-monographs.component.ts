@@ -10,20 +10,22 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { DialogData, DialogOperation, LoanDialogData, TypeOfLoan } from '../../../../util/dialog-data';
+import { LoanDialogData, TypeOfLoan } from '../../../../util/dialog-data';
 import { StudentMonographLoansDialogComponent } from '../student-monograph-loans-dialog/student-monograph-loans-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-student-monographs',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, MatCheckbox, MatChipsModule],
   templateUrl: './student-monographs.component.html',
   styleUrl: './student-monographs.component.css'
 })
 export class StudentMonographsComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['classification', 'title', 'description', 'tutor', 'presentationDate', 'careerName', 'authors', 'options'];
+  displayedColumns: string[] = ['image', 'classification', 'title', 'description', 'tutor', 'presentationDate', 'careerName', 'authors', 'options'];
 
   /*  */
   dataSource: MatTableDataSource<MonographDto> = new MatTableDataSource<MonographDto>();

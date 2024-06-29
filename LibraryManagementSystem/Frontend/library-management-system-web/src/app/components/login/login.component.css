@@ -1,8 +1,15 @@
+.form-container-div {
+    display: grid;
+    place-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
 .form-container  {
     background-color: #ededed;
     width: 400px;
-    margin: auto;
-    margin-top: 50px;
+    /* margin: auto;
+    margin-top: 50px; */
     box-sizing: border-box;
     box-shadow: 0 0 20px 0 #0007;
     border-radius: 10px;

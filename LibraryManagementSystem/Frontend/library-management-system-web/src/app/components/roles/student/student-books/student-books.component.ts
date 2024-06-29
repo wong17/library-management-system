@@ -10,20 +10,22 @@ import { ApiResponse } from '../../../../entities/api/api-response';
 import { BookService } from '../../../../services/library/book.service';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort } from '@angular/material/sort';
-import { DialogData, DialogOperation, LoanDialogData, TypeOfLoan } from '../../../../util/dialog-data';
+import { LoanDialogData, TypeOfLoan } from '../../../../util/dialog-data';
 import { StudentBooksLoansDialogComponent } from '../student-books-loans-dialog/student-books-loans-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-student-books',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, MatCheckbox, MatChipsModule],
   templateUrl: './student-books.component.html',
   styleUrl: './student-books.component.css'
 })
 export class StudentBooksComponent {
 
-  displayedColumns: string[] = ['isbN10', 'isbN13', 'classification', 'title', 'description', 'publicationYear', 'publisherName', 
+  displayedColumns: string[] = ['image', 'isbN10', 'isbN13', 'classification', 'title', 'description', 'publicationYear', 'publisherName', 
     'categoryName', 'authors', 'subCategories', 'options'];
 
   /*  */

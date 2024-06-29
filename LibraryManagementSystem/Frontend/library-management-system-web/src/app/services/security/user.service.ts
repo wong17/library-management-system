@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../../entities/api/api-response';
 import { catchError, map, Observable } from 'rxjs';
@@ -8,6 +8,7 @@ import { UserUpdateDto } from '../../entities/dtos/security/user-update-dto';
 import { UserLogInDto } from '../../entities/dtos/security/user-log-in-dto';
 import { HttpErrorHandler } from '../../util/http-error-handler';
 import { UserDto } from '../../entities/dtos/security/user-dto';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +37,7 @@ export class UserService {
    * Modulo HttpClient para enviar solicitudes http
    * @param http
    */
-  constructor(private readonly http: HttpClient) { }
+  constructor(private readonly http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) { }
 
   /**
    * Inserta un nuevo usuario
@@ -71,16 +72,23 @@ export class UserService {
 
   /* Guardar informacion del usuario que inicio sesion */
   private setCurrentUser(user: UserDto): void {
-    localStorage.setItem('currentUser', JSON.stringify(user));
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+    }
   }
 
   /* Para cerrar la sesión actual */
   logout() {
-    localStorage.removeItem('currentUser');
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('currentUser');
+    }
   }
 
   /* Para obtener la información del usuario que inició sesión */
   get currentUser(): UserDto | null {
+    if (!isPlatformBrowser(this.platformId)) 
+      return null;
+
     const userJson = localStorage.getItem('currentUser');
     return userJson ? JSON.parse(userJson) : null;
   }

@@ -22,3 +22,36 @@ table {
 .filter-input {
     margin-right: 30px;
 }
+
+.book-image-cell {
+    width: 100px;
+    height: auto;
+}
+
+.table-container {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.book-isbn10-cell {
+    width: 130px;
+}
+
+.book-isbn13-cell {
+    width: 160px;
+}
+
+.options-div {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.options-mat-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+}

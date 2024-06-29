@@ -16,18 +16,20 @@ import { ApiResponse } from '../../../../entities/api/api-response';
 import { AdminBooksDialogComponent } from '../admin-books-dialog/admin-books-dialog.component';
 import { AdminBooksSubCategoriesDialogComponent } from '../admin-books-sub-categories-dialog/admin-books-sub-categories-dialog.component';
 import { AdminBooksAuthorsDialogComponent } from '../admin-books-authors-dialog/admin-books-authors-dialog.component';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
   selector: 'app-admin-books',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, MatCheckbox, MatChipsModule],
   templateUrl: './admin-books.component.html',
   styleUrl: './admin-books.component.css'
 })
 export class AdminBooksComponent implements AfterViewInit, OnInit {
 
-  displayedColumns: string[] = ['bookId', 'isbN10', 'isbN13', 'classification', 'title', 'description', 'publicationYear', 'isActive', 'numberOfCopies', 'borrowedCopies', 'isAvailable',
-    'publisherName', 'categoryName', 'authors', 'subCategories', 'options'];
+  displayedColumns: string[] = ['bookId', 'image', 'isbN10', 'isbN13', 'classification', 'title', 'description', 'publicationYear', 'numberOfCopies', 
+    'borrowedCopies', 'publisherName', 'categoryName', 'authors', 'subCategories', 'isAvailable', 'isActive', 'options'];
 
   /*  */
   dataSource: MatTableDataSource<BookDto> = new MatTableDataSource<BookDto>();
@@ -213,6 +215,4 @@ export class AdminBooksComponent implements AfterViewInit, OnInit {
       }
     })
   }
-
-
 }

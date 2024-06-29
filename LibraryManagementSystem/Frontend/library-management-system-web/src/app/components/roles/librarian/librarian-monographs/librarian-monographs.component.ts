@@ -10,17 +10,19 @@ import { MatSort } from '@angular/material/sort';
 import { MonographService } from '../../../../services/library/monograph.service';
 import { ToastrService } from 'ngx-toastr';
 import { ApiResponse } from '../../../../entities/api/api-response';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-librarian-monographs',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, MatCheckbox, MatChipsModule],
   templateUrl: './librarian-monographs.component.html',
   styleUrl: './librarian-monographs.component.css'
 })
 export class LibrarianMonographsComponent {
 
-  displayedColumns: string[] = ['classification', 'title', 'description', 'tutor', 'presentationDate', 'isAvailable', 'careerName', 'authors'];
+  displayedColumns: string[] = ['image', 'classification', 'title', 'description', 'tutor', 'presentationDate', 'careerName', 'isAvailable', 'authors'];
 
   /*  */
   dataSource: MatTableDataSource<MonographDto> = new MatTableDataSource<MonographDto>();

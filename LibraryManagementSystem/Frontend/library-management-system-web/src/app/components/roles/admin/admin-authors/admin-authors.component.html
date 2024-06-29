@@ -33,7 +33,9 @@
   <!-- Definición de la columna isFormerGraduated -->
   <ng-container matColumnDef="isFormerGraduated">
     <th mat-header-cell *matHeaderCellDef>Bachiller de la Universidad</th>
-    <td mat-cell *matCellDef="let element">{{ element.isFormerGraduated }}</td>
+    <td mat-cell *matCellDef="let element">
+      <mat-checkbox [checked]="element.isFormerGraduated" disabled></mat-checkbox>
+    </td>
   </ng-container>
 
   <!-- Columna de opciones -->

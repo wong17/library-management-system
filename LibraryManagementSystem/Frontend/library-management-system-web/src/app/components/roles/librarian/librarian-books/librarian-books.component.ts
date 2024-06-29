@@ -10,17 +10,19 @@ import { MatSort } from '@angular/material/sort';
 import { BookService } from '../../../../services/library/book.service';
 import { ToastrService } from 'ngx-toastr';
 import { ApiResponse } from '../../../../entities/api/api-response';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-librarian-books',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, MatCheckbox, MatChipsModule],
   templateUrl: './librarian-books.component.html',
   styleUrl: './librarian-books.component.css'
 })
 export class LibrarianBooksComponent {
 
-  displayedColumns: string[] = ['isbN10', 'isbN13', 'classification', 'title', 'description', 'publicationYear', 'numberOfCopies', 'borrowedCopies', 'isAvailable',
+  displayedColumns: string[] = ['image', 'isbN10', 'isbN13', 'classification', 'title', 'description', 'publicationYear', 'numberOfCopies', 'borrowedCopies', 'isAvailable',
     'publisherName', 'categoryName', 'authors', 'subCategories'];
 
   /*  */

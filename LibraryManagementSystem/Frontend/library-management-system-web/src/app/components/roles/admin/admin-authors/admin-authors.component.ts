@@ -14,11 +14,12 @@ import { DialogData, DialogOperation } from '../../../../util/dialog-data';
 import { AdminAuthorsDialogComponent } from '../admin-authors-dialog/admin-authors-dialog.component';
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
 import { ApiResponse } from '../../../../entities/api/api-response';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-admin-authors',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, MatCheckbox],
   templateUrl: './admin-authors.component.html',
   styleUrl: './admin-authors.component.css'
 })

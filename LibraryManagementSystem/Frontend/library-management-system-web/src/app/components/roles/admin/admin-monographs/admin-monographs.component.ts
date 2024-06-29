@@ -15,18 +15,20 @@ import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.comp
 import { ToastrService } from 'ngx-toastr';
 import { ApiResponse } from '../../../../entities/api/api-response';
 import { AdminMonographsAuthorsDialogComponent } from '../admin-monographs-authors-dialog/admin-monographs-authors-dialog.component';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
   selector: 'app-admin-monographs',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, MatCheckbox, MatChipsModule],
   templateUrl: './admin-monographs.component.html',
   styleUrl: './admin-monographs.component.css'
 })
 export class AdminMonographsComponent implements AfterViewInit, OnInit {
 
-  displayedColumns: string[] = ['monographId', 'classification', 'title', 'description', 'tutor', 'presentationDate', 'isActive', 'isAvailable', 'careerName', 'authors', 
-    'options'];
+  displayedColumns: string[] = ['monographId', 'image', 'classification', 'title', 'description', 'tutor', 'presentationDate', 
+    'careerName', 'authors', 'isAvailable', 'isActive', 'options'];
 
   /*  */
   dataSource: MatTableDataSource<MonographDto> = new MatTableDataSource<MonographDto>();

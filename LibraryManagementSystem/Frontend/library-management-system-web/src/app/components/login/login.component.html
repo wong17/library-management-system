@@ -1,46 +1,75 @@
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form-container">
-  <!--Title-->
-  <header class="form-header">
-    <h1>Login</h1>
-  </header>
-  
-  <!--Content-->
-  <div class="form-content">
-    <!--Username-->
-    <div class="form-group">
-      <mat-form-field appearance="outline" class="inputField">
-        <mat-label>Nombre de usuario:</mat-label>
-        <input type="text" matInput placeholder="Usuario..." formControlName="username" [errorStateMatcher]="matcher" maxlength="50">
-        <mat-icon matSuffix>person</mat-icon>
-        <!--Username validations-->
-        @if(username?.hasError('required')) {
+<div class="form-container-div">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form-container">
+    <!--Title-->
+    <header class="form-header">
+      <h1>Log In</h1>
+    </header>
+
+    <!--Content-->
+    <div class="form-content">
+      <!--Username-->
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="inputField">
+          <mat-label>Nombre de usuario:</mat-label>
+          <input
+            type="text"
+            matInput
+            placeholder="Usuario..."
+            formControlName="username"
+            [errorStateMatcher]="matcher"
+            maxlength="50"
+          />
+          <mat-icon matSuffix>person</mat-icon>
+          <!--Username validations-->
+          @if(username?.hasError('required')) {
           <mat-error>Campo es <strong>obligatorio</strong></mat-error>
-        } @else if(username?.hasError('minlength')) {
-          <mat-error>Nombre de usuario debe tener un mínimo de 3 caracteres</mat-error>
-        } @else if(username?.hasError('maxlength')) {
-          <mat-error>Nombre de usuario debe tener un máximo de 50 caracteres</mat-error>
-        }
-      </mat-form-field>
-    </div>
- 
-    <!--Password-->
-    <div class="form-group">
-      <mat-form-field appearance="outline" class="inputField">
-        <mat-label>Contraseña:</mat-label>
-        <input type="password" matInput placeholder="Contraseña..." formControlName="password" [errorStateMatcher]="matcher" maxlength="64">
-        <mat-icon matSuffix>password</mat-icon>
-        <!--Password validations-->
-        @if(password?.hasError('required')) {
+          } @else if(username?.hasError('minlength')) {
+          <mat-error
+            >Nombre de usuario debe tener un mínimo de 3 caracteres</mat-error
+          >
+          } @else if(username?.hasError('maxlength')) {
+          <mat-error
+            >Nombre de usuario debe tener un máximo de 50 caracteres</mat-error
+          >
+          }
+        </mat-form-field>
+      </div>
+
+      <!--Password-->
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="inputField">
+          <mat-label>Contraseña:</mat-label>
+          <input
+            type="password"
+            matInput
+            placeholder="Contraseña..."
+            formControlName="password"
+            [errorStateMatcher]="matcher"
+            maxlength="64"
+          />
+          <mat-icon matSuffix>password</mat-icon>
+          <!--Password validations-->
+          @if(password?.hasError('required')) {
           <mat-error>Campo es <strong>obligatorio</strong></mat-error>
-        } @else if(password?.hasError('minlength')) {
+          } @else if(password?.hasError('minlength')) {
           <mat-error>Contraseña debe tener un mínimo de 8 caracteres</mat-error>
-        } @else if(password?.hasError('maxlength')) {
-          <mat-error>Contraseña debe tener un máximo de 64 caracteres</mat-error>
-        }
-      </mat-form-field>
+          } @else if(password?.hasError('maxlength')) {
+          <mat-error
+            >Contraseña debe tener un máximo de 64 caracteres</mat-error
+          >
+          }
+        </mat-form-field>
+      </div>
+
+      <!--Submit button-->
+      <button
+        type="submit"
+        mat-flat-button
+        color="primary"
+        [disabled]="loginForm.invalid"
+      >
+        Iniciar sesión
+      </button>
     </div>
-  
-    <!--Submit button-->
-    <button type="submit" mat-flat-button color="primary" [disabled]="loginForm.invalid">Iniciar sesión</button>
-  </div>
-</form>
+  </form>
+</div>

@@ -22,3 +22,28 @@ table {
 .filter-input {
     margin-right: 30px;
 }
+
+.table-container {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.monograph-image-cell {
+    width: 100px;
+    height: auto;
+}
+
+.options-div {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.options-mat-cell {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100px;
+}
