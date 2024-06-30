@@ -21,14 +21,11 @@ import { LibrarianMonographsComponent } from './components/roles/librarian/libra
 import { LibrarianBookLoansComponent } from './components/roles/librarian/librarian-book-loans/librarian-book-loans.component';
 import { LibrarianMonographLoansComponent } from './components/roles/librarian/librarian-monograph-loans/librarian-monograph-loans.component';
 import { AdminGuard, LibrarianGuard, StudentGuard } from './services/auth-guard';
-import { BookCardComponent } from './components/custom-cards/book-card/book-card.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' }, // Se activará cuando la URL sea la raíz de la aplicación (Redirige a LoginComponent por defecto)
     { path: 'login', component: LoginComponent },
 
-    { path: 'book-card', component: BookCardComponent },
-    
     /* Componentes Admin */
     { path: 'admin-home', component: AdminHomeComponent, canActivate: [AdminGuard], children: [
         { path: '', redirectTo: 'admin-dashboard', pathMatch: 'full' }, // Redirige automáticamente a admin-dashboard al carga admin-home

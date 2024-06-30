@@ -15,11 +15,16 @@ import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.comp
 import { BookLoanSignalRService } from '../../../../services/signalr-hubs/book-loan-signal-r.service';
 import { UpdateBorrowedBookLoanDto } from '../../../../entities/dtos/library/update-borrowed-book-loan-dto';
 import { UpdateReturnedBookLoanDto } from '../../../../entities/dtos/library/update-returned-book-loan-dto';
+import { BookCardComponent } from '../../../custom-cards/book-card/book-card.component';
+import { StudentCardComponent } from '../../../custom-cards/student-card/student-card.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-admin-book-loans',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, BookCardComponent, StudentCardComponent,
+    CommonModule
+  ],
   templateUrl: './admin-book-loans.component.html',
   styleUrl: './admin-book-loans.component.css'
 })

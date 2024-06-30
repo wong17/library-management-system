@@ -26,3 +26,31 @@ table {
 .add-button {
     min-width: auto;
 }
+
+.options-div {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.options-mat-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 220px;
+}
+
+.table-container {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.typeOfLoan-cell {
+    width: 100px;
+}
+
+.book-card-cell {
+    width: 500px;
+}

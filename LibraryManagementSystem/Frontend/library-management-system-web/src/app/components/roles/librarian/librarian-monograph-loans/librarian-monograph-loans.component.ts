@@ -15,11 +15,16 @@ import { ToastrService } from 'ngx-toastr';
 import { MonographLoanSignalRService } from '../../../../services/signalr-hubs/monograph-loan-signal-r.service';
 import { UpdateReturnedMonographLoanDto } from '../../../../entities/dtos/library/update-returned-monograph-loan-dto';
 import { UpdateBorrowedMonographLoanDto } from '../../../../entities/dtos/library/update-borrowed-monograph-loan-dto';
+import { CommonModule } from '@angular/common';
+import { MonographCardComponent } from '../../../custom-cards/monograph-card/monograph-card.component';
+import { StudentCardComponent } from '../../../custom-cards/student-card/student-card.component';
 
 @Component({
   selector: 'app-librarian-monograph-loans',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule,
+    StudentCardComponent, MonographCardComponent, CommonModule
+  ],
   templateUrl: './librarian-monograph-loans.component.html',
   styleUrl: './librarian-monograph-loans.component.css'
 })

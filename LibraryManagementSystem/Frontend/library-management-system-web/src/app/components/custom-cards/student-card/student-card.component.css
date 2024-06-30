@@ -1,0 +1,38 @@
+.student-container-card {
+    display: grid;
+    margin: 10px;
+    align-items: center;
+    grid-template-rows: minmax(50px, 80px) 1fr;
+    box-sizing: border-box;
+    padding: 0 10px 10px 10px;
+    width: 400px;
+    box-sizing: border-box;
+}
+
+header {
+    display: grid;
+    align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.student-content-card {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    column-gap: 10px;
+    align-content: center;
+}
+
+.student-image {
+    width: 150px;
+    height: auto;
+}
+
+span {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+p {
+    font-size: 16px;
+}

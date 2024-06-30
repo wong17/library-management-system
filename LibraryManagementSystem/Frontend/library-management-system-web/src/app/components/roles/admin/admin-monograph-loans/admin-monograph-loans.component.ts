@@ -15,11 +15,15 @@ import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.comp
 import { MonographLoanSignalRService } from '../../../../services/signalr-hubs/monograph-loan-signal-r.service';
 import { UpdateBorrowedMonographLoanDto } from '../../../../entities/dtos/library/update-borrowed-monograph-loan-dto';
 import { UpdateReturnedMonographLoanDto } from '../../../../entities/dtos/library/update-returned-monograph-loan-dto';
+import { StudentCardComponent } from '../../../custom-cards/student-card/student-card.component';
+import { CommonModule } from '@angular/common';
+import { MonographCardComponent } from '../../../custom-cards/monograph-card/monograph-card.component';
 
 @Component({
   selector: 'app-admin-monograph-loans',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, 
+    StudentCardComponent, MonographCardComponent, CommonModule],
   templateUrl: './admin-monograph-loans.component.html',
   styleUrl: './admin-monograph-loans.component.css'
 })

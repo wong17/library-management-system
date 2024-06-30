@@ -1,0 +1,28 @@
+<article class="book-container-card">
+  <header>
+    <h2>{{ book?.title }}</h2>
+  </header>
+  <main class="book-content-card">
+    <!-- Imagen del libro -->
+    <img
+      [src]="book?.image ? book?.image : 'assets/images/default-book-img.svg'"
+      class="book-image"
+      alt="Book Image"
+    />
+    <!-- Información general del libro -->
+    <div class="book-information-div">
+      <!---->
+      <section class="book-information-section">
+        <p><span>Clasificación: </span>{{ book?.classification }}</p>
+        <p><span>Año: </span>{{ book?.publicationYear }}</p>
+        <p><span>Editorial: </span>{{ book?.publisher?.name }}</p>
+        <p><span>Autores: </span></p>
+        <mat-chip-set aria-label="Autores">
+            @for (author of book?.authors; track author?.name) {
+            <mat-chip>{{ author?.name }}</mat-chip>
+            }
+        </mat-chip-set>
+      </section>
+    </div>
+  </main>
+</article>

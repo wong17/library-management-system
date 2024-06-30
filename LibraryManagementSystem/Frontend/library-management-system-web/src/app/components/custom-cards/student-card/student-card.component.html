@@ -1,0 +1,34 @@
+<article class="student-container-card">
+  <header>
+    <h2>
+      {{
+        (student?.firstName ? student?.firstName : "") +
+          " " +
+          (student?.secondName ? student?.secondName : "") +
+          " " +
+          (student?.firstLastname ? student?.firstLastname : "") +
+          " " +
+          (student?.secondLastname ? student?.secondLastname : "")
+      }}
+    </h2>
+  </header>
+  <main class="student-content-card">
+    <!-- Imagen del estudiante -->
+    <img
+      [src]="'assets/images/default-student-img.svg'"
+      class="student-image"
+      alt="Student Image"
+    />
+    <!-- Información general del estudiante -->
+    <div class="student-information-div">
+      <!---->
+      <section class="student-information-section">
+        <p><span>Carrera: </span>{{ student?.career?.name }}</p>
+        <p><span>Carnet: </span>{{ student?.carnet }}</p>
+        <p><span>Turno: </span>{{ student?.shift }}</p>
+        <p><span>Sexo: </span>{{ student?.sex }}</p>
+        <p><span>Teléfono: </span>{{ student?.phoneNumber }}</p>
+      </section>
+    </div>
+  </main>
+</article>

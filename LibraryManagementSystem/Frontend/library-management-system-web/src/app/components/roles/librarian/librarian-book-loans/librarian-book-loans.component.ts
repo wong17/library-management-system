@@ -15,11 +15,15 @@ import { ToastrService } from 'ngx-toastr';
 import { BookLoanSignalRService } from '../../../../services/signalr-hubs/book-loan-signal-r.service';
 import { UpdateReturnedBookLoanDto } from '../../../../entities/dtos/library/update-returned-book-loan-dto';
 import { UpdateBorrowedBookLoanDto } from '../../../../entities/dtos/library/update-borrowed-book-loan-dto';
+import { BookCardComponent } from '../../../custom-cards/book-card/book-card.component';
+import { StudentCardComponent } from '../../../custom-cards/student-card/student-card.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-librarian-book-loans',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, BookCardComponent, StudentCardComponent,
+    CommonModule],
   templateUrl: './librarian-book-loans.component.html',
   styleUrl: './librarian-book-loans.component.css'
 })
