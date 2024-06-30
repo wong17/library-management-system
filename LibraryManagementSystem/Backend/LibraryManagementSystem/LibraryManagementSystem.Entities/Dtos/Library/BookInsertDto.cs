@@ -16,12 +16,12 @@ namespace LibraryManagementSystem.Entities.Dtos.Library
 
         [Required]
         [StringLength(maximumLength: 25, ErrorMessage = "Clasificación del libro debe tener entre 1 y 25 caracteres", MinimumLength = 1)]
-        [RegularExpression(@"^[a-zA-Z0-9\-\. ]+$", ErrorMessage = "Clasificación del libro solo puede tener letras, números, guiones, puntos y espacios")]
+        [RegularExpression(@"^[\p{L}0-9\-\. ]+$", ErrorMessage = "Clasificación del libro solo puede tener letras, números, guiones, puntos y espacios")]
         public string? Classification { get; set; }
 
         [Required]
         [StringLength(maximumLength: 100, ErrorMessage = "Titulo del libro debe tener entre 1 y 100 caracteres", MinimumLength = 1)]
-        [RegularExpression(@"^[a-zA-Z0-9\-\.\, ]+$", ErrorMessage = "Titulo del libro solo puede tener letras, números, guiones, puntos. comas y espacios")]
+        [RegularExpression(@"^[\p{L}0-9\-\.\, ]+$", ErrorMessage = "Titulo del libro solo puede tener letras, números, guiones, puntos. comas y espacios")]
         public string? Title { get; set; }
 
         [StringLength(maximumLength: 500, ErrorMessage = "Descripción del libro debe tener un máximo de 500 caracteres")]
