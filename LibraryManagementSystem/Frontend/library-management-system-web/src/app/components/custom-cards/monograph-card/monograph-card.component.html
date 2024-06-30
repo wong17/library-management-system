@@ -5,7 +5,11 @@
   <main class="monograph-content-card">
     <!-- Imagen de la monografia -->
     <img
-      [src]="monograph?.image ? monograph?.image : 'assets/images/default-monograph-img.svg'"
+      [src]="
+        monograph?.image
+          ? monograph?.image
+          : 'assets/images/default-monograph-img.svg'
+      "
       class="monograph-image"
       alt="Monograph Image"
     />
@@ -14,7 +18,9 @@
       <!---->
       <section class="monograph-information-section">
         <p><span>Clasificación: </span>{{ monograph?.classification }}</p>
-        <p><span>Fecha presentación: </span>{{ monograph?.presentationDate }}</p>
+        <p>
+          <span>Fecha presentación: </span>{{ monograph?.presentationDate }}
+        </p>
         <p><span>Carrera: </span>{{ monograph?.career?.name }}</p>
         <p><span>Autores: </span></p>
         <mat-chip-set aria-label="Autores">

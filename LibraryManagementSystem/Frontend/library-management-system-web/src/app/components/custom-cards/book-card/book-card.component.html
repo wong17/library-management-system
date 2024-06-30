@@ -18,9 +18,9 @@
         <p><span>Editorial: </span>{{ book?.publisher?.name }}</p>
         <p><span>Autores: </span></p>
         <mat-chip-set aria-label="Autores">
-            @for (author of book?.authors; track author?.name) {
-            <mat-chip>{{ author?.name }}</mat-chip>
-            }
+          @for (author of book?.authors; track author?.name) {
+          <mat-chip>{{ author?.name }}</mat-chip>
+          }
         </mat-chip-set>
       </section>
     </div>

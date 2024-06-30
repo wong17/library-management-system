@@ -15,11 +15,13 @@ import { StudentMonographLoansDialogComponent } from '../student-monograph-loans
 import { MatDialog } from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-student-monographs',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, MatCheckbox, MatChipsModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, 
+    MatCheckbox, MatChipsModule, MatTooltipModule],
   templateUrl: './student-monographs.component.html',
   styleUrl: './student-monographs.component.css'
 })

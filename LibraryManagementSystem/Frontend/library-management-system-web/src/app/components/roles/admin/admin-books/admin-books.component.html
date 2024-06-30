@@ -149,28 +149,34 @@
       <th mat-header-cell *matHeaderCellDef>Opciones</th>
       <!-- Iconos a mostrar en la columna -->
       <mat-cell *matCellDef="let element" class="options-mat-cell">
-        <div class="options-div">
-          <mat-icon
-            fontIcon="category"
-            matTooltip="Editar sub categorías"
-            (click)="editBookSubCategoriesClick(element)"
-          ></mat-icon>
-          <mat-icon
-            fontIcon="group"
-            matTooltip="Editar autores"
-            (click)="editBookAuthorsClick(element)"
-          ></mat-icon>
-          <mat-icon
-            fontIcon="edit"
-            matTooltip="Editar"
-            (click)="editBookClick(element)"
-          ></mat-icon>
-          <mat-icon
-            fontIcon="delete"
-            matTooltip="Eliminar"
-            (click)="deleteBookClick(element)"
-          ></mat-icon>
-        </div>
+        @if (element?.isActive) {
+          <div class="options-div">
+            <mat-icon
+              fontIcon="category"
+              matTooltip="Editar sub categorías"
+              matTooltipPosition="below"
+              (click)="editBookSubCategoriesClick(element)"
+            ></mat-icon>
+            <mat-icon
+              fontIcon="group"
+              matTooltip="Editar autores"
+              matTooltipPosition="below"
+              (click)="editBookAuthorsClick(element)"
+            ></mat-icon>
+            <mat-icon
+              fontIcon="edit"
+              matTooltip="Editar"
+              matTooltipPosition="below"
+              (click)="editBookClick(element)"
+            ></mat-icon>
+            <mat-icon
+              fontIcon="delete"
+              matTooltip="Eliminar"
+              matTooltipPosition="below"
+              (click)="deleteBookClick(element)"
+            ></mat-icon>
+          </div>
+        }
       </mat-cell>
     </ng-container>
 

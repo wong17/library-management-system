@@ -17,11 +17,13 @@ import { ApiResponse } from '../../../../entities/api/api-response';
 import { AdminMonographsAuthorsDialogComponent } from '../admin-monographs-authors-dialog/admin-monographs-authors-dialog.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-admin-monographs',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, MatCheckbox, MatChipsModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, 
+    MatCheckbox, MatChipsModule, MatTooltipModule],
   templateUrl: './admin-monographs.component.html',
   styleUrl: './admin-monographs.component.css'
 })

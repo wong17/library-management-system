@@ -44,3 +44,17 @@ table {
     width: 100px;
     height: auto;
 }
+
+.options-div {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.options-mat-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+}

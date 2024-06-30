@@ -18,12 +18,13 @@ import { UpdateReturnedBookLoanDto } from '../../../../entities/dtos/library/upd
 import { BookCardComponent } from '../../../custom-cards/book-card/book-card.component';
 import { StudentCardComponent } from '../../../custom-cards/student-card/student-card.component';
 import { CommonModule } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-admin-book-loans',
   standalone: true,
   imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, BookCardComponent, StudentCardComponent,
-    CommonModule
+    CommonModule, MatTooltipModule
   ],
   templateUrl: './admin-book-loans.component.html',
   styleUrl: './admin-book-loans.component.css'

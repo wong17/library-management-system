@@ -14,11 +14,12 @@ import { DialogData, DialogOperation } from '../../../../util/dialog-data';
 import { AdminCategoriesDialogComponent } from '../admin-categories-dialog/admin-categories-dialog.component';
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
 import { ApiResponse } from '../../../../entities/api/api-response';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-admin-categories',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, MatTooltipModule],
   templateUrl: './admin-categories.component.html',
   styleUrl: './admin-categories.component.css'
 })

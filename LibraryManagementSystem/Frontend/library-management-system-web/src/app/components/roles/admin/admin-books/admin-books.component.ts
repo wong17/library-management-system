@@ -18,11 +18,13 @@ import { AdminBooksSubCategoriesDialogComponent } from '../admin-books-sub-categ
 import { AdminBooksAuthorsDialogComponent } from '../admin-books-authors-dialog/admin-books-authors-dialog.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-admin-books',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, MatCheckbox, MatChipsModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, 
+    MatCheckbox, MatChipsModule, MatTooltipModule],
   templateUrl: './admin-books.component.html',
   styleUrl: './admin-books.component.css'
 })

@@ -13,11 +13,12 @@ import { AdminPublishersDialogComponent } from '../admin-publishers-dialog/admin
 import { DialogData, DialogOperation } from '../../../../util/dialog-data';
 import { ToastrService } from 'ngx-toastr';
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-admin-publishers',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, MatTooltipModule],
   templateUrl: './admin-publishers.component.html',
   styleUrl: './admin-publishers.component.css'
 })

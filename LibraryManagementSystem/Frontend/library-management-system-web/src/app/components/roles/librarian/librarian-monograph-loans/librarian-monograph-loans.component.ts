@@ -18,12 +18,13 @@ import { UpdateBorrowedMonographLoanDto } from '../../../../entities/dtos/librar
 import { CommonModule } from '@angular/common';
 import { MonographCardComponent } from '../../../custom-cards/monograph-card/monograph-card.component';
 import { StudentCardComponent } from '../../../custom-cards/student-card/student-card.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-librarian-monograph-loans',
   standalone: true,
   imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule,
-    StudentCardComponent, MonographCardComponent, CommonModule
+    StudentCardComponent, MonographCardComponent, CommonModule, MatTooltipModule
   ],
   templateUrl: './librarian-monograph-loans.component.html',
   styleUrl: './librarian-monograph-loans.component.css'

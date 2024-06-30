@@ -15,11 +15,13 @@ import { StudentBooksLoansDialogComponent } from '../student-books-loans-dialog/
 import { MatDialog } from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-student-books',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, MatCheckbox, MatChipsModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule, 
+    MatCheckbox, MatChipsModule, MatTooltipModule],
   templateUrl: './student-books.component.html',
   styleUrl: './student-books.component.css'
 })
