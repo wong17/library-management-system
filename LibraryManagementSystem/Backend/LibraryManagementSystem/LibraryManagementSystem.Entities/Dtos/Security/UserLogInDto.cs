@@ -6,7 +6,7 @@ namespace LibraryManagementSystem.Entities.Dtos.Security
     {
         [Required]
         [StringLength(maximumLength: 50, ErrorMessage = "Nombre de usuario debe tener entre 1 y 50 caracteres", MinimumLength = 1)]
-        [RegularExpression(@"^[\p{L}0-9\. ]+$", ErrorMessage = "Nombre de usuario solo puede tener letras, números y puntos")]
+        [RegularExpression(@"^[\p{L}0-9\. ]+$", ErrorMessage = "Nombre de usuario solo puede tener letras, números, puntos y espacios")]
         public string? UserName { get; set; }
 
         [Required]
