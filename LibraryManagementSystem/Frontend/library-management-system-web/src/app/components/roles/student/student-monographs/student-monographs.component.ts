@@ -216,7 +216,7 @@ export class StudentMonographsComponent implements OnInit, AfterViewInit {
           return;
         }
         // Asignar datos
-        this.authors = list as AuthorDto[];
+        this.authors = list.filter((author: AuthorDto) => author.isFormerGraduated);
       },
       error: (error: ApiResponse) => {
         this.toastr.error(`${error.message}`, 'Error', {
