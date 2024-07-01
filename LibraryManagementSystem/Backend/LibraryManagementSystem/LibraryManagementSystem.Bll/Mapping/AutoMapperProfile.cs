@@ -37,6 +37,8 @@ namespace LibraryManagementSystem.Bll.Mapping
             CreateMap<SubCategory, SubCategoryInsertDto>().ReverseMap();
             CreateMap<SubCategory, SubCategoryUpdateDto>().ReverseMap();
             CreateMap<SubCategory, SubCategoryDto>().ReverseMap();
+            CreateMap<SubCategory, SubCategoryFilterDto>().ReverseMap();
+            CreateMap<SubCategoryDto, SubCategoryFilterDto>().ReverseMap();
 
             CreateMap<Author, AuthorInsertDto>().ReverseMap();
             CreateMap<Author, AuthorUpdateDto>().ReverseMap();

@@ -152,7 +152,7 @@ export class AdminSubCategoriesComponent implements AfterViewInit, OnInit {
           return;
         }
         // Asignar datos
-        this.dataSource.data = response.result as SubCategoryDto[];;
+        this.dataSource.data = response.result as SubCategoryDto[];
       },
       error: (error: ApiResponse) => {
         this.toastr.error(`${error.message}`, 'Error', {

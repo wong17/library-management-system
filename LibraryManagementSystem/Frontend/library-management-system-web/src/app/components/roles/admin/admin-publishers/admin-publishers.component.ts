@@ -14,6 +14,7 @@ import { DialogData, DialogOperation } from '../../../../util/dialog-data';
 import { ToastrService } from 'ngx-toastr';
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ApiResponse } from '../../../../entities/api/api-response';
 
 @Component({
   selector: 'app-admin-publishers',
@@ -153,8 +154,8 @@ export class AdminPublishersComponent implements AfterViewInit, OnInit {
         // Asignar datos
         this.dataSource.data = list as PublisherDto[];
       },
-      error: error => {
-        this.toastr.error(error.message, 'Error', {
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error.message}`, 'Error', {
           timeOut: 5000
         });
       }

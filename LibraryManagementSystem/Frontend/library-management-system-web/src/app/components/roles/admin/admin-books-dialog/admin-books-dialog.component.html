@@ -131,15 +131,13 @@
           <button
             class="deleteButton"
             mat-icon-button
-            (click)="
-              fileInput.value = ''; image?.setValue(null)
-            "
+            (click)="fileInput.value = ''; image?.setValue(null)"
           >
             <mat-icon>close</mat-icon>
           </button>
         </ng-container>
         }
-         <!-- no image -->
+        <!-- no image -->
         @if(!image!.value) {
         <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="10px">
           <mat-icon style="opacity: 60%">file_upload</mat-icon>
@@ -216,9 +214,7 @@
     </mat-form-field>
 
     <!--Esta activo-->
-    <mat-checkbox formControlName="isActive">
-      ¿Está activo?
-    </mat-checkbox>
+    <mat-checkbox formControlName="isActive"> ¿Está activo? </mat-checkbox>
 
     <!--Acciones-->
     <mat-dialog-actions align="end" class="dialog-actions">

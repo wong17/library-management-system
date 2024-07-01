@@ -5,6 +5,7 @@ using LibraryManagementSystem.Entities.Dtos.Library;
 using LibraryManagementSystem.Entities.Models.Library;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Text.Json;
 
 namespace LibraryManagementSystem.WebAPI.Controllers
 {
@@ -14,6 +15,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
     {
         private readonly IBookBll _bookBll = bookBll;
         private readonly IMapper _mapper = mapper;
+        private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
         /// <summary>
         /// Inserta un Libro
@@ -106,6 +108,32 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return NotFound(response);
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Devuelva los libros filtrados por autores, editoriales, categorías, sub categorías y año de publicación
+        /// </summary>
+        /// <param name="filterParamsDto"></param>
+        /// <returns></returns>
+        [HttpGet("get_filtered_book")]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetFilteredBook([FromQuery] string filterParamsDto)
+        {
+            if (filterParamsDto is null)
+                return BadRequest(new ApiResponse() { Message = "FilterBookDto json es null.", StatusCode = HttpStatusCode.BadRequest });
+
+            var filterBookDto = JsonSerializer.Deserialize<FilterBookDto>(filterParamsDto, _jsonOptions);
+            if (filterBookDto is null)
+                return BadRequest(new ApiResponse() { Message = "FilterBookDto es null.", StatusCode = HttpStatusCode.BadRequest });
+
+            var response = await _bookBll.GetFilteredBook(filterBookDto);
+            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);

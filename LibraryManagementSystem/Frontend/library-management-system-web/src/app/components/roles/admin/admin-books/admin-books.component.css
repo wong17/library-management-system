@@ -1,3 +1,88 @@
+/*----------------------------------------*/
+.book-section {
+    display: grid;
+    grid-template-rows: 100px 200px 2fr 50px;
+}
+
+/*----------------------------------------*/
+.search-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.text-span {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.refresh-button {
+    background-color: #155724;
+    color: white;
+}
+
+.span-width {
+    width: 100px;
+}
+
+/*----------------------------------------*/
+
+.filter-options-container {
+    display: grid;
+    grid-template-rows: 40px 1fr;
+}
+
+.filter-parameters-form {
+    display: grid;
+    grid-template-rows: 1fr 1fr 100px;
+    grid-template-rows: 1fr 1fr;
+    align-items: center;
+}
+
+.filter-div {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+}
+
+.author-filter-div {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+}
+
+.publisher-filter-div {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+}
+
+.year-filter-div {
+    grid-column: 3 / 4;
+    grid-row: 1 / 2;
+}
+
+.category-filter-div {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+}
+
+.subCategory-filter-div {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+}
+
+.filter-matselect {
+    width: 360px;
+}
+
+.filter-button {
+    width: 100px;
+    grid-column: 3 / 4;
+    grid-row: 2 / 3;;
+}
+
+/*----------------------------------------*/
+
 table {
     width: 100%;
 }
@@ -12,19 +97,6 @@ table {
     border-right: 1px solid currentColor;
     padding-right: 24px;
     text-align: center;
-}
-
-.filter-container {
-    display: flex;
-    align-items: center;
-}
-
-.filter-input {
-    margin-right: 30px;
-}
-
-.add-button {
-    min-width: auto;
 }
 
 .options-div {
