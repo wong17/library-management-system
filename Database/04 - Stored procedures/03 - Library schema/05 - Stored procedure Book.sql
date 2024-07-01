@@ -408,3 +408,39 @@ BEGIN
 	END
 END
 GO
+
+-- GET Books filtered by authors, publishers, years, categories and subcategories
+IF OBJECT_ID('Library.uspGetFilteredBooks', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspGetFilteredBooks;  
+GO
+CREATE PROC [Library].uspGetFilteredBooks (
+	@AuthorIds [Library].AuthorType READONLY,
+	@PublisherIds [Library].PublisherType READONLY,
+	@CategoryIds [Library].CategoryType READONLY,
+	@SubCategoryIds [Library].SubCategoryType READONLY,
+	@PublicationYear SMALLINT = NULL
+)
+AS
+BEGIN
+	--
+	SELECT DISTINCT b.*
+    FROM [Library].Book b
+    LEFT JOIN [Library].BookAuthor ba ON b.BookId = ba.BookId
+    LEFT JOIN [Library].BookSubCategory bs ON b.BookId = bs.BookId
+    WHERE 
+        -- Filtro por autores si @AuthorIds tiene registros
+        (NOT EXISTS (SELECT 1 FROM @AuthorIds) OR ba.AuthorId IN (SELECT AuthorId FROM @AuthorIds))
+        AND
+        -- Filtro por editoriales si @PublisherIds tiene registros
+        (NOT EXISTS (SELECT 1 FROM @PublisherIds) OR b.PublisherId IN (SELECT PublisherId FROM @PublisherIds))
+        AND
+        -- Filtro por categorías si @CategoryIds tiene registros
+        (NOT EXISTS (SELECT 1 FROM @CategoryIds) OR b.CategoryId IN (SELECT CategoryId FROM @CategoryIds))
+        AND
+        -- Filtro por subcategorías si @SubCategoryIds tiene registros
+        (NOT EXISTS (SELECT 1 FROM @SubCategoryIds) OR bs.SubCategoryId IN (SELECT SubCategoryId FROM @SubCategoryIds))
+        AND
+        -- Filtro por año de publicación si @PublicationYear no es NULL
+        (@PublicationYear IS NULL OR b.PublicationYear = @PublicationYear);
+END
+GO
