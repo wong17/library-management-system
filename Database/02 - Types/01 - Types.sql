@@ -171,3 +171,14 @@ CREATE TYPE [Library].MonographAuthorType AS TABLE
 	ModifiedOn DATETIME
 )
 GO
+
+-- Career TYPE
+IF TYPE_ID (N'University.CareerType') IS NOT NULL 
+	DROP TYPE [University].CareerType;
+GO
+CREATE TYPE [University].CareerType AS TABLE 
+(
+	CareerId TINYINT,
+	[Name] VARCHAR(50)
+)
+GO
