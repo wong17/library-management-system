@@ -1,11 +1,11 @@
 ﻿using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Dal.Core;
-using LibraryManagementSystem.Entities.Models.Library;
-using System.Data.SqlClient;
-using System.Data;
-using System.Net;
 using LibraryManagementSystem.Dal.Repository.Interfaces.Library;
 using LibraryManagementSystem.Entities.Dtos.Library;
+using LibraryManagementSystem.Entities.Models.Library;
+using System.Data;
+using System.Data.SqlClient;
+using System.Net;
 
 namespace LibraryManagementSystem.Dal.Repository.Implements.Library
 {
@@ -229,7 +229,8 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                 new("@PublicationYear", SqlDbType.SmallInt)
                 {
                     Value = filterBookDto.PublicationYear
-                }];
+                }
+            ];
 
             try
             {

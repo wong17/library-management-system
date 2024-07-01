@@ -1,106 +1,181 @@
 <h1>Monografías</h1>
 
-<div class="filter-container">
-  <mat-form-field>
-    <mat-label>Filtrar</mat-label>
-    <input
-      matInput
-      (keyup)="applyFilter($event)"
-      placeholder="Ej. Sistema de ventas e inventario"
-      #input
-    />
-  </mat-form-field>
-</div>
+<section class="monograph-section">
+  <!--Panel de busqueda y boton de agregar nuevo -->
+  <section class="search-container">
+    <span class="text-span">Buscar: </span>
+    <mat-form-field>
+      <mat-label>Nombre de la monografia...</mat-label>
+      <input
+        matInput
+        (keyup)="applyFilter($event)"
+        placeholder="Ej. Sistema de ventas e inventario"
+        #input
+      />
+    </mat-form-field>
 
-<div class="table-container">
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-    <!-- Definición de la columna Image -->
-    <ng-container matColumnDef="image">
-      <th mat-header-cell *matHeaderCellDef>Imagen</th>
-      <td mat-cell *matCellDef="let element">
-        <img
-          [src]="
-            element.image
-              ? element.image
-              : 'assets/images/default-monograph-img.svg'
-          "
-          class="monograph-image-cell"
-          alt="Monograph Image"
-        />
-      </td>
-    </ng-container>
-    
-    <!-- Definición de la columna classification -->
-    <ng-container matColumnDef="classification">
-      <th mat-header-cell *matHeaderCellDef>Clasificación</th>
-      <td mat-cell *matCellDef="let element">{{ element.classification }}</td>
-    </ng-container>
+    <button
+      mat-flat-button
+      class="refresh-button"
+      (click)="reloadMonographsClick()"
+    >
+      <mat-icon>refresh</mat-icon>
+      Refrescar
+    </button>
+  </section>
 
-    <!-- Definición de la columna title -->
-    <ng-container matColumnDef="title">
-      <th mat-header-cell *matHeaderCellDef>Titulo</th>
-      <td mat-cell *matCellDef="let element">{{ element.title }}</td>
-    </ng-container>
-
-    <!-- Definición de la columna description -->
-    <ng-container matColumnDef="description">
-      <th mat-header-cell *matHeaderCellDef>Descripción</th>
-      <td mat-cell *matCellDef="let element">{{ element.description }}</td>
-    </ng-container>
-
-    <!-- Definición de la columna Tutor -->
-    <ng-container matColumnDef="tutor">
-      <th mat-header-cell *matHeaderCellDef>Tutor</th>
-      <td mat-cell *matCellDef="let element">{{ element.tutor }}</td>
-    </ng-container>
-
-    <!-- Definición de la columna presentationDate -->
-    <ng-container matColumnDef="presentationDate">
-      <th mat-header-cell *matHeaderCellDef>Fecha de presentación</th>
-      <td mat-cell *matCellDef="let element">{{ element.presentationDate }}</td>
-    </ng-container>
-
-    <!-- Definición de la columna careerName -->
-    <ng-container matColumnDef="careerName">
-      <th mat-header-cell *matHeaderCellDef>Carrera</th>
-      <td mat-cell *matCellDef="let element">{{ element.career.name }}</td>
-    </ng-container>
-
-    <!-- Definición de la columna authors -->
-    <ng-container matColumnDef="authors">
-      <th mat-header-cell *matHeaderCellDef>Autores</th>
-      <td mat-cell *matCellDef="let element">
-        <mat-chip-set aria-label="Autores">
-          @for (author of element?.authors; track author?.name) {
-          <mat-chip>{{ author?.name }}</mat-chip>
+  <!--Panel para filtrar monografias-->
+  <section class="filter-options-container">
+    <!---->
+    <h2 class="text-span">Búsqueda avanzada</h2>
+    <form
+      [formGroup]="filterForm"
+      class="filter-parameters-form"
+      (ngSubmit)="onSubmit()"
+    >
+      <!---->
+      <div class="filter-div author-filter-div">
+        <span class="text-span span-width">Autores: </span>
+        <mat-select
+          formControlName="authorIds"
+          multiple
+          class="filter-matselect"
+        >
+          @for (author of authors; track author) {
+          <mat-option [value]="author.authorId">{{ author.name }}</mat-option>
           }
-        </mat-chip-set>
-      </td>
-    </ng-container>
+        </mat-select>
+      </div>
 
-    <!-- Definición de la columna isAvailable -->
-    <ng-container matColumnDef="isAvailable">
-      <th mat-header-cell *matHeaderCellDef>Disponible para préstamo</th>
-      <td mat-cell *matCellDef="let element">
-        <mat-checkbox [checked]="element?.isAvailable" disabled></mat-checkbox>
-      </td>
-    </ng-container>
+      <div class="filter-div career-filter-div">
+        <span class="text-span span-width">Carreras: </span>
+        <mat-select
+          formControlName="careerIds"
+          multiple
+          class="filter-matselect"
+        >
+          @for (career of careers; track career) {
+          <mat-option [value]="career.careerId">{{ career.name }}</mat-option>
+          }
+        </mat-select>
+      </div>
 
-    <!-- Vincular arreglo que contiene el texto de las columnas que debe coincidir con la definición de cada una -->
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <div class="filter-div">
+        <span class="text-span span-width">Desde: </span>
+        <input type="date" formControlName="beginPresentationDate" />
 
-    <!-- Row shown when there is no matching data. -->
-    <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell" colspan="4">
-        No hay datos que coincidan con el filtro "{{ input.value }}"
-      </td>
-    </tr>
-  </table>
-</div>
+        <span class="text-span span-width">Hasta: </span>
+        <input type="date" formControlName="endPresentationDate" />
+      </div>
 
-<!-- Agregar componente de paginado -->
-<mat-paginator
-  [pageSizeOptions]="[15, 30, 50, 100]"
-  aria-label="Selecciona página de Monografías"
-></mat-paginator>
+      <!---->
+      <button
+        mat-flat-button
+        type="submit"
+        color="primary"
+        [disabled]="filterForm.invalid"
+        class="filter-button"
+      >
+        Filtrar
+      </button>
+    </form>
+  </section>
+
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <!-- Definición de la columna Image -->
+      <ng-container matColumnDef="image">
+        <th mat-header-cell *matHeaderCellDef>Imagen</th>
+        <td mat-cell *matCellDef="let element">
+          <img
+            [src]="
+              element.image
+                ? element.image
+                : 'assets/images/default-monograph-img.svg'
+            "
+            class="monograph-image-cell"
+            alt="Monograph Image"
+          />
+        </td>
+      </ng-container>
+
+      <!-- Definición de la columna classification -->
+      <ng-container matColumnDef="classification">
+        <th mat-header-cell *matHeaderCellDef>Clasificación</th>
+        <td mat-cell *matCellDef="let element">{{ element.classification }}</td>
+      </ng-container>
+
+      <!-- Definición de la columna title -->
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef>Titulo</th>
+        <td mat-cell *matCellDef="let element">{{ element.title }}</td>
+      </ng-container>
+
+      <!-- Definición de la columna description -->
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>Descripción</th>
+        <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+      </ng-container>
+
+      <!-- Definición de la columna Tutor -->
+      <ng-container matColumnDef="tutor">
+        <th mat-header-cell *matHeaderCellDef>Tutor</th>
+        <td mat-cell *matCellDef="let element">{{ element.tutor }}</td>
+      </ng-container>
+
+      <!-- Definición de la columna presentationDate -->
+      <ng-container matColumnDef="presentationDate">
+        <th mat-header-cell *matHeaderCellDef>Fecha de presentación</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.presentationDate }}
+        </td>
+      </ng-container>
+
+      <!-- Definición de la columna careerName -->
+      <ng-container matColumnDef="careerName">
+        <th mat-header-cell *matHeaderCellDef>Carrera</th>
+        <td mat-cell *matCellDef="let element">{{ element.career.name }}</td>
+      </ng-container>
+
+      <!-- Definición de la columna authors -->
+      <ng-container matColumnDef="authors">
+        <th mat-header-cell *matHeaderCellDef>Autores</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-chip-set aria-label="Autores">
+            @for (author of element?.authors; track author?.name) {
+            <mat-chip>{{ author?.name }}</mat-chip>
+            }
+          </mat-chip-set>
+        </td>
+      </ng-container>
+
+      <!-- Definición de la columna isAvailable -->
+      <ng-container matColumnDef="isAvailable">
+        <th mat-header-cell *matHeaderCellDef>Disponible para préstamo</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-checkbox
+            [checked]="element?.isAvailable"
+            disabled
+          ></mat-checkbox>
+        </td>
+      </ng-container>
+
+      <!-- Vincular arreglo que contiene el texto de las columnas que debe coincidir con la definición de cada una -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">
+          No hay datos que coincidan con el filtro "{{ input.value }}"
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Agregar componente de paginado -->
+  <mat-paginator
+    [pageSizeOptions]="[15, 30, 50, 100]"
+    aria-label="Selecciona página de Monografías"
+  ></mat-paginator>
+</section>

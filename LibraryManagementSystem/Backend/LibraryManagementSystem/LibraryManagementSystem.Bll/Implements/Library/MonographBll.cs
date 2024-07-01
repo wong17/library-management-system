@@ -142,6 +142,72 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             return response;
         }
 
+        public async Task<ApiResponse> GetFilteredMonograph(FilterMonographDto filterMonographDto)
+        {
+            var response = await _repository.GetFilteredMonograph(filterMonographDto);
+            if (response.Result is null || response.Result is not IEnumerable<Monograph> monographs)
+                return response;
+
+            // Obtener los ids de las carreras de cada monografia
+            var careerIds = monographs.Select(m => m.CareerId).ToList();
+            var monographDtos = _mapper.Map<IEnumerable<MonographDto>>(monographs).ToList();
+
+            // 1. Comprobar si hay carreras registradas
+            var careersResponse = await _careerBll.GetAll();
+            if (careersResponse.Result is not null && careersResponse.Result is IEnumerable<CareerDto> careers)
+            {
+                var careersDictionary = careers.ToDictionary(c => c.CareerId);
+
+                for (int i = 0; i < monographDtos.Count; i++)
+                {
+                    var monographDto = monographDtos[i];
+                    var careerId = careerIds[i];
+
+                    if (careersDictionary.TryGetValue(Convert.ToByte(careerId), out var careerDto))
+                    {
+                        monographDto.Career = careerDto;
+                    }
+                }
+            }
+
+            // 2. Comprobar si hay autores registrados
+            var authorsResponse = _authorBll.GetAll();
+            var monographAuthorsResponse = _monographAuthorBll.GetAll();
+            if ((authorsResponse.Result.Result is not null && authorsResponse.Result.Result is IEnumerable<AuthorDto> authors) &&
+                (monographAuthorsResponse.Result.Result is not null && monographAuthorsResponse.Result.Result is IEnumerable<MonographAuthorDto> monographAuthors))
+            {
+                var authorsDictionary = authors.ToDictionary(a => a.AuthorId);
+                var monographAuthorsDictionary = ListHelper.ListToDictionary(monographAuthors.ToList(), ba => ba.MonographId, ba => ba.AuthorId);
+
+                for (int i = 0; i < monographDtos.Count; i++)
+                {
+                    var monographDto = monographDtos[i];
+                    var allAuthors = new List<AuthorDto>();
+
+                    // Si no se puede obtener la lista con id de todos los autores de la monografia actual...
+                    if (!monographAuthorsDictionary.TryGetValue(monographDto.MonographId, out var authorList))
+                        continue;
+
+                    // Recorrer lista de id de autores para obtener el AuthorDto
+                    for (int j = 0; j < authorList.Count; j++)
+                    {
+                        var authorId = authorList[j];
+                        // Obtener autor en base a su id
+                        if (authorsDictionary.TryGetValue(authorId, out var authorDto))
+                        {
+                            allAuthors.Add(authorDto);
+                        }
+                    }
+                    // Asignar lista
+                    monographDto.Authors = allAuthors;
+                }
+            }
+
+            response.Result = monographDtos;
+
+            return response;
+        }
+
         public async Task<ApiResponse> Update(Monograph entity) => await _repository.Update(entity);
     }
 }

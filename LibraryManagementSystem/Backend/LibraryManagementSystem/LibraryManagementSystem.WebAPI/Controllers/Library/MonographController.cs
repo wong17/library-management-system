@@ -5,6 +5,7 @@ using LibraryManagementSystem.Entities.Dtos.Library;
 using LibraryManagementSystem.Entities.Models.Library;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Text.Json;
 
 namespace LibraryManagementSystem.WebAPI.Controllers
 {
@@ -14,6 +15,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
     {
         private readonly IMonographBll _monographBll = monographBll;
         private readonly IMapper _mapper = mapper;
+        private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
         /// <summary>
         /// Inserta una monografia
@@ -106,6 +108,32 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return NotFound(response);
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Devuelva las monografias filtradas por autores, carreras y fecha de presentación
+        /// </summary>
+        /// <param name="filterParamsDto"></param>
+        /// <returns></returns>
+        [HttpGet("get_filtered_monograph")]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetFilteredMonograph([FromQuery] string filterParamsDto)
+        {
+            if (filterParamsDto is null)
+                return BadRequest(new ApiResponse() { Message = "FilterBookDto json es null.", StatusCode = HttpStatusCode.BadRequest });
+
+            var filterMonographDto = JsonSerializer.Deserialize<FilterMonographDto>(filterParamsDto, _jsonOptions);
+            if (filterMonographDto is null)
+                return BadRequest(new ApiResponse() { Message = "FilterMonographDto es null.", StatusCode = HttpStatusCode.BadRequest });
+
+            var response = await _monographBll.GetFilteredMonograph(filterMonographDto);
+            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);

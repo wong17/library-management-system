@@ -231,20 +231,22 @@
         <th mat-header-cell *matHeaderCellDef>Opciones</th>
         <!-- Iconos a mostrar en la columna -->
         <mat-cell *matCellDef="let element" class="options-mat-cell">
-          <div class="options-div">
-            <mat-icon
-              fontIcon="home"
-              matTooltipPosition="below"
-              matTooltip="Solicitar libro para domicilio"
-              (click)="requestBookHomeClick(element)"
-            ></mat-icon>
-            <mat-icon
-              fontIcon="local_library"
-              matTooltip="Solicitar libro para sala"
-              matTooltipPosition="below"
-              (click)="requestBookLibraryRoomClick(element)"
-            ></mat-icon>
-          </div>
+          @if (element?.isActive) {
+            <div class="options-div">
+              <mat-icon
+                fontIcon="home"
+                matTooltipPosition="below"
+                matTooltip="Solicitar libro para domicilio"
+                (click)="requestBookHomeClick(element)"
+              ></mat-icon>
+              <mat-icon
+                fontIcon="local_library"
+                matTooltip="Solicitar libro para sala"
+                matTooltipPosition="below"
+                (click)="requestBookLibraryRoomClick(element)"
+              ></mat-icon>
+            </div>
+          }
         </mat-cell>
       </ng-container>
 

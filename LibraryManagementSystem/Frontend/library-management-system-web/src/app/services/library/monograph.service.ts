@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { ApiResponse } from '../../entities/api/api-response';
 import { catchError, Observable } from 'rxjs';
 import { MonographInsertDto } from '../../entities/dtos/library/monograph-insert-dto';
 import { MonographUpdateDto } from '../../entities/dtos/library/monograph-update-dto';
 import { HttpErrorHandler } from '../../util/http-error-handler';
+import { FilterMonographDto } from '../../entities/dtos/library/filter-monograph-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,7 @@ export class MonographService {
   private readonly monographDeleteUrl: string = '/api/monographs/delete'
   private readonly monographGetAllUrl: string = '/api/monographs/get_all'
   private readonly monographGetByIdUrl: string = '/api/monographs/get_by_id'
+  private readonly monographGetFilteredMonographUrl: string = '/api/monographs/get_filtered_monograph'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {
@@ -89,6 +91,22 @@ export class MonographService {
    */
   getById(monographId: number): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographGetByIdUrl}/${monographId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
+  }
+
+  /**
+   * Devuelve las monografias filtradas por autores, carreras y fecha de presentacion
+   * @param filterMonographDto 
+   * @returns 
+   */
+  getFilteredMonograph(filterMonographDto: FilterMonographDto): Observable<ApiResponse> {
+    const filterParamsDto = JSON.stringify(filterMonographDto);
+
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographGetFilteredMonographUrl}`, {
+      params: new HttpParams().set('filterParamsDto', filterParamsDto)
+    })
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

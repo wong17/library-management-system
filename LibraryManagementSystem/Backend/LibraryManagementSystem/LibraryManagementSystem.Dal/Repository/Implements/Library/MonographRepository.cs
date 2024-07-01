@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Net;
 using LibraryManagementSystem.Dal.Repository.Interfaces.Library;
+using LibraryManagementSystem.Entities.Dtos.Library;
 
 namespace LibraryManagementSystem.Dal.Repository.Implements.Library
 {
@@ -188,6 +189,53 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                 response.Result = monograph;
                 response.StatusCode = HttpStatusCode.OK;
                 response.Message = "Registro encontrado.";
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.InternalServerError;
+            }
+
+            return response;
+        }
+
+        public async Task<ApiResponse> GetFilteredMonograph(FilterMonographDto filterMonographDto)
+        {
+            ApiResponse response = new();
+            /* Convertir lista a DataTable */
+            DataTable authorsTable = _sqlConnector.ListToDataTable(filterMonographDto.Authors ?? []);
+            DataTable careersTable = _sqlConnector.ListToDataTable(filterMonographDto.Careers ?? []);
+
+            SqlParameter[] parameters = [
+                new("@AuthorIds", SqlDbType.Structured)
+                {
+                    TypeName = "[Library].AuthorType", Value = authorsTable.Columns.Count == 0 ? null : authorsTable
+                },
+                new("@CareerIds", SqlDbType.Structured)
+                {
+                    TypeName = "[University].CareerType", Value = careersTable.Columns.Count == 0 ? null : careersTable
+                },
+                new("@BeginPresentationDate", SqlDbType.Date)
+                {
+                    Value = filterMonographDto.BeginPresentationDate
+                },
+                new("@EndPresentationDate", SqlDbType.Date)
+                {
+                    Value = filterMonographDto.EndPresentationDate
+                }
+            ];
+
+            try
+            {
+                /* Ejecutar procedimiento almacenado */
+                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Library].uspGetFilteredMonographs", CommandType.StoredProcedure, parameters);
+                /* Convertir DataTable a una Lista */
+                IEnumerable<Monograph> monographs = _sqlConnector.DataTableToList<Monograph>(result);
+                /* Retornar lista de elementos y código de éxito */
+                response.IsSuccess = 0;
+                response.Result = monographs;
+                response.Message = monographs.Any() ? "Registros obtenidos exitosamente." : "No hay registros.";
+                response.StatusCode = HttpStatusCode.OK;
             }
             catch (Exception ex)
             {

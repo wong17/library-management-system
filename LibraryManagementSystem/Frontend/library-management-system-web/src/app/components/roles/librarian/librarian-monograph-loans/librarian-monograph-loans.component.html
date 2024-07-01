@@ -95,26 +95,28 @@
       <th mat-header-cell *matHeaderCellDef>Opciones</th>
       <!-- Iconos a mostrar en la columna -->
       <mat-cell *matCellDef="let element" class="options-mat-cell">
-        <div class="options-div"> 
-          <mat-icon
-            fontIcon="assignment"
-            matTooltip="Préstamo de monografía"
-            matTooltipPosition="below"
-            (click)="updateBorrowedMonographLoanClick(element)"
-          ></mat-icon>
-          <mat-icon
-            fontIcon="assignment_return"
-            matTooltip="Devolución de monografía"
-            matTooltipPosition="below"
-            (click)="updateReturnedMonographLoanClick(element)"
-          ></mat-icon>
-          <mat-icon
-            fontIcon="delete"
-            matTooltip="Eliminar"
-            matTooltipPosition="below"
-            (click)="deleteMonographLoanClick(element)"
-          ></mat-icon>
-        </div>
+        @if(element?.isActive) {
+          <div class="options-div"> 
+            <mat-icon
+              fontIcon="assignment"
+              matTooltip="Préstamo de monografía"
+              matTooltipPosition="below"
+              (click)="updateBorrowedMonographLoanClick(element)"
+            ></mat-icon>
+            <mat-icon
+              fontIcon="assignment_return"
+              matTooltip="Devolución de monografía"
+              matTooltipPosition="below"
+              (click)="updateReturnedMonographLoanClick(element)"
+            ></mat-icon>
+            <mat-icon
+              fontIcon="delete"
+              matTooltip="Eliminar"
+              matTooltipPosition="below"
+              (click)="deleteMonographLoanClick(element)"
+            ></mat-icon>
+          </div>
+        }
       </mat-cell>
     </ng-container>
   

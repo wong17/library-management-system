@@ -1,5 +1,6 @@
 ﻿using LibraryManagementSystem.Bll.Interfaces.Base;
 using LibraryManagementSystem.Common.Runtime;
+using LibraryManagementSystem.Entities.Dtos.Library;
 using LibraryManagementSystem.Entities.Models.Library;
 
 namespace LibraryManagementSystem.Bll.Interfaces.Library
@@ -15,5 +16,7 @@ namespace LibraryManagementSystem.Bll.Interfaces.Library
         Task<ApiResponse> GetAll();
         /* Para obtener un solo registro */
         Task<ApiResponse> GetById(int id);
+
+        Task<ApiResponse> GetFilteredMonograph(FilterMonographDto filterMonographDto);
     }
 }
