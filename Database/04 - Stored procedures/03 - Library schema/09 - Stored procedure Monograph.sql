@@ -289,3 +289,43 @@ BEGIN
 	END
 END
 GO
+
+-- GET Monographs filtered by authors, careers and presentation date
+IF OBJECT_ID('Library.uspGetFilteredMonographs', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspGetFilteredMonographs;  
+GO
+CREATE PROC [Library].uspGetFilteredMonographs (
+	@AuthorIds [Library].AuthorType READONLY,
+	@CareerIds [University].CareerType READONLY,
+	@BeginPresentationDate DATE = NULL,
+	@EndPresentationDate DATE = NULL
+)
+AS
+BEGIN
+	--
+	SELECT DISTINCT m.*
+	FROM [Library].Monograph AS m
+	LEFT JOIN [Library].MonographAuthor ma ON m.MonographId = ma.MonographId
+	WHERE 
+		-- Filtro por autores si @AuthorIds tiene registros
+        (NOT EXISTS (SELECT 1 FROM @AuthorIds) OR ma.AuthorId IN (SELECT AuthorId FROM @AuthorIds))
+		AND
+		-- Filtro por carreras si @CareerIds tiene registros
+		(NOT EXISTS (SELECT 1 FROM @CareerIds) OR m.CareerId IN (SELECT CareerId FROM @CareerIds))
+		AND
+		-- Filtro por fechas de presentación
+		(
+			-- Si sólo se proporciona la fecha de inicio
+			(@BeginPresentationDate IS NOT NULL AND @EndPresentationDate IS NULL AND m.PresentationDate >= @BeginPresentationDate)
+			OR
+			-- Si sólo se proporciona la fecha final
+			(@BeginPresentationDate IS NULL AND @EndPresentationDate IS NOT NULL AND m.PresentationDate <= @EndPresentationDate)
+			OR
+			-- Si se proporcionan ambas fechas
+			(@BeginPresentationDate IS NOT NULL AND @EndPresentationDate IS NOT NULL AND m.PresentationDate BETWEEN @BeginPresentationDate AND @EndPresentationDate)
+			OR
+			-- Si no se proporciona ninguna fecha
+			(@BeginPresentationDate IS NULL AND @EndPresentationDate IS NULL)
+		);
+END
+GO
