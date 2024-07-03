@@ -1,23 +1,15 @@
-﻿using LibraryManagementSystem.Entities.Dtos.Security;
-using LibraryManagementSystem.Entities.Dtos.University;
-
-namespace LibraryManagementSystem.Entities.Dtos.Library
+﻿namespace LibraryManagementSystem.Entities.Dtos.Library
 {
-    public class BookLoanDto
+    public class BookLoanDto : LoanDto
     {
-        public int BookLoanId { get; set; }
-        public string? TypeOfLoan { get; set; }
-        public string? State { get; set; }
-        public DateTime LoanDate { get; set; }
-        public DateTime DueDate { get; set; }
-        public DateTime ReturnDate { get; set; }
-        // Student
-        public StudentDto? Student { get; set; }
+        private int bookLoanId;
+        private string? typeOfLoan;
+        private BookDto? book;
+
+        public int BookLoanId { get => bookLoanId; set => bookLoanId = value; }
+        // Tipo de préstamo (DOMICILIO o SALA)
+        public string? TypeOfLoan { get => typeOfLoan; set => typeOfLoan = value; }
         // Book
-        public BookDto? Book { get; set; }
-        // BorrowedUser
-        public UserDto? BorrowedUser { get; set; }
-        // ReturnedUser
-        public UserDto? ReturnedUser { get; set; }
+        public BookDto? Book { get => book; set => book = value; }
     }
 }

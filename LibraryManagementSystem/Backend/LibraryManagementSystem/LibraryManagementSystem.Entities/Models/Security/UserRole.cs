@@ -2,7 +2,10 @@
 {
     public class UserRole
     {
-        public int UserId { get; set; }
-        public int RoleId { get; set; }
+        private int userId;
+        private int roleId;
+
+        public int UserId { get => userId; set => userId = value; }
+        public int RoleId { get => roleId; set => roleId = value; }
     }
 }

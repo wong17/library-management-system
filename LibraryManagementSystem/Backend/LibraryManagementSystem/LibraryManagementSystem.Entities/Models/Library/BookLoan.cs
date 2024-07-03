@@ -1,16 +1,13 @@
 ﻿namespace LibraryManagementSystem.Entities.Models.Library
 {
-    public class BookLoan
+    public class BookLoan : Loan
     {
-        public int BookLoanId { get; set; }
-        public int StudentId { get; set; }
-        public int BookId { get; set; }
-        public string? TypeOfLoan { get; set; }
-        public string? State { get; set; }
-        public DateTime LoanDate { get; set; }
-        public DateTime DueDate { get; set; }
-        public DateTime ReturnDate { get; set; }
-        public int BorrowedUserId { get; set; }
-        public int ReturnedUserId { get; set; }
+        private int bookLoanId;
+        private int bookId;
+        private string? typeOfLoan;
+
+        public int BookLoanId { get => bookLoanId; set => bookLoanId = value; }
+        public int BookId { get => bookId; set => bookId = value; }
+        public string? TypeOfLoan { get => typeOfLoan; set => typeOfLoan = value; }
     }
 }

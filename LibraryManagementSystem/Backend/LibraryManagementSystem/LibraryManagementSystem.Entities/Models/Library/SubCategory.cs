@@ -2,8 +2,12 @@
 {
     public class SubCategory
     {
-        public int SubCategoryId { get; set; }
-        public int CategoryId { get; set; }
-        public string? Name { get; set; }
+        private int subCategoryId;
+        private int categoryId;
+        private string? name;
+
+        public int SubCategoryId { get => subCategoryId; set => subCategoryId = value; }
+        public int CategoryId { get => categoryId; set => categoryId = value; }
+        public string? Name { get => name; set => name = value; }
     }
 }

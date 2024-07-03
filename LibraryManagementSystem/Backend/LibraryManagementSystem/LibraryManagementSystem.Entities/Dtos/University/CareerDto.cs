@@ -2,7 +2,10 @@
 {
     public class CareerDto
     {
-        public byte CareerId { get; set; }
-        public string? Name { get; set; }
+        private byte careerId;
+        private string? name;
+
+        public byte CareerId { get => careerId; set => careerId = value; }
+        public string? Name { get => name; set => name = value; }
     }
 }

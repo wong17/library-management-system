@@ -1,10 +1,11 @@
-﻿using System.Text.Json.Serialization;
-
-namespace LibraryManagementSystem.Entities.Models.University
+﻿namespace LibraryManagementSystem.Entities.Models.University
 {
     public class Career
     {
-        public byte CareerId { get; set; }
-        public string? Name { get; set; }
+        private byte careerId;
+        private string? name;
+
+        public byte CareerId { get => careerId; set => careerId = value; }
+        public string? Name { get => name; set => name = value; }
     }
 }

@@ -128,7 +128,15 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             if (filterParamsDto is null)
                 return BadRequest(new ApiResponse() { Message = "FilterBookDto json es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var filterBookDto = JsonSerializer.Deserialize<FilterBookDto>(filterParamsDto, _jsonOptions);
+            FilterBookDto? filterBookDto;
+            try
+            {
+                filterBookDto = JsonSerializer.Deserialize<FilterBookDto>(filterParamsDto, _jsonOptions);
+            } catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse() { Message = ex.Message, StatusCode = HttpStatusCode.BadRequest });
+            }
+
             if (filterBookDto is null)
                 return BadRequest(new ApiResponse() { Message = "FilterBookDto es null.", StatusCode = HttpStatusCode.BadRequest });
 

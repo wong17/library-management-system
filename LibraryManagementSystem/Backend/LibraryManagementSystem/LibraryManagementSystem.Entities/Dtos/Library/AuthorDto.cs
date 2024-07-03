@@ -2,8 +2,12 @@
 {
     public class AuthorDto
     {
-        public int AuthorId { get; set; }
-        public string? Name { get; set; }
-        public bool IsFormerGraduated { get; set; }
+        private int authorId;
+        private string? name;
+        private bool isFormerGraduated;
+
+        public int AuthorId { get => authorId; set => authorId = value; }
+        public string? Name { get => name; set => name = value; }
+        public bool IsFormerGraduated { get => isFormerGraduated; set => isFormerGraduated = value; }
     }
 }
