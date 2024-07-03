@@ -1,3 +1,68 @@
+/*----------------------------------------*/
+.book-loan-section {
+    display: grid;
+    grid-template-rows: 200px 2fr 50px;
+}
+
+/*----------------------------------------*/
+.filter-options-container {
+    display: grid;
+    grid-template-rows: 40px 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 60px;
+    align-items: center;
+}
+
+.filter-parameters-form {
+    display: grid;
+    grid-template-columns: 1fr 50px;
+    column-gap: 10px;
+}
+
+.refresh-button {
+    background-color: #155724;
+    color: white;
+    grid-column: 3 / 4;
+    grid-row: 1 / 2;
+    width: 100px;
+}
+
+/*----------------------------------------*/
+
+.filter-div {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    column-gap: 10px;
+    align-items: center;
+}
+
+.filter-div-carnet {
+    display: grid;
+    grid-template-columns: 1fr 50px;
+    column-gap: 10px;
+    align-items: center;
+}
+
+.text-form-span {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.text-span {
+    font-size: 16px;
+    font-weight: bold;
+    grid-row: 1 / 2;
+    grid-column: 1 / 3;
+}
+
+.filter-matselect {
+    width: 100%;
+}
+
+.span-width {
+    width: 100px;
+}
+
 table {
     width: 100%;
 }

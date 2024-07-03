@@ -20,16 +20,27 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DialogData, DialogOperation } from '../../../../util/dialog-data';
 import { BookBorrowDateLoanComponent } from '../../../book-borrow-date-loan/book-borrow-date-loan.component';
 import { BookReturnDialogComponent } from '../../../book-return-dialog/book-return-dialog.component';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ControlStateMatcher } from '../../../../util/control-state-matcher';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-admin-book-loans',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, 
-    MatIconModule, BookCardComponent, StudentCardComponent, CommonModule, MatTooltipModule],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule,
+    MatIconModule, BookCardComponent, StudentCardComponent, CommonModule, MatTooltipModule, ReactiveFormsModule, MatSelectModule],
   templateUrl: './admin-book-loans.component.html',
   styleUrl: './admin-book-loans.component.css'
 })
 export class AdminBookLoansComponent implements AfterViewInit, OnInit {
+
+  /* */
+  filterByStateForm: FormGroup;
+  filterByStudentCarnetForm: FormGroup;
+  filterByTypeOfLoanForm: FormGroup;
+
+  /* */
+  matcher: ControlStateMatcher = new ControlStateMatcher()
 
   displayedColumns: string[] = ['bookLoanId', 'typeOfLoan', 'state', 'loanDate', 'dueDate', 'returnDate', 'student', 'book', 'borrowedUser', 'returnedUser', 'options'];
 
@@ -41,11 +52,26 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
   @ViewChild(MatSort) sort: MatSort | null = null;
 
   constructor(
-    private bookLoanService: BookLoanService, 
-    private toastr: ToastrService, 
-    private dialog: MatDialog, 
-    private blSignalR: BookLoanSignalRService
-  ) { }
+    private bookLoanService: BookLoanService,
+    private toastr: ToastrService,
+    private dialog: MatDialog,
+    private blSignalR: BookLoanSignalRService,
+    private fb: FormBuilder
+  ) {
+
+    this.filterByStateForm = this.fb.group({
+      states: ['']
+    });
+
+    this.filterByStudentCarnetForm = this.fb.group({
+      carnet: ['', [Validators.required, Validators.minLength(10)]]
+    });
+
+    this.filterByTypeOfLoanForm = this.fb.group({
+      typeOfLoans: ['']
+    });
+
+  }
 
   ngOnInit(): void {
     this.getBookLoansDto();
@@ -193,7 +219,7 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
       })
       return
     }
-    
+
     const dialogData: DialogData = {
       title: `Devolución de libro`,
       operation: DialogOperation.Add,
@@ -215,6 +241,109 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
       this.getBookLoansDto();
     })
   }
-  
+
+  get states() {
+    return this.filterByStateForm.get('states');
+  }
+
+  get carnet() {
+    return this.filterByStudentCarnetForm.get('carnet');
+  }
+
+  get typeOfLoans() {
+    return this.filterByTypeOfLoanForm.get('typeOfLoans');
+  }
+
+  filterByState() {
+    const state = this.states?.value as string
+    
+    if (state === '') {
+      this.reloadBookLoansClick();
+      return;
+    }
+
+    this.bookLoanService.getByState(state.trim()).subscribe({
+      next: response => {
+        if (response.isSuccess !== 0 || response.statusCode !== 200) {
+          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          });
+          return;
+        }
+        this.dataSource.data = response.result as BookLoanDto[];
+      },
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error?.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
+      }
+    });
+  }
+
+  filterByStudentCarnet() {
+    const carnet = this.carnet?.value as string;
+
+    if (!carnet) {
+      this.toastr.warning(`Debes digitar un carnet`, 'Atención', {
+        timeOut: 5000,
+        easeTime: 1000
+      });
+      return;
+    }
+
+    this.bookLoanService.getByStudentCarnet(carnet.trim()).subscribe({
+      next: response => {
+        if (response.isSuccess !== 0 || response.statusCode !== 200) {
+          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          });
+          return;
+        }
+        this.dataSource.data = response.result as BookLoanDto[];
+      },
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error?.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
+      }
+    });
+  }
+
+  filterByTypeOfLoan() {
+    const type = this.typeOfLoans?.value as string; 
+
+    if (type === '') {
+      this.reloadBookLoansClick();
+      return;
+    }
+
+    this.bookLoanService.getByTypeOfLoan(type).subscribe({
+      next: response => {
+        if (response.isSuccess !== 0 || response.statusCode !== 200) {
+          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          });
+          return;
+        }
+        this.dataSource.data = response.result as BookLoanDto[];
+      },
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error?.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
+      }
+    });
+  }
+
+  reloadBookLoansClick() {
+    this.getBookLoansDto();
+  }
+
 }
 
