@@ -4,27 +4,27 @@
 <mat-dialog-content class="dialog-content">
   <form [formGroup]="monographForm" (ngSubmit)="onSubmit()">
     <!--Titulo del libro-->
-    <mat-form-field appearance="fill" class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Titulo</mat-label>
       <input
         matInput
         placeholder="Sistema para..."
         formControlName="title"
         [errorStateMatcher]="matcher"
-        maxlength="13"
+        maxlength="250"
       />
       <!--validations-->
       @if(title?.hasError('required')) {
       <mat-error>Campo es <strong>obligatorio</strong></mat-error>
       } @else if(title?.hasError('maxlength')) {
-      <mat-error>ISBN10 debe tener un máximo de 250 caracteres</mat-error>
+      <mat-error>Titulo debe tener un máximo de 250 caracteres</mat-error>
       } @else if(title?.hasError('minlength')) {
-      <mat-error>ISBN10 debe tener un mínimo de 1 caracteres</mat-error>
+      <mat-error>Titulo debe tener un mínimo de 1 caracteres</mat-error>
       }
     </mat-form-field>
 
     <!--Classification de la monografia-->
-    <mat-form-field appearance="fill" class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Clasificación</mat-label>
       <input
         matInput
@@ -44,7 +44,7 @@
     </mat-form-field>
 
     <!--Tutor de la monografia-->
-    <mat-form-field appearance="fill" class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Tutor</mat-label>
       <input
         matInput
@@ -64,7 +64,7 @@
     </mat-form-field>
 
     <!--Descripción del libro-->
-    <mat-form-field appearance="fill" class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Descripción</mat-label>
       <input
         matInput
@@ -80,13 +80,14 @@
     </mat-form-field>
 
     <!--Fecha de presentación-->
-    <mat-form-field class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Fecha de presentación</mat-label>
       <input
         matInput
         type="date"
         formControlName="presentationDate"
         [errorStateMatcher]="matcher"
+        min="1900-01-01"
       />
       <!--validations-->
       @if(presentationDate?.hasError('required')) {
@@ -95,7 +96,7 @@
     </mat-form-field>
 
     <!--Imagen-->
-    <mat-form-field class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Imagen</mat-label>
       <div
         class="fileUploadContainer"
@@ -145,7 +146,7 @@
     </mat-form-field>
 
     <!--Carreras-->
-    <mat-form-field class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Selecciona una carrera</mat-label>
       <mat-select formControlName="careerId">
         @for (career of careers; track career) {

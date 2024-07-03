@@ -1,16 +1,8 @@
-import { UserDto } from "../security/user-dto";
-import { StudentDto } from "../university/student-dto";
 import { BookDto } from "./book-dto";
+import { LoanDto } from "./loan-dto";
 
-export interface BookLoanDto {
+export interface BookLoanDto extends LoanDto {
     bookLoanId: number;
     typeOfLoan: string | null;
-    state: string | null;
-    loanDate: Date;
-    dueDate: Date;
-    returnDate: Date;
-    student: StudentDto | null;
     book: BookDto | null;
-    borrowedUser: UserDto | null;
-    returnedUser: UserDto | null;
 }

@@ -4,7 +4,7 @@
 <mat-dialog-content class="dialog-content">
   <form [formGroup]="subCategoryForm" (ngSubmit)="onSubmit()">
     <!--Nombre de la sub categoria-->
-    <mat-form-field appearance="fill" class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Nombre</mat-label>
       <input
         matInput
@@ -21,7 +21,7 @@
       }
     </mat-form-field>
     <!--Lista de categorias-->
-    <mat-form-field class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Selecciona una categoría</mat-label>
       <mat-select formControlName="categoryId">
         @for (category of categories; track category) {

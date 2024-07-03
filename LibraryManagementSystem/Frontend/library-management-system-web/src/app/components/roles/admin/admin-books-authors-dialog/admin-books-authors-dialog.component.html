@@ -5,7 +5,7 @@
   <form [formGroup]="bookAuthorsForm" (ngSubmit)="onSubmit()">
 
     <!--Sub categorias-->
-    <mat-form-field class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Selecciona uno o varios autores</mat-label>
       <mat-select formControlName="authorIds" multiple>
         @for (author of authors; track author) {

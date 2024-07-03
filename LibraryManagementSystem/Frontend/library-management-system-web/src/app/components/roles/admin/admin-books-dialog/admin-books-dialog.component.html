@@ -1,10 +1,10 @@
 <!--Titulo-->
 <h2 mat-dialog-title>{{ dialogData.title }}</h2>
 <!--Contenido-->
-<mat-dialog-content class="dialog-content">
+<mat-dialog-content appearance="outline" class="dialog-content">
   <form [formGroup]="bookForm" (ngSubmit)="onSubmit()">
     <!--Isbn10 del libro-->
-    <mat-form-field appearance="fill" class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>ISBN10</mat-label>
       <input
         matInput
@@ -24,7 +24,7 @@
     </mat-form-field>
 
     <!--Isbn13 del libro-->
-    <mat-form-field appearance="fill" class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>ISBN13</mat-label>
       <input
         matInput
@@ -44,7 +44,7 @@
     </mat-form-field>
 
     <!--Classification del libro-->
-    <mat-form-field appearance="fill" class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Clasificación</mat-label>
       <input
         matInput
@@ -64,7 +64,7 @@
     </mat-form-field>
 
     <!--Titulo del libro-->
-    <mat-form-field appearance="fill" class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Titulo</mat-label>
       <input
         matInput
@@ -84,7 +84,7 @@
     </mat-form-field>
 
     <!--Descripción del libro-->
-    <mat-form-field appearance="fill" class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Descripción</mat-label>
       <input
         matInput
@@ -100,7 +100,7 @@
     </mat-form-field>
 
     <!--Año de publicación-->
-    <mat-form-field class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Año de publicación</mat-label>
       <input
         matInput
@@ -117,7 +117,7 @@
     </mat-form-field>
 
     <!--Imagen-->
-    <mat-form-field class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Imagen</mat-label>
       <div
         class="fileUploadContainer"
@@ -165,7 +165,7 @@
     </mat-form-field>
 
     <!--Editoriales-->
-    <mat-form-field class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Selecciona una editorial</mat-label>
       <mat-select formControlName="publisherId">
         @for (publisher of publishers; track publisher) {
@@ -181,7 +181,7 @@
     </mat-form-field>
 
     <!--Categorias-->
-    <mat-form-field class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Selecciona una categoría</mat-label>
       <mat-select formControlName="categoryId">
         @for (category of categories; track category) {
@@ -197,7 +197,7 @@
     </mat-form-field>
 
     <!--Número de copias-->
-    <mat-form-field class="form-field">
+    <mat-form-field appearance="outline" class="form-field">
       <mat-label>Número de copias</mat-label>
       <input
         matInput

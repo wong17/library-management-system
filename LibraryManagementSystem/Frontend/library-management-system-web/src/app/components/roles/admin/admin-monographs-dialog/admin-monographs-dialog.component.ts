@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -23,7 +23,8 @@ import { ApiResponse } from '../../../../entities/api/api-response';
 @Component({
   selector: 'app-admin-monographs-dialog',
   standalone: true,
-  imports: [MatButtonModule, MatDialogModule, MatInputModule, MatIconModule, MatFormFieldModule, ReactiveFormsModule, MatSelectModule, MatCheckboxModule, CommonModule],
+  imports: [MatButtonModule, MatDialogModule, MatInputModule, MatIconModule, MatFormFieldModule, ReactiveFormsModule, 
+    MatSelectModule, MatCheckboxModule, CommonModule],
   templateUrl: './admin-monographs-dialog.component.html',
   styleUrl: './admin-monographs-dialog.component.css'
 })
@@ -46,6 +47,10 @@ export class AdminMonographsDialogComponent {
   selectedFile: File | null = null;
   imagePreview: string | null = null;
 
+  // Define min and max dates
+  minDate: string = '1900-01-01';
+  maxDate: string;
+
   constructor(
     public dialogRef: MatDialogRef<AdminMonographsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public dialogData: DialogData,
@@ -54,12 +59,20 @@ export class AdminMonographsDialogComponent {
     private formBuilder: FormBuilder,
     private toastr: ToastrService
   ) {
+
+    // Set the max date to the current year
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    this.maxDate = `${year}-${month}-${day}`;
+
     /* Agrupar controles, crear formulario y agregar validaciones */
     this.monographForm = this.formBuilder.group({
       title: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(250)]],
       description: ['', [Validators.maxLength(500)]],
       classification: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(25)]],
-      presentationDate: ['', [Validators.required]],
+      presentationDate: ['', [Validators.required, this.minDateValidator(new Date('1900-01-01')), this.maxDateValidator(new Date(this.maxDate))]],
       careerId: ['', [Validators.required]],
       tutor: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(100)]],
       image: [''],
@@ -73,6 +86,11 @@ export class AdminMonographsDialogComponent {
     if (dialogData.data) {
       // Obtener dto
       this.monographDto = dialogData.data as MonographDto;
+
+      if (typeof this.monographDto.presentationDate === 'string') {
+        this.monographDto.presentationDate = new Date(this.monographDto.presentationDate);
+      }
+
       // Verificar si tiene una imagen asociada
       let imageStr: string | null = this.monographDto.image
       if (imageStr) {
@@ -81,14 +99,21 @@ export class AdminMonographsDialogComponent {
         const base64String = `data:image/*;base64,${base64Data}`
         imageStr = base64String
       }
+
+      const formattedDate = this.formatDateToYYYYMMDD(this.monographDto.presentationDate);
+
       // Setear la informacion en el formulario
       this.monographForm.patchValue({
-        title: this.monographDto.title, description: this.monographDto.description,
-        classification: this.monographDto.classification, presentationDate: this.monographDto.presentationDate,
-        careerId: this.monographDto.career?.careerId, tutor: this.monographDto.tutor,
-        image: imageStr, isActive: this.monographDto.isActive
+        title: this.monographDto.title, 
+        description: this.monographDto.description,
+        classification: this.monographDto.classification, 
+        presentationDate: formattedDate,
+        careerId: this.monographDto.career?.careerId, 
+        tutor: this.monographDto.tutor,
+        image: imageStr, 
+        isActive: this.monographDto.isActive
       });
-
+      
       // Inicializar el dto para actualizar
       this.monographUpdateDto = {
         monographId: this.monographDto.monographId,
@@ -103,6 +128,39 @@ export class AdminMonographsDialogComponent {
       }
     }
 
+  }
+
+  /**
+   * Convertir fecha a string con formato 'yyyy/mm/dd
+   * @param date 
+   * @returns 
+   */
+  formatDateToYYYYMMDD(date: Date): string {
+    return date.toISOString().substring(0, 10);
+  }
+
+  /**
+   * Validar fecha minima
+   * @param minDate 
+   * @returns 
+   */
+  minDateValidator(minDate: Date) {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const controlDate = new Date(control.value);
+      return controlDate >= minDate ? null : { 'minDate': { value: control.value } };
+    };
+  }
+
+  /**
+   * Validar fecha maxima
+   * @param maxDate 
+   * @returns 
+   */
+  maxDateValidator(maxDate: Date) {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const controlDate = new Date(control.value);
+      return controlDate <= maxDate ? null : { 'maxDate': { value: control.value } };
+    };
   }
 
   /* Para seleccionar una imagen */
