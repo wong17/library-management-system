@@ -273,19 +273,6 @@ BEGIN
 		SELECT 1 AS IsSuccess, 'Número de copias del Libro fuera de rango' AS [Message]
 		RETURN
 	END
-	-- IsActive
-	IF ((SELECT 1 FROM [Library].Book WHERE BookId = @BookId AND IsActive = 0) = 1 AND @IsActive = 0) 
-	BEGIN
-		SELECT 1 AS IsSuccess, 'El libro ya esta desactivado, no es posible volverlo a hacer' AS [Message]
-		RETURN
-	END
-	--
-	IF ([Library].ufnCanDeactivateBook(@BookId, @IsActive) = 0)
-	BEGIN
-		SELECT 1 AS IsSuccess, 'No se puede desactivar el libro, hay solicitudes pendientes (CREADAS), primero eliminelas o apruebelas para
-		posteriormente desactivarlo y que no este disponible para futuros prestamos' AS [Message]
-		RETURN
-	END
 	--
 	BEGIN TRY
 		--
@@ -336,7 +323,7 @@ BEGIN
 	--
 	BEGIN TRY
 		--
-		UPDATE [Library].Book SET IsActive = 0 WHERE BookId = @BookId
+		UPDATE [Library].Book SET IsActive = 0, IsAvailable = 0 WHERE BookId = @BookId
 		--
 		SELECT 0 AS IsSuccess, 'Libro eliminado exitosamente' AS [Message]
 	END TRY

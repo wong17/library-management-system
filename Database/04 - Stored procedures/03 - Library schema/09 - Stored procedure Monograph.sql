@@ -188,7 +188,7 @@ BEGIN
 		--
 		UPDATE [Library].Monograph 
 		SET [Classification] = @Classification, Title = @Title, [Description] = @Description, Tutor = @Tutor, PresentationDate = @PresentationDate, 
-			CareerId = @CareerId, [Image] = @Image,	IsActive = @IsActive
+			CareerId = @CareerId, [Image] = @Image,	IsActive = @IsActive, IsAvailable = @IsActive
 		WHERE MonographId = @MonographId
 		--
 		SELECT 0 AS IsSuccess, 'Monografía actualizada exitosamente' AS [Message]
@@ -258,7 +258,7 @@ BEGIN
 	--
 	BEGIN TRY
 		--
-		UPDATE [Library].Monograph SET IsActive = 0 WHERE MonographId = @MonographId
+		UPDATE [Library].Monograph SET IsActive = 0, IsAvailable = 0 WHERE MonographId = @MonographId
 		--
 		SELECT 0 AS IsSuccess, 'Monografía eliminada exitosamente' AS [Message]
 	END TRY
