@@ -20,7 +20,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
             ApiResponse? response;
             /* Lista de parámetros que recibe el procedimiento almacenado */
             SqlParameter[] parameters = [
-                new("@StudentId", entity.StudentId), new("@MonographId", entity.Monographid)
+                new("@StudentId", entity.StudentId), new("@MonographId", entity.MonographId)
             ];
 
             try

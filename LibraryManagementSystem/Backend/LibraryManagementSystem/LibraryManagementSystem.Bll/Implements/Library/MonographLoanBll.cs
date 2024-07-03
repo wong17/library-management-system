@@ -34,7 +34,7 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             // Obtener ids de los estudiantes de todos los prestamos
             var studentIds = monographLoans.Select(m => m.StudentId).ToList();
             // Obtener ids de las monografias de todos los prestamos
-            var monographIds = monographLoans.Select(m => m.MonographLoanId).ToList();
+            var monographIds = monographLoans.Select(m => m.MonographId).ToList();
             // Obtener ids de los usuarios que aprobaron el prestamo del libro
             var borrowedUserIds = monographLoans.Select(m => m.BorrowedUserId).ToList();
             // Obtener ids de los usuarios que recibieron el libro
