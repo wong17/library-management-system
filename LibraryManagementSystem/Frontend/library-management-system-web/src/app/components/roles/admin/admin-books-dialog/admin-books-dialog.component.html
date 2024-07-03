@@ -108,7 +108,7 @@
         formControlName="publicationYear"
         [errorStateMatcher]="matcher"
         min="1900"
-        max="9999"
+        [max]="currentYear" 
       />
       <!--validations-->
       @if(publicationYear?.hasError('required')) {

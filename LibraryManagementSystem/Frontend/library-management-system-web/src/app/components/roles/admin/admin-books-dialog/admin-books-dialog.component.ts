@@ -48,6 +48,8 @@ export class AdminBooksDialogComponent {
   /* */
   selectedFile: File | null = null;
   imagePreview: string | null = null;
+  /* Año actual */
+  currentYear: number = new Date().getFullYear();
 
   constructor(
     public dialogRef: MatDialogRef<AdminBooksDialogComponent>,
@@ -90,11 +92,16 @@ export class AdminBooksDialogComponent {
       }
       // Setear la informacion en el formulario
       this.bookForm.patchValue({
-        isbn10: this.bookDto.isbN10, isbn13: this.bookDto.isbN13,
-        classification: this.bookDto.classification, title: this.bookDto.title,
-        description: this.bookDto.description, publicationYear: this.bookDto.publicationYear,
-        image: imageStr, publisherId: this.bookDto.publisher?.publisherId,
-        categoryId: this.bookDto.category?.categoryId, numberOfCopies: this.bookDto.numberOfCopies,
+        isbn10: this.bookDto.isbN10, 
+        isbn13: this.bookDto.isbN13,
+        classification: this.bookDto.classification, 
+        title: this.bookDto.title,
+        description: this.bookDto.description, 
+        publicationYear: this.bookDto.publicationYear,
+        image: imageStr, 
+        publisherId: this.bookDto.publisher?.publisherId,
+        categoryId: this.bookDto.category?.categoryId, 
+        numberOfCopies: this.bookDto.numberOfCopies,
         isActive: this.bookDto.isActive
       });
 
