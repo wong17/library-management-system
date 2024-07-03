@@ -197,6 +197,56 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
             return response;
         }
 
+        public async Task<ApiResponse> GetMonographLoanByState(string? state)
+        {
+            ApiResponse response = new();
+            SqlParameter[] parameters = [new("@State", state)];
+            try
+            {
+                /* Ejecutar procedimiento almacenado */
+                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Library].uspGetMonographLoanByState", CommandType.StoredProcedure, parameters);
+                /* Convertir DataTable a una Lista */
+                IEnumerable<MonographLoan> monographLoans = _sqlConnector.DataTableToList<MonographLoan>(result);
+                /* Retornar lista de elementos y código de éxito */
+                response.IsSuccess = 0;
+                response.Result = monographLoans;
+                response.Message = monographLoans.Any() ? "Registros obtenidos exitosamente." : "No hay registros.";
+                response.StatusCode = HttpStatusCode.OK;
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.InternalServerError;
+            }
+
+            return response;
+        }
+
+        public async Task<ApiResponse> GetMonographLoanByStudentCarnet(string? carnet)
+        {
+            ApiResponse response = new();
+            SqlParameter[] parameters = [new("@Carnet", carnet)];
+            try
+            {
+                /* Ejecutar procedimiento almacenado */
+                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Library].uspMonographLoanByStudentCarnet", CommandType.StoredProcedure, parameters);
+                /* Convertir DataTable a una Lista */
+                IEnumerable<MonographLoan> monographLoans = _sqlConnector.DataTableToList<MonographLoan>(result);
+                /* Retornar lista de elementos y código de éxito */
+                response.IsSuccess = 0;
+                response.Result = monographLoans;
+                response.Message = monographLoans.Any() ? "Registros obtenidos exitosamente." : "No hay registros.";
+                response.StatusCode = HttpStatusCode.OK;
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.InternalServerError;
+            }
+
+            return response;
+        }
+
         /* Para aprobar una Solicitud de prestamo de monografia en la base de datos */
 
         public async Task<ApiResponse> UpdateBorrowedMonographLoan(UpdateBorrowedMonographLoanDto updateBorrowedMonographLoanDto)

@@ -22,6 +22,8 @@ export class MonographLoanService {
   private readonly monographLoanDeleteUrl: string = '/api/monograph_loans/delete'
   private readonly monographLoanGetAllUrl: string = '/api/monograph_loans/get_all'
   private readonly monographLoanGetByIdUrl: string = '/api/monograph_loans/get_by_id'
+  private readonly monographLoanGetByStateUrl: string = '/api/monograph_loans/get_by_state'
+  private readonly monographLoanGetByStudentCarnetUrl: string = '/api/monograph_loans/get_by_student_carnet'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {
@@ -103,6 +105,30 @@ export class MonographLoanService {
    */
   getById(monographLoanId: number): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographLoanGetByIdUrl}/${monographLoanId}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
+  }
+
+  /**
+   * Devuelve un préstamo de monografía
+   * @param state
+   * @returns Observable<ApiResponse>
+   */
+  getByState(state: string): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographLoanGetByStateUrl}/${state}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
+  }
+
+  /**
+   * Devuelve un préstamo de monografía
+   * @param carnet
+   * @returns Observable<ApiResponse>
+   */
+  getByStudentCarnet(carnet: string): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.monographLoanGetByStudentCarnetUrl}/${carnet}`)
       .pipe<ApiResponse>(catchError(error => {
         return HttpErrorHandler.handlerError(error);
       }));

@@ -157,6 +157,81 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
             return response;
         }
 
+        public async Task<ApiResponse> GetBookLoanByState(string? state)
+        {
+            ApiResponse response = new();
+            SqlParameter[] parameters = [new("@State", state)];
+            try
+            {
+                /* Ejecutar procedimiento almacenado */
+                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Library].uspGetBookLoanByState", CommandType.StoredProcedure, parameters);
+                /* Convertir DataTable a una Lista */
+                IEnumerable<BookLoan> bookLoans = _sqlConnector.DataTableToList<BookLoan>(result);
+                /* Retornar lista de elementos y código de éxito */
+                response.IsSuccess = 0;
+                response.Result = bookLoans;
+                response.Message = bookLoans.Any() ? "Registros obtenidos exitosamente." : "No hay registros.";
+                response.StatusCode = HttpStatusCode.OK;
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.InternalServerError;
+            }
+
+            return response;
+        }
+
+        public async Task<ApiResponse> GetBookLoanByStudentCarnet(string? carnet)
+        {
+            ApiResponse response = new();
+            SqlParameter[] parameters = [new("@Carnet", carnet)];
+            try
+            {
+                /* Ejecutar procedimiento almacenado */
+                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Library].uspGetBookLoanByStudentCarnet", CommandType.StoredProcedure, parameters);
+                /* Convertir DataTable a una Lista */
+                IEnumerable<BookLoan> bookLoans = _sqlConnector.DataTableToList<BookLoan>(result);
+                /* Retornar lista de elementos y código de éxito */
+                response.IsSuccess = 0;
+                response.Result = bookLoans;
+                response.Message = bookLoans.Any() ? "Registros obtenidos exitosamente." : "No hay registros.";
+                response.StatusCode = HttpStatusCode.OK;
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.InternalServerError;
+            }
+
+            return response;
+        }
+
+        public async Task<ApiResponse> GetBookLoanByTypeOfLoan(string? typeOfLoan)
+        {
+            ApiResponse response = new();
+            SqlParameter[] parameters = [new("@TypeOfLoan", typeOfLoan)];
+            try
+            {
+                /* Ejecutar procedimiento almacenado */
+                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Library].uspGetBookLoanByTypeOfLoan", CommandType.StoredProcedure, parameters);
+                /* Convertir DataTable a una Lista */
+                IEnumerable<BookLoan> bookLoans = _sqlConnector.DataTableToList<BookLoan>(result);
+                /* Retornar lista de elementos y código de éxito */
+                response.IsSuccess = 0;
+                response.Result = bookLoans;
+                response.Message = bookLoans.Any() ? "Registros obtenidos exitosamente." : "No hay registros.";
+                response.StatusCode = HttpStatusCode.OK;
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.StatusCode = HttpStatusCode.InternalServerError;
+            }
+
+            return response;
+        }
+
         /* Para obtener una Solicitud de prestamo de libro en la base de datos */
 
         public async Task<ApiResponse> GetById(int id)

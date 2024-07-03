@@ -355,3 +355,37 @@ BEGIN
 	END
 END
 GO
+
+-- GET MonographLoanByStudentCarnet
+IF OBJECT_ID('Library.uspMonographLoanByStudentCarnet', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspMonographLoanByStudentCarnet;  
+GO
+CREATE PROC [Library].uspMonographLoanByStudentCarnet (
+	@Carnet CHAR(10)
+)
+AS
+BEGIN
+	--
+	SELECT bl.MonographLoanId, bl.StudentId, bl.MonographId, bl.[State], bl.LoanDate, bl.DueDate, bl.ReturnDate, bl.BorrowedUserId, bl.ReturnedUserId 
+	FROM [Library].MonographLoan AS bl
+	INNER JOIN [University].Student AS s ON bl.StudentId = s.StudentId AND s.Carnet = @Carnet
+	ORDER BY bl.LoanDate DESC
+END
+GO
+
+-- GET MonographLoanByState
+IF OBJECT_ID('Library.uspGetMonographLoanByState', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspGetMonographLoanByState;  
+GO
+CREATE PROC [Library].uspGetMonographLoanByState (
+	@State CHAR(9)
+)
+AS
+BEGIN
+	--
+	SELECT bl.MonographLoanId, bl.StudentId, bl.MonographId, bl.[State], bl.LoanDate, bl.DueDate, bl.ReturnDate, bl.BorrowedUserId, bl.ReturnedUserId 
+	FROM [Library].MonographLoan AS bl
+	WHERE bl.[State] = @State
+	ORDER BY bl.LoanDate DESC
+END
+GO

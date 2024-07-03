@@ -107,6 +107,258 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             return response;
         }
 
+        public async Task<ApiResponse> GetBookLoanByState(string? state)
+        {
+            var response = await _repository.GetBookLoanByState(state);
+            // Comprobar si hay elementos
+            if (response.Result is null || response.Result is not IEnumerable<BookLoan> bookLoans)
+                return response;
+
+            // Obtener ids de los estudiantes de todos los prestamos
+            var studentIds = bookLoans.Select(b => b.StudentId).ToList();
+            // Obtener ids de los libros de todos los prestamos
+            var bookIds = bookLoans.Select(b => b.BookId).ToList();
+            // Obtener ids de los usuarios que aprobaron el prestamo del libro
+            var borrowedUserIds = bookLoans.Select(b => b.BorrowedUserId).ToList();
+            // Obtener ids de los usuarios que recibieron el libro
+            var returnedUserIds = bookLoans.Select(b => b.ReturnedUserId).ToList();
+            // Convertir bookloans a BookLoanDto
+            var bookLoansDto = _mapper.Map<IEnumerable<BookLoanDto>>(bookLoans).ToList();
+
+            // 1. Comprobar si hay estudiantes
+            var studentsResponse = await _studentBll.GetAll();
+            if (studentsResponse.Result is not null && studentsResponse.Result is IEnumerable<StudentDto> students)
+            {
+                var studentsDictionary = students.ToDictionary(s => s.StudentId);
+
+                for (int i = 0; i < bookLoansDto.Count; i++)
+                {
+                    var bookLoanDto = bookLoansDto[i];
+                    var studentId = studentIds[i];
+
+                    if (studentsDictionary.TryGetValue(studentId, out var studentDto))
+                    {
+                        bookLoanDto.Student = studentDto;
+                    }
+                }
+            }
+
+            // 2. Comprobar si hay libros
+            var booksResponse = await _bookBll.GetAll();
+            if (booksResponse.Result is not null && booksResponse.Result is IEnumerable<BookDto> books)
+            {
+                var booksDictionary = books.ToDictionary(b => b.BookId);
+
+                for (int i = 0; i < bookLoansDto.Count; i++)
+                {
+                    var bookLoanDto = bookLoansDto[i];
+                    var bookId = bookIds[i];
+
+                    if (booksDictionary.TryGetValue(bookId, out var bookDto))
+                    {
+                        bookLoanDto.Book = bookDto;
+                    }
+                }
+            }
+
+            // 3. Borrowed users y Returned users
+            var usersResponse = await _userBll.GetAll();
+            if (usersResponse.Result is not null && usersResponse.Result is IEnumerable<UserDto> users)
+            {
+                var usersDictionary = users.ToDictionary(u => u.UserId);
+
+                for (int i = 0; i < bookLoansDto.Count; i++)
+                {
+                    var bookLoanDto = bookLoansDto[i];
+
+                    var borrowedUserId = borrowedUserIds[i];
+                    var returnedUserId = returnedUserIds[i];
+
+                    if (usersDictionary.TryGetValue(borrowedUserId, out var borrowedUserDto))
+                    {
+                        bookLoanDto.BorrowedUser = borrowedUserDto;
+                    }
+                    if (usersDictionary.TryGetValue(returnedUserId, out var returnedUserDto))
+                    {
+                        bookLoanDto.ReturnedUser = returnedUserDto;
+                    }
+                }
+            }
+
+            // Retornar Dtos
+            response.Result = bookLoansDto;
+
+            return response;
+        }
+
+        public async Task<ApiResponse> GetBookLoanByStudentCarnet(string? carnet)
+        {
+            var response = await _repository.GetBookLoanByStudentCarnet(carnet);
+            // Comprobar si hay elementos
+            if (response.Result is null || response.Result is not IEnumerable<BookLoan> bookLoans)
+                return response;
+
+            // Obtener ids de los estudiantes de todos los prestamos
+            var studentIds = bookLoans.Select(b => b.StudentId).ToList();
+            // Obtener ids de los libros de todos los prestamos
+            var bookIds = bookLoans.Select(b => b.BookId).ToList();
+            // Obtener ids de los usuarios que aprobaron el prestamo del libro
+            var borrowedUserIds = bookLoans.Select(b => b.BorrowedUserId).ToList();
+            // Obtener ids de los usuarios que recibieron el libro
+            var returnedUserIds = bookLoans.Select(b => b.ReturnedUserId).ToList();
+            // Convertir bookloans a BookLoanDto
+            var bookLoansDto = _mapper.Map<IEnumerable<BookLoanDto>>(bookLoans).ToList();
+
+            // 1. Comprobar si hay estudiantes
+            var studentsResponse = await _studentBll.GetAll();
+            if (studentsResponse.Result is not null && studentsResponse.Result is IEnumerable<StudentDto> students)
+            {
+                var studentsDictionary = students.ToDictionary(s => s.StudentId);
+
+                for (int i = 0; i < bookLoansDto.Count; i++)
+                {
+                    var bookLoanDto = bookLoansDto[i];
+                    var studentId = studentIds[i];
+
+                    if (studentsDictionary.TryGetValue(studentId, out var studentDto))
+                    {
+                        bookLoanDto.Student = studentDto;
+                    }
+                }
+            }
+
+            // 2. Comprobar si hay libros
+            var booksResponse = await _bookBll.GetAll();
+            if (booksResponse.Result is not null && booksResponse.Result is IEnumerable<BookDto> books)
+            {
+                var booksDictionary = books.ToDictionary(b => b.BookId);
+
+                for (int i = 0; i < bookLoansDto.Count; i++)
+                {
+                    var bookLoanDto = bookLoansDto[i];
+                    var bookId = bookIds[i];
+
+                    if (booksDictionary.TryGetValue(bookId, out var bookDto))
+                    {
+                        bookLoanDto.Book = bookDto;
+                    }
+                }
+            }
+
+            // 3. Borrowed users y Returned users
+            var usersResponse = await _userBll.GetAll();
+            if (usersResponse.Result is not null && usersResponse.Result is IEnumerable<UserDto> users)
+            {
+                var usersDictionary = users.ToDictionary(u => u.UserId);
+
+                for (int i = 0; i < bookLoansDto.Count; i++)
+                {
+                    var bookLoanDto = bookLoansDto[i];
+
+                    var borrowedUserId = borrowedUserIds[i];
+                    var returnedUserId = returnedUserIds[i];
+
+                    if (usersDictionary.TryGetValue(borrowedUserId, out var borrowedUserDto))
+                    {
+                        bookLoanDto.BorrowedUser = borrowedUserDto;
+                    }
+                    if (usersDictionary.TryGetValue(returnedUserId, out var returnedUserDto))
+                    {
+                        bookLoanDto.ReturnedUser = returnedUserDto;
+                    }
+                }
+            }
+
+            // Retornar Dtos
+            response.Result = bookLoansDto;
+
+            return response;
+        }
+
+        public async Task<ApiResponse> GetBookLoanByTypeOfLoan(string? typeOfLoan)
+        {
+            var response = await _repository.GetBookLoanByTypeOfLoan(typeOfLoan);
+            // Comprobar si hay elementos
+            if (response.Result is null || response.Result is not IEnumerable<BookLoan> bookLoans)
+                return response;
+
+            // Obtener ids de los estudiantes de todos los prestamos
+            var studentIds = bookLoans.Select(b => b.StudentId).ToList();
+            // Obtener ids de los libros de todos los prestamos
+            var bookIds = bookLoans.Select(b => b.BookId).ToList();
+            // Obtener ids de los usuarios que aprobaron el prestamo del libro
+            var borrowedUserIds = bookLoans.Select(b => b.BorrowedUserId).ToList();
+            // Obtener ids de los usuarios que recibieron el libro
+            var returnedUserIds = bookLoans.Select(b => b.ReturnedUserId).ToList();
+            // Convertir bookloans a BookLoanDto
+            var bookLoansDto = _mapper.Map<IEnumerable<BookLoanDto>>(bookLoans).ToList();
+
+            // 1. Comprobar si hay estudiantes
+            var studentsResponse = await _studentBll.GetAll();
+            if (studentsResponse.Result is not null && studentsResponse.Result is IEnumerable<StudentDto> students)
+            {
+                var studentsDictionary = students.ToDictionary(s => s.StudentId);
+
+                for (int i = 0; i < bookLoansDto.Count; i++)
+                {
+                    var bookLoanDto = bookLoansDto[i];
+                    var studentId = studentIds[i];
+
+                    if (studentsDictionary.TryGetValue(studentId, out var studentDto))
+                    {
+                        bookLoanDto.Student = studentDto;
+                    }
+                }
+            }
+
+            // 2. Comprobar si hay libros
+            var booksResponse = await _bookBll.GetAll();
+            if (booksResponse.Result is not null && booksResponse.Result is IEnumerable<BookDto> books)
+            {
+                var booksDictionary = books.ToDictionary(b => b.BookId);
+
+                for (int i = 0; i < bookLoansDto.Count; i++)
+                {
+                    var bookLoanDto = bookLoansDto[i];
+                    var bookId = bookIds[i];
+
+                    if (booksDictionary.TryGetValue(bookId, out var bookDto))
+                    {
+                        bookLoanDto.Book = bookDto;
+                    }
+                }
+            }
+
+            // 3. Borrowed users y Returned users
+            var usersResponse = await _userBll.GetAll();
+            if (usersResponse.Result is not null && usersResponse.Result is IEnumerable<UserDto> users)
+            {
+                var usersDictionary = users.ToDictionary(u => u.UserId);
+
+                for (int i = 0; i < bookLoansDto.Count; i++)
+                {
+                    var bookLoanDto = bookLoansDto[i];
+
+                    var borrowedUserId = borrowedUserIds[i];
+                    var returnedUserId = returnedUserIds[i];
+
+                    if (usersDictionary.TryGetValue(borrowedUserId, out var borrowedUserDto))
+                    {
+                        bookLoanDto.BorrowedUser = borrowedUserDto;
+                    }
+                    if (usersDictionary.TryGetValue(returnedUserId, out var returnedUserDto))
+                    {
+                        bookLoanDto.ReturnedUser = returnedUserDto;
+                    }
+                }
+            }
+
+            // Retornar Dtos
+            response.Result = bookLoansDto;
+
+            return response;
+        }
+
         public async Task<ApiResponse> GetById(int id)
         {
             var response = await _repository.GetById(id);

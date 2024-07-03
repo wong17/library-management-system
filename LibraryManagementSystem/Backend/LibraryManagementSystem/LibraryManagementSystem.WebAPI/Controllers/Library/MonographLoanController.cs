@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LibraryManagementSystem.Bll.Implements.Library;
 using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
@@ -122,6 +123,50 @@ namespace LibraryManagementSystem.WebAPI.Controllers
                 return NotFound(response);
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Devuelve un préstamo de monografia por su estado
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        [HttpGet("get_by_state/{state}")]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetBookLoanByState(string? state)
+        {
+            if (string.IsNullOrEmpty(state))
+                return BadRequest(new ApiResponse() { Message = "State no puede ser null o vacio.", StatusCode = HttpStatusCode.BadRequest });
+
+            var response = await _monographLoanBll.GetMonographLoanByState(state);
+            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Devuelve un préstamo de monografia por su carnet
+        /// </summary>
+        /// <param name="carnet"></param>
+        /// <returns></returns>
+        [HttpGet("get_by_student_carnet/{carnet}")]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetBookLoanByStudentCarnet(string? carnet)
+        {
+            if (string.IsNullOrEmpty(carnet))
+                return BadRequest(new ApiResponse() { Message = "Carnet no puede ser null o vacio.", StatusCode = HttpStatusCode.BadRequest });
+
+            var response = await _monographLoanBll.GetMonographLoanByStudentCarnet(carnet);
+            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);

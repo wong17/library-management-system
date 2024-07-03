@@ -368,3 +368,55 @@ BEGIN
 	END
 END
 GO
+
+-- GET BookLoanByStudentCarnet
+IF OBJECT_ID('Library.uspGetBookLoanByStudentCarnet', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspGetBookLoanByStudentCarnet;  
+GO
+CREATE PROC [Library].uspGetBookLoanByStudentCarnet (
+	@Carnet CHAR(10)
+)
+AS
+BEGIN
+	--
+	SELECT bl.BookLoanId, bl.StudentId, bl.BookId, bl.TypeOfLoan, bl.[State], bl.LoanDate, bl.DueDate, bl.ReturnDate, bl.BorrowedUserId, bl.ReturnedUserId 
+	FROM [Library].BookLoan AS bl
+	INNER JOIN [University].Student AS s ON bl.StudentId = s.StudentId AND s.Carnet = @Carnet
+	ORDER BY bl.LoanDate DESC
+END
+GO
+
+-- GET BookLoanByTypeOfLoan
+IF OBJECT_ID('Library.uspGetBookLoanByTypeOfLoan', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspGetBookLoanByTypeOfLoan;  
+GO
+CREATE PROC [Library].uspGetBookLoanByTypeOfLoan (
+	@TypeOfLoan VARCHAR(10)
+)
+AS
+BEGIN
+	--
+	SELECT bl.BookLoanId, bl.StudentId, bl.BookId, bl.TypeOfLoan, bl.[State], bl.LoanDate, bl.DueDate, bl.ReturnDate, bl.BorrowedUserId, bl.ReturnedUserId 
+	FROM [Library].BookLoan AS bl
+	WHERE bl.TypeOfLoan = @TypeOfLoan
+	ORDER BY bl.LoanDate DESC
+END
+GO
+
+-- GET BookLoanByState
+IF OBJECT_ID('Library.uspGetBookLoanByState', 'P') IS NOT NULL  
+    DROP PROCEDURE [Library].uspGetBookLoanByState;  
+GO
+CREATE PROC [Library].uspGetBookLoanByState (
+	@State CHAR(9)
+)
+AS
+BEGIN
+	--
+	SELECT bl.BookLoanId, bl.StudentId, bl.BookId, bl.TypeOfLoan, bl.[State], bl.LoanDate, bl.DueDate, bl.ReturnDate, bl.BorrowedUserId, bl.ReturnedUserId 
+	FROM [Library].BookLoan AS bl
+	WHERE bl.[State] = @State
+	ORDER BY bl.LoanDate DESC
+END
+GO
+

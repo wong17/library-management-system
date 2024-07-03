@@ -157,6 +157,172 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             return response;
         }
 
+        public async Task<ApiResponse> GetMonographLoanByState(string? state)
+        {
+            var response = await _repository.GetMonographLoanByState(state);
+            // Comprobar si hay elementos
+            if (response.Result is null || response.Result is not IEnumerable<MonographLoan> monographLoans)
+                return response;
+
+            // Obtener ids de los estudiantes de todos los prestamos
+            var studentIds = monographLoans.Select(m => m.StudentId).ToList();
+            // Obtener ids de las monografias de todos los prestamos
+            var monographIds = monographLoans.Select(m => m.MonographId).ToList();
+            // Obtener ids de los usuarios que aprobaron el prestamo del libro
+            var borrowedUserIds = monographLoans.Select(m => m.BorrowedUserId).ToList();
+            // Obtener ids de los usuarios que recibieron el libro
+            var returnedUserIds = monographLoans.Select(m => m.ReturnedUserId).ToList();
+            // Convertir bookloans a BookLoanDto
+            var monographLoansDto = _mapper.Map<IEnumerable<MonographLoanDto>>(monographLoans).ToList();
+
+            // 1. Comprobar si hay estudiantes
+            var studentsResponse = await _studentBll.GetAll();
+            if (studentsResponse.Result is not null && studentsResponse.Result is IEnumerable<StudentDto> students)
+            {
+                var studentsDictionary = students.ToDictionary(s => s.StudentId);
+
+                for (int i = 0; i < monographLoansDto.Count; i++)
+                {
+                    var bookLoanDto = monographLoansDto[i];
+                    var studentId = studentIds[i];
+
+                    if (studentsDictionary.TryGetValue(studentId, out var studentDto))
+                    {
+                        bookLoanDto.Student = studentDto;
+                    }
+                }
+            }
+
+            // 2. Comprobar si hay monografias
+            var monographsResponse = await _monographBll.GetAll();
+            if (monographsResponse.Result is not null && monographsResponse.Result is IEnumerable<MonographDto> monographs)
+            {
+                var monographsDictionary = monographs.ToDictionary(m => m.MonographId);
+
+                for (int i = 0; i < monographLoansDto.Count; i++)
+                {
+                    var monographLoanDto = monographLoansDto[i];
+                    var monographId = monographIds[i];
+
+                    if (monographsDictionary.TryGetValue(monographId, out var monographDto))
+                    {
+                        monographLoanDto.Monograph = monographDto;
+                    }
+                }
+            }
+
+            // 3. Borrowed users y Returned users
+            var usersResponse = await _userBll.GetAll();
+            if (usersResponse.Result is not null && usersResponse.Result is IEnumerable<UserDto> users)
+            {
+                var usersDictionary = users.ToDictionary(u => u.UserId);
+
+                for (int i = 0; i < monographLoansDto.Count; i++)
+                {
+                    var monographLoanDto = monographLoansDto[i];
+
+                    var borrowedUserId = borrowedUserIds[i];
+                    var returnedUserId = returnedUserIds[i];
+
+                    if (usersDictionary.TryGetValue(borrowedUserId, out var borrowedUserDto))
+                    {
+                        monographLoanDto.BorrowedUser = borrowedUserDto;
+                    }
+                    if (usersDictionary.TryGetValue(returnedUserId, out var returnedUserDto))
+                    {
+                        monographLoanDto.ReturnedUser = returnedUserDto;
+                    }
+                }
+            }
+
+            response.Result = monographLoansDto;
+
+            return response;
+        }
+
+        public async Task<ApiResponse> GetMonographLoanByStudentCarnet(string? carnet)
+        {
+            var response = await _repository.GetMonographLoanByStudentCarnet(carnet);
+            // Comprobar si hay elementos
+            if (response.Result is null || response.Result is not IEnumerable<MonographLoan> monographLoans)
+                return response;
+
+            // Obtener ids de los estudiantes de todos los prestamos
+            var studentIds = monographLoans.Select(m => m.StudentId).ToList();
+            // Obtener ids de las monografias de todos los prestamos
+            var monographIds = monographLoans.Select(m => m.MonographId).ToList();
+            // Obtener ids de los usuarios que aprobaron el prestamo del libro
+            var borrowedUserIds = monographLoans.Select(m => m.BorrowedUserId).ToList();
+            // Obtener ids de los usuarios que recibieron el libro
+            var returnedUserIds = monographLoans.Select(m => m.ReturnedUserId).ToList();
+            // Convertir bookloans a BookLoanDto
+            var monographLoansDto = _mapper.Map<IEnumerable<MonographLoanDto>>(monographLoans).ToList();
+
+            // 1. Comprobar si hay estudiantes
+            var studentsResponse = await _studentBll.GetAll();
+            if (studentsResponse.Result is not null && studentsResponse.Result is IEnumerable<StudentDto> students)
+            {
+                var studentsDictionary = students.ToDictionary(s => s.StudentId);
+
+                for (int i = 0; i < monographLoansDto.Count; i++)
+                {
+                    var bookLoanDto = monographLoansDto[i];
+                    var studentId = studentIds[i];
+
+                    if (studentsDictionary.TryGetValue(studentId, out var studentDto))
+                    {
+                        bookLoanDto.Student = studentDto;
+                    }
+                }
+            }
+
+            // 2. Comprobar si hay monografias
+            var monographsResponse = await _monographBll.GetAll();
+            if (monographsResponse.Result is not null && monographsResponse.Result is IEnumerable<MonographDto> monographs)
+            {
+                var monographsDictionary = monographs.ToDictionary(m => m.MonographId);
+
+                for (int i = 0; i < monographLoansDto.Count; i++)
+                {
+                    var monographLoanDto = monographLoansDto[i];
+                    var monographId = monographIds[i];
+
+                    if (monographsDictionary.TryGetValue(monographId, out var monographDto))
+                    {
+                        monographLoanDto.Monograph = monographDto;
+                    }
+                }
+            }
+
+            // 3. Borrowed users y Returned users
+            var usersResponse = await _userBll.GetAll();
+            if (usersResponse.Result is not null && usersResponse.Result is IEnumerable<UserDto> users)
+            {
+                var usersDictionary = users.ToDictionary(u => u.UserId);
+
+                for (int i = 0; i < monographLoansDto.Count; i++)
+                {
+                    var monographLoanDto = monographLoansDto[i];
+
+                    var borrowedUserId = borrowedUserIds[i];
+                    var returnedUserId = returnedUserIds[i];
+
+                    if (usersDictionary.TryGetValue(borrowedUserId, out var borrowedUserDto))
+                    {
+                        monographLoanDto.BorrowedUser = borrowedUserDto;
+                    }
+                    if (usersDictionary.TryGetValue(returnedUserId, out var returnedUserDto))
+                    {
+                        monographLoanDto.ReturnedUser = returnedUserDto;
+                    }
+                }
+            }
+
+            response.Result = monographLoansDto;
+
+            return response;
+        }
+
         public async Task<ApiResponse> UpdateBorrowedMonographLoan(UpdateBorrowedMonographLoanDto updateBorrowedMonographLoanDto) =>
             await _repository.UpdateBorrowedMonographLoan(updateBorrowedMonographLoanDto);
 

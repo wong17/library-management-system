@@ -22,6 +22,9 @@ export class BookLoanService {
   private readonly bookLoanDeleteUrl: string = '/api/book_loans/delete'
   private readonly bookLoanGetAllUrl: string = '/api/book_loans/get_all'
   private readonly bookLoanGetByIdUrl: string = '/api/book_loans/get_by_id'
+  private readonly bookLoanGetByStateUrl: string = '/api/book_loans/get_by_state'
+  private readonly bookLoanGetByTypeOfLoanUrl: string = '/api/book_loans/get_by_type_of_loan'
+  private readonly bookLoanGetByStudentCarnetUrl: string = '/api/book_loans/get_by_student_carnet'
 
   /* Encabezado http para solicitudes POST y PUT */
   private readonly httpHeader = {
@@ -107,4 +110,41 @@ export class BookLoanService {
         return HttpErrorHandler.handlerError(error);
       }));
   }
+
+  /**
+   * Devuelve un préstamo de libro
+   * @param state
+   * @returns Observable<ApiResponse>
+   */
+  getByState(state: string): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookLoanGetByStateUrl}/${state}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
+  }
+
+  /**
+   * Devuelve un préstamo de libro
+   * @param typeOfLoan
+   * @returns Observable<ApiResponse>
+   */
+  getByTypeOfLoan(typeOfLoan: string): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookLoanGetByTypeOfLoanUrl}/${typeOfLoan}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
+  }
+
+  /**
+   * Devuelve un préstamo de libro
+   * @param carnet
+   * @returns Observable<ApiResponse>
+   */
+  getByStudentCarnet(carnet: string): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${this.apiUrl}${this.bookLoanGetByStudentCarnetUrl}/${carnet}`)
+      .pipe<ApiResponse>(catchError(error => {
+        return HttpErrorHandler.handlerError(error);
+      }));
+  }
+
 }

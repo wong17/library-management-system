@@ -11,5 +11,8 @@ namespace LibraryManagementSystem.Dal.Repository.Interfaces.Library
         Task<ApiResponse> UpdateBorrowedMonographLoan(UpdateBorrowedMonographLoanDto updateBorrowedMonographLoanDto);
         /* Para hacer la devolución de una monografía, estado de la solicitud: PRESTADA -> DEVUELTA */
         Task<ApiResponse> UpdateReturnedMonographLoan(UpdateReturnedMonographLoanDto updateReturnedMonographLoanDto);
+
+        Task<ApiResponse> GetMonographLoanByStudentCarnet(string? carnet);
+        Task<ApiResponse> GetMonographLoanByState(string? state);
     }
 }

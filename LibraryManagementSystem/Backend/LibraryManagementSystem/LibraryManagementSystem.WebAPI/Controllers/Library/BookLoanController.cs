@@ -128,6 +128,72 @@ namespace LibraryManagementSystem.WebAPI.Controllers
         }
 
         /// <summary>
+        /// Devuelve un préstamo de libro por su estado
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        [HttpGet("get_by_state/{state}")]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetBookLoanByState(string? state)
+        {
+            if (string.IsNullOrEmpty(state))
+                return BadRequest(new ApiResponse() { Message = "State no puede ser null o vacio.", StatusCode = HttpStatusCode.BadRequest });
+
+            var response = await _bookLoanBll.GetBookLoanByState(state);
+            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Devuelve un préstamo de libro por su tipo de prestamo
+        /// </summary>
+        /// <param name="typeOfLoan"></param>
+        /// <returns></returns>
+        [HttpGet("get_by_type_of_loan/{typeOfLoan}")]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetBookLoanByTypeOfLoan(string? typeOfLoan)
+        {
+            if (string.IsNullOrEmpty(typeOfLoan))
+                return BadRequest(new ApiResponse() { Message = "Tipo de préstamo no puede ser null o vacio.", StatusCode = HttpStatusCode.BadRequest });
+
+            var response = await _bookLoanBll.GetBookLoanByTypeOfLoan(typeOfLoan);
+            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Devuelve un préstamo de libro por su carnet
+        /// </summary>
+        /// <param name="carnet"></param>
+        /// <returns></returns>
+        [HttpGet("get_by_student_carnet/{carnet}")]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetBookLoanByStudentCarnet(string? carnet)
+        {
+            if (string.IsNullOrEmpty(carnet))
+                return BadRequest(new ApiResponse() { Message = "Carnet no puede ser null o vacio.", StatusCode = HttpStatusCode.BadRequest });
+
+            var response = await _bookLoanBll.GetBookLoanByStudentCarnet(carnet);
+            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            return Ok(response);
+        }
+
+        /// <summary>
         /// Para aprobar una solicitud de préstamo de libro, estado de la solicitud: CREADA -> PRESTADO
         /// </summary>
         /// <param name="updateBorrowedBookLoanDto"></param>
