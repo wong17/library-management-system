@@ -20,17 +20,27 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MonographReturnDialogComponent } from '../../../monograph-return-dialog/monograph-return-dialog.component';
 import { DialogData, DialogOperation } from '../../../../util/dialog-data';
 import { MonographBorrowDateLoanComponent } from '../../../monograph-borrow-dialog/monograph-borrow-date-loan.component';
+import { MatSelectModule } from '@angular/material/select';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ControlStateMatcher } from '../../../../util/control-state-matcher';
 
 @Component({
   selector: 'app-librarian-monograph-loans',
   standalone: true,
   imports: [MatTableModule, MatInputModule, MatFormFieldModule, MatPaginator, MatPaginatorModule, MatButtonModule, MatIconModule,
-    StudentCardComponent, MonographCardComponent, CommonModule, MatTooltipModule
+    StudentCardComponent, MonographCardComponent, CommonModule, MatTooltipModule, ReactiveFormsModule, MatSelectModule
   ],
   templateUrl: './librarian-monograph-loans.component.html',
   styleUrl: './librarian-monograph-loans.component.css'
 })
 export class LibrarianMonographLoansComponent implements OnInit, AfterViewInit {
+
+  /* */
+  filterByStateForm: FormGroup;
+  filterByStudentCarnetForm: FormGroup;
+
+  /* */
+  matcher: ControlStateMatcher = new ControlStateMatcher()
 
   displayedColumns: string[] = ['monographLoanId', 'state', 'loanDate', 'dueDate', 'returnDate', 'student', 'monograph', 'borrowedUser', 'returnedUser', 'options'];
 
@@ -52,8 +62,17 @@ export class LibrarianMonographLoansComponent implements OnInit, AfterViewInit {
     private monographLoanService: MonographLoanService, 
     private toastr: ToastrService, 
     private dialog: MatDialog, 
-    private mlSignalR: MonographLoanSignalRService
-  ) { }
+    private mlSignalR: MonographLoanSignalRService,
+    private fb: FormBuilder
+  ) {
+    this.filterByStateForm = this.fb.group({
+      states: ['']
+    });
+
+    this.filterByStudentCarnetForm = this.fb.group({
+      carnet: ['', [Validators.required, Validators.minLength(10)]]
+    });
+   }
 
   ngOnInit(): void {
     this.getMonographLoansDto();
@@ -240,6 +259,77 @@ export class LibrarianMonographLoansComponent implements OnInit, AfterViewInit {
 
       this.getMonographLoansDto();
     })
+  }
+
+  get states() {
+    return this.filterByStateForm.get('states');
+  }
+
+  get carnet() {
+    return this.filterByStudentCarnetForm.get('carnet');
+  }
+
+  filterByState() {
+    const state = this.states?.value as string
+    
+    if (state === '') {
+      this.reloadMonographLoansClick();
+      return;
+    }
+
+    this.monographLoanService.getByState(state.trim()).subscribe({
+      next: response => {
+        if (response.isSuccess !== 0 || response.statusCode !== 200) {
+          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          });
+          return;
+        }
+        this.dataSource.data = response.result as MonographLoanDto[];
+      },
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error?.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
+      }
+    });
+  }
+
+  filterByStudentCarnet() {
+    const carnet = this.carnet?.value as string;
+
+    if (!carnet) {
+      this.toastr.warning(`Debes digitar un carnet`, 'Atención', {
+        timeOut: 5000,
+        easeTime: 1000
+      });
+      return;
+    }
+
+    this.monographLoanService.getByStudentCarnet(carnet.trim()).subscribe({
+      next: response => {
+        if (response.isSuccess !== 0 || response.statusCode !== 200) {
+          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+            timeOut: 5000,
+            easeTime: 1000
+          });
+          return;
+        }
+        this.dataSource.data = response.result as MonographLoanDto[];
+      },
+      error: (error: ApiResponse) => {
+        this.toastr.error(`${error?.message}`, 'Error', {
+          timeOut: 5000,
+          easeTime: 1000
+        });
+      }
+    });
+  }
+
+  reloadMonographLoansClick() {
+    this.getMonographLoansDto();
   }
 
 }
