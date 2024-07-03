@@ -25,6 +25,7 @@ import { PublisherDto } from '../../../../entities/dtos/library/publisher-dto';
 import { CategoryDto } from '../../../../entities/dtos/library/category-dto';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
+import { BookSignalRService } from '../../../../services/signalr-hubs/book-signal-r.service';
 
 @Component({
   selector: 'app-librarian-books',
@@ -67,7 +68,8 @@ export class LibrarianBooksComponent {
     private categoryService: CategoryService,
     private subCategoryService: SubCategoryService,
     private toastr: ToastrService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private bSignalR: BookSignalRService
   ) {
     this.filterForm = this.fb.group({
       authorIds: [''],
@@ -86,6 +88,11 @@ export class LibrarianBooksComponent {
       const dataStr = StringUtil.removeAccents(JSON.stringify(data).toLowerCase());
       return dataStr.includes(filter);
     };
+
+    // Conectarse al Hub de libros
+    this.bSignalR.bookNotification.subscribe((value: boolean) => {
+      this.getBooksDto();
+    });
   }
 
   ngAfterViewInit(): void {

@@ -3,7 +3,6 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signal
 import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -11,13 +10,13 @@ export class BookLoanSignalRService {
 
   private bookLoanHubConnection: HubConnection;
   public bookLoanNotification = new Subject<boolean>();
-  
-  constructor() { 
+
+  constructor() {
     this.bookLoanHubConnection = new HubConnectionBuilder()
       .withUrl(`${environment.apiUrl}/hubs/bookloan_hub`)
       .build();
 
-      this.startConnections();
+    this.startConnections();
   }
 
   private startConnections() {
@@ -25,7 +24,7 @@ export class BookLoanSignalRService {
       .start()
       .then(() => console.log('Connected to BookLoan Hub'))
       .catch(err => console.error('Error connecting to BookLoan Hub:', err));
-      
+
     this.bookLoanHubConnection.on('SendLoanNotification', (loanCreated: boolean) => {
       this.bookLoanNotification.next(loanCreated);
     });

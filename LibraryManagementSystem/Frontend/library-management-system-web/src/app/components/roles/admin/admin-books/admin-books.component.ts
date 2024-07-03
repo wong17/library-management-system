@@ -31,6 +31,7 @@ import { PublisherDto } from '../../../../entities/dtos/library/publisher-dto';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FilterBookDto } from '../../../../entities/dtos/library/filter-book-dto';
 import { StringUtil } from '../../../../util/string-util';
+import { BookSignalRService } from '../../../../services/signalr-hubs/book-signal-r.service';
 
 @Component({
   selector: 'app-admin-books',
@@ -75,7 +76,8 @@ export class AdminBooksComponent implements AfterViewInit, OnInit {
     private subCategoryService: SubCategoryService,
     private dialog: MatDialog,
     private toastr: ToastrService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private bSignalR: BookSignalRService
   ) {
     this.filterForm = this.fb.group({
       authorIds: [''],
@@ -94,6 +96,11 @@ export class AdminBooksComponent implements AfterViewInit, OnInit {
       const dataStr = StringUtil.removeAccents(JSON.stringify(data).toLowerCase());
       return dataStr.includes(filter);
     };
+
+    // Conectarse al Hub de libros
+    this.bSignalR.bookNotification.subscribe((value: boolean) => {
+      this.getBooksDto();
+    });
   }
 
   ngAfterViewInit(): void {

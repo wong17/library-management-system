@@ -13,11 +13,13 @@ namespace LibraryManagementSystem.WebAPI.Controllers
     [Route("api/monograph_loans")]
     [ApiController]
     public class MonographLoanController(IMonographLoanBll monographLoanBll, IMapper mapper,
-        IHubContext<MonographLoanNotificationHub, ILoanNotification> hubContext) : ControllerBase
+        IHubContext<MonographLoanNotificationHub, ILoanNotification> hubContext,
+        IHubContext<MonographNotificationHub, IMonographNotification> monographHubContext) : ControllerBase
     {
         private readonly IMonographLoanBll _monographLoanBll = monographLoanBll;
         private readonly IMapper _mapper = mapper;
         private readonly IHubContext<MonographLoanNotificationHub, ILoanNotification> _hubContext = hubContext;
+        private readonly IHubContext<MonographNotificationHub, IMonographNotification> _monographHubContext = monographHubContext;
 
         /// <summary>
         /// Inserta un préstamo de monografia
@@ -45,6 +47,8 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             // Notifica a clientes con rol admin o bibliotecario
             await _hubContext.Clients.All.SendLoanNotification(true);
+            // Notifica a todos los clientes
+            await _monographHubContext.Clients.All.SendMonographStillAvailableNotification(true);
 
             return Ok(response);
         }
@@ -73,6 +77,11 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notifica a clientes con rol admin o bibliotecario
+            await _hubContext.Clients.All.SendLoanNotification(true);
+            // Notifica a todos los clientes
+            await _monographHubContext.Clients.All.SendMonographStillAvailableNotification(true);
 
             return Ok(response);
         }
@@ -143,6 +152,11 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
+            // Notifica a clientes con rol admin o bibliotecario
+            await _hubContext.Clients.All.SendLoanNotification(true);
+            // Notifica a todos los clientes
+            await _monographHubContext.Clients.All.SendMonographStillAvailableNotification(true);
+
             return Ok(response);
         }
 
@@ -170,6 +184,11 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notifica a clientes con rol admin o bibliotecario
+            await _hubContext.Clients.All.SendLoanNotification(true);
+            // Notifica a todos los clientes
+            await _monographHubContext.Clients.All.SendMonographStillAvailableNotification(true);
 
             return Ok(response);
         }

@@ -25,6 +25,7 @@ import { FilterMonographDto } from '../../../../entities/dtos/library/filter-mon
 import { CareerService } from '../../../../services/university/career.service';
 import { AuthorService } from '../../../../services/library/author.service';
 import { StringUtil } from '../../../../util/string-util';
+import { MonographSignalRService } from '../../../../services/signalr-hubs/monograph-signal-r.service';
 
 @Component({
   selector: 'app-student-monographs',
@@ -60,7 +61,8 @@ export class StudentMonographsComponent implements OnInit, AfterViewInit {
     private careerService: CareerService,
     private dialog: MatDialog,
     private toastr: ToastrService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private mSignalR: MonographSignalRService
   ) {
     this.filterForm = this.fb.group({
       authorIds: [''],
@@ -77,6 +79,11 @@ export class StudentMonographsComponent implements OnInit, AfterViewInit {
       const dataStr = StringUtil.removeAccents(JSON.stringify(data).toLowerCase());
       return dataStr.includes(filter);
     };
+
+    // Conectarse al Hub de monografias
+    this.mSignalR.monographNotification.subscribe((value: boolean) => {
+      this.getMonographsDto();
+    });
   }
 
   ngAfterViewInit(): void {

@@ -28,6 +28,7 @@ import { CategoryService } from '../../../../services/library/category.service';
 import { PublisherService } from '../../../../services/library/publisher.service';
 import { AuthorService } from '../../../../services/library/author.service';
 import { StringUtil } from '../../../../util/string-util';
+import { BookSignalRService } from '../../../../services/signalr-hubs/book-signal-r.service';
 
 @Component({
   selector: 'app-student-books',
@@ -71,7 +72,8 @@ export class StudentBooksComponent {
     private subCategoryService: SubCategoryService,
     private dialog: MatDialog,
     private toastr: ToastrService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private bSignalR: BookSignalRService
   ) {
     this.filterForm = this.fb.group({
       authorIds: [''],
@@ -90,6 +92,11 @@ export class StudentBooksComponent {
       const dataStr = StringUtil.removeAccents(JSON.stringify(data).toLowerCase());
       return dataStr.includes(filter);
     };
+
+    // Conectarse al Hub de libros
+    this.bSignalR.bookNotification.subscribe((value: boolean) => {
+      this.getBooksDto();
+    });
   }
 
   ngAfterViewInit(): void {

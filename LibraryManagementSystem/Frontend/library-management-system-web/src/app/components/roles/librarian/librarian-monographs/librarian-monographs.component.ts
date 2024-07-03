@@ -22,6 +22,7 @@ import { StringUtil } from '../../../../util/string-util';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MonographSignalRService } from '../../../../services/signalr-hubs/monograph-signal-r.service';
 
 @Component({
   selector: 'app-librarian-monographs',
@@ -56,7 +57,8 @@ export class LibrarianMonographsComponent {
     private authorService: AuthorService,
     private careerService: CareerService,
     private toastr: ToastrService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private mSignalR: MonographSignalRService
   ) {
     this.filterForm = this.fb.group({
       authorIds: [''],
@@ -73,6 +75,11 @@ export class LibrarianMonographsComponent {
       const dataStr = StringUtil.removeAccents(JSON.stringify(data).toLowerCase());
       return dataStr.includes(filter);
     };
+
+    // Conectarse al Hub de monografias
+    this.mSignalR.monographNotification.subscribe((value: boolean) => {
+      this.getMonographsDto();
+    });
   }
 
   ngAfterViewInit(): void {

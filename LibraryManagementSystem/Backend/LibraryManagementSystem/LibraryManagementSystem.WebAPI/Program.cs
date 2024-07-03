@@ -65,5 +65,7 @@ app.MapControllers();
 /* Hubs */
 app.MapHub<BookLoanNotificationHub>("/hubs/bookloan_hub");
 app.MapHub<MonographLoanNotificationHub>("/hubs/monographloan_hub");
+app.MapHub<BookLoanNotificationHub>("/hubs/book_hub");
+app.MapHub<MonographNotificationHub>("/hubs/monograph_hub");
 
 app.Run();

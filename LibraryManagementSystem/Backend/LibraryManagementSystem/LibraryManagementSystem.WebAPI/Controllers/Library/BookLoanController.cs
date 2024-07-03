@@ -13,11 +13,13 @@ namespace LibraryManagementSystem.WebAPI.Controllers
     [Route("api/book_loans")]
     [ApiController]
     public class BookLoanController(IBookLoanBll bookLoanBll, IMapper mapper, 
-        IHubContext<BookLoanNotificationHub, ILoanNotification> hubContext) : ControllerBase
+        IHubContext<BookLoanNotificationHub, ILoanNotification> hubContext,
+        IHubContext<BookNotificationHub, IBookNotification> bookHubContext) : ControllerBase
     {
         private readonly IBookLoanBll _bookLoanBll = bookLoanBll;
         private readonly IMapper _mapper = mapper;
         private readonly IHubContext<BookLoanNotificationHub, ILoanNotification> _hubContext = hubContext;
+        private readonly IHubContext<BookNotificationHub, IBookNotification> _bookHubContext = bookHubContext;
 
         /// <summary>
         /// Inserta un préstamo de libro
@@ -45,6 +47,8 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             // Notifica a clientes con rol admin o bibliotecario
             await _hubContext.Clients.All.SendLoanNotification(true);
+            // Notifica a todos los clientes
+            await _bookHubContext.Clients.All.SendBookStillAvailableNotification(true);
 
             return Ok(response);
         }
@@ -73,6 +77,11 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notifica a clientes con rol admin o bibliotecario
+            await _hubContext.Clients.All.SendLoanNotification(true);
+            // Notifica a todos los clientes
+            await _bookHubContext.Clients.All.SendBookStillAvailableNotification(true);
 
             return Ok(response);
         }
@@ -143,6 +152,11 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
+            // Notifica a clientes con rol admin o bibliotecario
+            await _hubContext.Clients.All.SendLoanNotification(true);
+            // Notifica a todos los clientes
+            await _bookHubContext.Clients.All.SendBookStillAvailableNotification(true);
+
             return Ok(response);
         }
 
@@ -170,6 +184,11 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notifica a clientes con rol admin o bibliotecario
+            await _hubContext.Clients.All.SendLoanNotification(true);
+            // Notifica a todos los clientes
+            await _bookHubContext.Clients.All.SendBookStillAvailableNotification(true);
 
             return Ok(response);
         }
