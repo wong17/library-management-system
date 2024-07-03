@@ -14,6 +14,15 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/library-management-system-web",
+            "externalDependencies": ["http", "https", "url", "util", "net"],
+            "allowedCommonJsDependencies": [
+              "tough-cookie",
+              "node-fetch",
+              "fetch-cookie",
+              "abort-controller",
+              "ws",
+              "eventsource"
+            ],
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
