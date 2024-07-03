@@ -1,0 +1,32 @@
+<!--Titulo-->
+<h2 mat-dialog-title>{{ dialogData.title }}</h2>
+
+<!--Contenido-->
+<mat-dialog-content class="dialog-content">
+  <form
+    [formGroup]="borrowDateForm"
+    (ngSubmit)="onSubmit()"
+    class="borrowDate-form"
+  >
+    <!--Fecha de devolución-->
+    <h4>Selecciona fecha de devolución del libro</h4>
+    <input type="datetime-local" formControlName="borrowDate" />
+
+    <!--Acciones-->
+    <mat-dialog-actions align="end" class="dialog-actions">
+      <!---->
+      <button mat-button mat-dialog-close (click)="closeDialog(false)">
+        Cancelar
+      </button>
+      <!---->
+      <button
+        mat-flat-button
+        type="submit"
+        color="primary"
+        [disabled]="borrowDateForm.invalid"
+      >
+        Prestar libro
+      </button>
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>

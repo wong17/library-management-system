@@ -1,0 +1,18 @@
+.dialog-content {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.returnMonograph-form {
+    display: grid;
+    grid-template-rows: 40px 40px;
+    row-gap: 5px;
+}
+
+h4 {
+    font-weight: bold;
+}
+
+.dialog-actions {
+    padding: 0;
+}

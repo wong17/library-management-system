@@ -1,3 +1,45 @@
+.dialog-content {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 10px;
+    height: 700px;
+}
+
+/* ------------------------------------------------ */
+
+.student-form {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: 1fr 40px;
+    align-items: center;
+    column-gap: 20px;
+}
+
+h3 {
+    font-weight: bold;
+}
+
+.student-form-actions-div {
+    display: flex;
+    justify-content: flex-end;
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+}
+
+/* ------------------------------------------------ */
+
+.student-section {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+}
+
+.monograph-section {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+
+/* ------------------------------------------------ */
+
 .dialog-actions {
     padding: 0;
 }

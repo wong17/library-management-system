@@ -13,12 +13,13 @@ import { ApiResponse } from '../../../../entities/api/api-response';
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
 import { ToastrService } from 'ngx-toastr';
 import { MonographLoanSignalRService } from '../../../../services/signalr-hubs/monograph-loan-signal-r.service';
-import { UpdateReturnedMonographLoanDto } from '../../../../entities/dtos/library/update-returned-monograph-loan-dto';
-import { UpdateBorrowedMonographLoanDto } from '../../../../entities/dtos/library/update-borrowed-monograph-loan-dto';
 import { CommonModule } from '@angular/common';
 import { MonographCardComponent } from '../../../custom-cards/monograph-card/monograph-card.component';
 import { StudentCardComponent } from '../../../custom-cards/student-card/student-card.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MonographReturnDialogComponent } from '../../../monograph-return-dialog/monograph-return-dialog.component';
+import { DialogData, DialogOperation } from '../../../../util/dialog-data';
+import { MonographBorrowDateLoanComponent } from '../../../monograph-borrow-dialog/monograph-borrow-date-loan.component';
 
 @Component({
   selector: 'app-librarian-monograph-loans',
@@ -40,7 +41,19 @@ export class LibrarianMonographLoansComponent implements OnInit, AfterViewInit {
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
 
-  constructor(private monographLoanService: MonographLoanService, private toastr: ToastrService, private dialog: MatDialog, private mlSignalR: MonographLoanSignalRService) { }
+  /**
+   * Inicializa el componente
+   * @param monographLoanService 
+   * @param toastr 
+   * @param dialog 
+   * @param mlSignalR 
+   */
+  constructor(
+    private monographLoanService: MonographLoanService, 
+    private toastr: ToastrService, 
+    private dialog: MatDialog, 
+    private mlSignalR: MonographLoanSignalRService
+  ) { }
 
   ngOnInit(): void {
     this.getMonographLoansDto();
@@ -66,6 +79,9 @@ export class LibrarianMonographLoansComponent implements OnInit, AfterViewInit {
     }
   }
 
+  /**
+   * Obtine todas las solicitudes de prestamo de monografias de la bd
+   */
   private getMonographLoansDto(): void {
     this.monographLoanService.getAll().subscribe({
       next: response => {
@@ -98,6 +114,11 @@ export class LibrarianMonographLoansComponent implements OnInit, AfterViewInit {
     })
   }
 
+  /**
+   * Elimina la solicitud seleccionada en la vista
+   * @param monographLoan 
+   * @returns 
+   */
   deleteMonographLoanClick(monographLoan: MonographLoanDto) {
     if (monographLoan.state?.trimEnd() !== "CREADA") {
       this.toastr.warning(`No es posible eliminar una solicitud préstada o devuelta`, 'Atención', {
@@ -147,7 +168,13 @@ export class LibrarianMonographLoansComponent implements OnInit, AfterViewInit {
     });
   }
 
+  /**
+   * Abre la ventana de dialogo para preguntar si se desea prestar la monografia
+   * @param monographLoan 
+   * @returns 
+   */
   updateBorrowedMonographLoanClick(monographLoan: MonographLoanDto) {
+    // Validar estado de la solicitud
     if (monographLoan.state?.trimEnd() !== "CREADA") {
       this.toastr.warning(`No es posible préstar la monografía sino se ha solicitado un préstamo`, 'Atención', {
         timeOut: 5000,
@@ -155,41 +182,36 @@ export class LibrarianMonographLoansComponent implements OnInit, AfterViewInit {
       })
       return
     }
-    //
-    const loanDto: UpdateBorrowedMonographLoanDto = {
-      monographLoanId: monographLoan.monographLoanId,
-      dueDate: new Date(),
-      borrowedUserId: 1
-    }
-    // Realizar solicitud para prestar registro
-    this.monographLoanService.updateBorrowedMonographLoan(loanDto).subscribe({
-      next: response => {
-        // Ocurrio un error
-        if (response.isSuccess !== 0 || response.statusCode !== 200) {
-          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
-          })
-          return;
-        }
-        // Solicitud exitosa
-        this.toastr.success(`${response.message}`, 'Exito', {
-          timeOut: 5000,
-          easeTime: 1000
-        })
+    
+    const dialogData: DialogData = {
+      title: `Préstamo de monografía`,
+      operation: DialogOperation.Add,
+      data: monographLoan
+    };
 
-        this.getMonographLoansDto();
-      },
-      error: (error: ApiResponse) => {
-        this.toastr.error(`${error.message}`, 'Error', {
-          timeOut: 5000,
-          easeTime: 1000
-        });
-      }
+    // Abrir dialogo para preguntar si desea devolver el libro o no
+    const dialogRef = this.dialog.open(MonographBorrowDateLoanComponent, {
+      width: '400px',
+      disableClose: true,
+      data: dialogData
+    });
+
+    //
+    dialogRef.afterClosed().subscribe((done) => {
+      if (!done)
+        return
+
+      this.getMonographLoansDto();
     })
   }
   
+  /**
+   * Abre la ventana de dialogo para preguntar si se desea devolver la monografia
+   * @param monographLoan 
+   * @returns 
+   */
   updateReturnedMonographLoanClick(monographLoan: MonographLoanDto) {
+    // Validar estado de la solicitud
     if (monographLoan.state?.trimEnd() !== "PRESTADA") {
       this.toastr.warning(`No es posible devolver la monografía si no esta PRESTADA`, 'Atención', {
         timeOut: 5000,
@@ -197,36 +219,26 @@ export class LibrarianMonographLoansComponent implements OnInit, AfterViewInit {
       })
       return
     }
-    //
-    const loanDto: UpdateReturnedMonographLoanDto = {
-      monographLoanId: monographLoan.monographLoanId,
-      returnedUserId: 1
-    }
-    // Realizar solicitud para devolver registro
-    this.monographLoanService.updateReturnedMonographLoan(loanDto).subscribe({
-      next: response => {
-        // Ocurrio un error
-        if (response.isSuccess !== 0 || response.statusCode !== 200) {
-          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
-          })
-          return;
-        }
-        // Solicitud exitosa
-        this.toastr.success(`${response.message}`, 'Exito', {
-          timeOut: 5000,
-          easeTime: 1000
-        })
 
-        this.getMonographLoansDto();
-      },
-      error: (error: ApiResponse) => {
-        this.toastr.error(`${error.message}`, 'Error', {
-          timeOut: 5000,
-          easeTime: 1000
-        });
-      }
+    const dialogData: DialogData = {
+      title: `Devolución de monografía`,
+      operation: DialogOperation.Add,
+      data: monographLoan
+    };
+
+    // Abrir dialogo para preguntar si desea devolver el libro o no
+    const dialogRef = this.dialog.open(MonographReturnDialogComponent, {
+      width: '400px',
+      disableClose: true,
+      data: dialogData
+    });
+
+    //
+    dialogRef.afterClosed().subscribe((done) => {
+      if (!done)
+        return
+
+      this.getMonographLoansDto();
     })
   }
 

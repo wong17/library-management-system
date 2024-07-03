@@ -1,0 +1,22 @@
+.dialog-content {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.borrowDate-form {
+    display: grid;
+    grid-template-rows: 40px 1fr 40px;
+    row-gap: 5px;
+}
+
+.dialog-actions {
+    padding: 0;
+}
+
+.form-field {
+    width: 100%;
+}
+
+h4 {
+    font-weight: bold;
+}

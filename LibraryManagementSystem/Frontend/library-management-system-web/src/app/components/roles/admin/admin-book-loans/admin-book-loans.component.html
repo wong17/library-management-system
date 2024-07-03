@@ -37,7 +37,9 @@
     <!-- Definición de la columna loanDate -->
     <ng-container matColumnDef="loanDate">
       <th mat-header-cell *matHeaderCellDef>Fecha de solicitud</th>
-      <td mat-cell *matCellDef="let element">{{ element.loanDate }}</td>
+      <td mat-cell *matCellDef="let element">
+        {{ element.loanDate | date:'dd/MM/yyyy HH:mm:ss' }}
+      </td>
     </ng-container>
 
     <!-- Definición de la columna dueDate -->
@@ -106,13 +108,13 @@
         <div class="options-div">
           <mat-icon
             fontIcon="assignment"
-            matTooltip="Préstar libro"
+            matTooltip="Préstar"
             matTooltipPosition="below"
             (click)="updateBorrowedBookLoanClick(element)"
           ></mat-icon>
           <mat-icon
             fontIcon="assignment_return"
-            matTooltip="Devolver libro"
+            matTooltip="Devolver"
             matTooltipPosition="below"
             (click)="updateReturnedBookLoanClick(element)"
           ></mat-icon>

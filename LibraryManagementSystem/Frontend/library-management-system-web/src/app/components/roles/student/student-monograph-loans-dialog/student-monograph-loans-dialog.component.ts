@@ -26,6 +26,7 @@ import { ApiResponse } from '../../../../entities/api/api-response';
 export class StudentMonographLoansDialogComponent {
 
   /* Referencia del formulario */
+  studentForm: FormGroup;
   studentMonographLoanForm: FormGroup;
   /* */
   matcher: ControlStateMatcher = new ControlStateMatcher()
@@ -33,6 +34,8 @@ export class StudentMonographLoansDialogComponent {
   monographLoanInsertDto: MonographLoanInsertDto = { monographid: 0, studentId: 0 }
   studentDto: StudentDto | undefined
   monographDto: MonographDto | undefined
+
+  isFormFilled: boolean = false
 
   constructor(
     public dialogRef: MatDialogRef<StudentMonographLoansDialogComponent>,
@@ -43,6 +46,10 @@ export class StudentMonographLoansDialogComponent {
     private toastr: ToastrService
   ) {
     /* Agrupar controles, crear formulario y agregar validaciones */
+    this.studentForm = this.formBuilder.group({
+      carnet: ['', [Validators.required, Validators.minLength(10)]]
+    })
+
     this.studentMonographLoanForm = this.formBuilder.group({
       carnet: ['', [Validators.required, Validators.minLength(10)]],
       fullName: [''],
@@ -68,6 +75,18 @@ export class StudentMonographLoansDialogComponent {
       }
 
     }
+  }
+
+  clearForm() {
+    this.studentForm.get('carnet')?.reset();
+    this.studentMonographLoanForm.patchValue({
+      fullName: '',
+      career: '',
+      sex: '',
+      shift: ''
+    });
+    this.studentDto = undefined;
+    this.isFormFilled = false;
   }
 
   /* Guardar */
@@ -113,6 +132,9 @@ export class StudentMonographLoansDialogComponent {
   }
 
   searchStudent() {
+    // Validar que se haya ingresdo un carnet
+    if (!this.isFormFilled && !this.carnet?.value) return;
+
     // Obtener informacion de los campos
     if (!this.carnet?.value) {
       this.toastr.error(`Carnet del estudiante es obligatorio`, 'Error', {
@@ -142,6 +164,7 @@ export class StudentMonographLoansDialogComponent {
           sex: `${this.studentDto.sex}`,
           shift: `${this.studentDto.shift}`
         })
+        this.isFormFilled = true
       },
       error: (error: ApiResponse) => {
         this.toastr.error(`${error.message}`, 'Error', {
@@ -158,7 +181,7 @@ export class StudentMonographLoansDialogComponent {
 
   /* Getters */
   get carnet() {
-    return this.studentMonographLoanForm.get('carnet');
+    return this.studentForm.get('carnet');
   }
 
   get typeOfLoan() {

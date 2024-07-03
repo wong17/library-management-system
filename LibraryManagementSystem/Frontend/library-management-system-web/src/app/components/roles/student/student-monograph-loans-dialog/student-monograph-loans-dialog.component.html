@@ -2,9 +2,12 @@
 <h2 mat-dialog-title>{{ loanDialogData.title }}</h2>
 <!--Contenido-->
 <mat-dialog-content class="dialog-content">
-  <form [formGroup]="studentMonographLoanForm" (ngSubmit)="onSubmit()">
+  <h3 class="h3-student-form">Buscar estudiante</h3>
+
+  <!-- Form estudiante -->
+  <form [formGroup]="studentForm" (ngSubmit)="searchStudent()">
     <!--Carnet del estudiante-->
-    <mat-form-field appearance="fill" class="form-field">
+    <mat-form-field appearance="outline" class="form-field carnet-field">
       <mat-label>Carnet</mat-label>
       <input
         matInput
@@ -24,102 +27,118 @@
     </mat-form-field>
 
     <!--Boton para buscar al estudiante-->
-    <button mat-button mat-stroked-button (click)="searchStudent()">
-      Buscar...
-    </button>
+    <div class="student-form-actions-div">
+      <button mat-flat-button (click)="clearForm()">Limpiar</button>
 
-    <!------------------------------------------------------------------------------------->
+      <button
+        mat-flat-button
+        type="submit"
+        color="primary"
+        [disabled]="studentForm.invalid"
+      >
+        Buscar
+      </button>
+    </div>
+  </form>
 
-    <!--Nombre del solicitante-->
-    <mat-form-field appearance="fill" class="form-field">
-      <mat-label>Nombre del solicitante</mat-label>
-      <input
-        matInput
-        placeholder=""
-        formControlName="fullName"
-        [errorStateMatcher]="matcher"
-        maxlength="60"
-        readonly="true"
-      />
-    </mat-form-field>
+  <form [formGroup]="studentMonographLoanForm" (ngSubmit)="onSubmit()">
+    <h3>Información del estudiante</h3>
 
-    <!--Carrera-->
-    <mat-form-field appearance="fill" class="form-field">
-      <mat-label>Carrera</mat-label>
-      <input
-        matInput
-        placeholder=""
-        formControlName="career"
-        [errorStateMatcher]="matcher"
-        maxlength="50"
-        readonly="true"
-      />
-    </mat-form-field>
+    <section class="student-section">
+      <!--Nombre del solicitante-->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Nombre del solicitante</mat-label>
+        <input
+          matInput
+          placeholder=""
+          formControlName="fullName"
+          [errorStateMatcher]="matcher"
+          maxlength="60"
+          readonly="true"
+        />
+      </mat-form-field>
 
-    <!--Sexo-->
-    <mat-form-field appearance="fill" class="form-field">
-      <mat-label>Sexo</mat-label>
-      <input
-        matInput
-        placeholder=""
-        formControlName="sex"
-        [errorStateMatcher]="matcher"
-        maxlength="1"
-        readonly="true"
-      />
-    </mat-form-field>
+      <!--Carrera-->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Carrera</mat-label>
+        <input
+          matInput
+          placeholder=""
+          formControlName="career"
+          [errorStateMatcher]="matcher"
+          maxlength="50"
+          readonly="true"
+        />
+      </mat-form-field>
 
-    <!--Turno-->
-    <mat-form-field class="form-field">
-      <mat-label>Turno</mat-label>
-      <input
-        matInput
-        placeholder=""
-        formControlName="shift"
-        [errorStateMatcher]="matcher"
-        maxlength="10"
-        readonly="true"
-      />
-    </mat-form-field>
+      <!--Sexo-->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Sexo</mat-label>
+        <input
+          matInput
+          placeholder=""
+          formControlName="sex"
+          [errorStateMatcher]="matcher"
+          maxlength="1"
+          readonly="true"
+        />
+      </mat-form-field>
 
-    <!--Clasificacion del libro-->
-    <mat-form-field appearance="fill" class="form-field">
-      <mat-label>Clasificación</mat-label>
-      <input
-        matInput
-        placeholder=""
-        formControlName="classification"
-        [errorStateMatcher]="matcher"
-        maxlength="25"
-        readonly="true"
-      />
-    </mat-form-field>
+      <!--Turno-->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Turno</mat-label>
+        <input
+          matInput
+          placeholder=""
+          formControlName="shift"
+          [errorStateMatcher]="matcher"
+          maxlength="10"
+          readonly="true"
+        />
+      </mat-form-field>
+    </section>
 
-    <!--Titulo del libro-->
-    <mat-form-field appearance="fill" class="form-field">
-      <mat-label>Titulo</mat-label>
-      <input
-        matInput
-        placeholder=""
-        formControlName="title"
-        [errorStateMatcher]="matcher"
-        maxlength="100"
-        readonly="true"
-      />
-    </mat-form-field>
+    <h3>Información de la monografía</h3>
+    <section class="monograph-section">
+      <!--Clasificacion del libro-->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Clasificación</mat-label>
+        <input
+          matInput
+          placeholder=""
+          formControlName="classification"
+          [errorStateMatcher]="matcher"
+          maxlength="25"
+          readonly="true"
+        />
+      </mat-form-field>
 
-    <!--Autores-->
-    <mat-form-field class="form-field">
-      <mat-label>Autores</mat-label>
-      <input
-        matInput
-        placeholder=""
-        formControlName="authors"
-        [errorStateMatcher]="matcher"
-        maxlength="200"
-        readonly="true"
-      />
-    </mat-form-field>
+      <!--Titulo del libro-->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Titulo</mat-label>
+        <input
+          matInput
+          placeholder=""
+          formControlName="title"
+          [errorStateMatcher]="matcher"
+          maxlength="100"
+          readonly="true"
+        />
+      </mat-form-field>
+
+      <!--Autores-->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Autores</mat-label>
+        <input
+          matInput
+          placeholder=""
+          formControlName="authors"
+          [errorStateMatcher]="matcher"
+          maxlength="200"
+          readonly="true"
+        />
+      </mat-form-field>
+    </section>
 
     <!--Acciones-->
     <mat-dialog-actions align="end" class="dialog-actions">
@@ -132,7 +151,7 @@
         mat-flat-button
         type="submit"
         color="primary"
-        [disabled]="studentMonographLoanForm.invalid"
+        [disabled]="!isFormFilled"
       >
         Solicitar
       </button>

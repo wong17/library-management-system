@@ -1,0 +1,21 @@
+<!--Titulo-->
+<h2 mat-dialog-title>{{ dialogData.title }}</h2>
+
+<!--Contenido-->
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="returnMonographForm" (ngSubmit)="onSubmit()" class="returnMonograph-form">
+    <h4>¿Seguro que desea devolver la monografía?</h4>
+
+    <!--Acciones-->
+    <mat-dialog-actions align="end" class="dialog-actions">
+      <!---->
+      <button mat-button mat-dialog-close (click)="closeDialog(false)">
+        Cancelar
+      </button>
+      <!---->
+      <button mat-flat-button type="submit" color="primary" [disabled]="returnMonographForm.invalid">
+        Devolver monografía
+      </button>
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>

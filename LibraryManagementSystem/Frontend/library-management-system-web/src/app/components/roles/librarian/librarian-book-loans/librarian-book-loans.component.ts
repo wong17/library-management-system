@@ -13,12 +13,13 @@ import { ApiResponse } from '../../../../entities/api/api-response';
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
 import { ToastrService } from 'ngx-toastr';
 import { BookLoanSignalRService } from '../../../../services/signalr-hubs/book-loan-signal-r.service';
-import { UpdateReturnedBookLoanDto } from '../../../../entities/dtos/library/update-returned-book-loan-dto';
-import { UpdateBorrowedBookLoanDto } from '../../../../entities/dtos/library/update-borrowed-book-loan-dto';
 import { BookCardComponent } from '../../../custom-cards/book-card/book-card.component';
 import { StudentCardComponent } from '../../../custom-cards/student-card/student-card.component';
 import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { BookBorrowDateLoanComponent } from '../../../book-borrow-date-loan/book-borrow-date-loan.component';
+import { DialogData, DialogOperation } from '../../../../util/dialog-data';
+import { BookReturnDialogComponent } from '../../../book-return-dialog/book-return-dialog.component';
 
 @Component({
   selector: 'app-librarian-book-loans',
@@ -148,49 +149,38 @@ export class LibrarianBookLoansComponent implements OnInit, AfterViewInit {
   }
 
   updateBorrowedBookLoanClick(bookLoan: BookLoanDto) {
+    // Verificar estado de la solicitud
     if (bookLoan.state?.trimEnd() !== "CREADA") {
-      this.toastr.warning(`No es posible préstar el libro sino se ha solicitado un préstamo`, 'Atención', {
+      this.toastr.warning(`No es posible prestar el libro sino se ha solicitado un préstamo`, 'Atención', {
         timeOut: 5000,
         easeTime: 1000
       })
       return
     }
-    // 
-    const loanDto: UpdateBorrowedBookLoanDto = {
-      bookLoanId: bookLoan.bookLoanId,
-      dueDate: new Date(),
-      borrowedUserId: 1
-    }
 
-    // Realizar solicitud para prestar registro
-    this.bookLoanService.updateBorrowedBookLoan(loanDto).subscribe({
-      next: response => {
-        // Ocurrio un error
-        if (response.isSuccess !== 0 || response.statusCode !== 200) {
-          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
-          })
-          return;
-        }
-        // Solicitud exitosa
-        this.toastr.success(`${response.message}`, 'Exito', {
-          timeOut: 5000,
-          easeTime: 1000
-        })
+    const dialogData: DialogData = {
+      title: `Préstamo de libro`,
+      operation: DialogOperation.Add,
+      data: bookLoan
+    };
 
-        this.getBookLoansDto();
-      },
-      error: (error: ApiResponse) => {
-        this.toastr.error(`${error.message}`, 'Error', {
-          timeOut: 5000,
-          easeTime: 1000
-        });
-      }
+    // Abrir dialogo para preguntar por fecha de devolución
+    const dialogRef = this.dialog.open(BookBorrowDateLoanComponent, {
+      width: '400px',
+      disableClose: true,
+      data: dialogData
+    });
+    //
+    dialogRef.afterClosed().subscribe((done) => {
+      if (!done)
+        return
+
+      this.getBookLoansDto();
     })
   }
 
   updateReturnedBookLoanClick(bookLoan: BookLoanDto) {
+    // Verificar estado de la solicitud
     if (bookLoan.state?.trimEnd() !== "PRESTADO") {
       this.toastr.warning(`No es posible devolver el libro si no esta PRESTADO`, 'Atención', {
         timeOut: 5000,
@@ -198,36 +188,26 @@ export class LibrarianBookLoansComponent implements OnInit, AfterViewInit {
       })
       return
     }
-    //
-    const loanDto: UpdateReturnedBookLoanDto = {
-      bookLoanId: bookLoan.bookLoanId,
-      returnedUserId: 1
-    }
-    // Realizar solicitud para devolver registro
-    this.bookLoanService.updateReturnedBookLoan(loanDto).subscribe({
-      next: response => {
-        // Ocurrio un error
-        if (response.isSuccess !== 0 || response.statusCode !== 200) {
-          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
-            timeOut: 5000,
-            easeTime: 1000
-          })
-          return;
-        }
-        // Solicitud exitosa
-        this.toastr.success(`${response.message}`, 'Exito', {
-          timeOut: 5000,
-          easeTime: 1000
-        })
+    
+    const dialogData: DialogData = {
+      title: `Devolución de libro`,
+      operation: DialogOperation.Add,
+      data: bookLoan
+    };
 
-        this.getBookLoansDto();
-      },
-      error: (error: ApiResponse) => {
-        this.toastr.error(`${error.message}`, 'Error', {
-          timeOut: 5000,
-          easeTime: 1000
-        });
-      }
+    // Abrir dialogo para preguntar si desea devolver el libro o no
+    const dialogRef = this.dialog.open(BookReturnDialogComponent, {
+      width: '400px',
+      disableClose: true,
+      data: dialogData
+    });
+
+    //
+    dialogRef.afterClosed().subscribe((done) => {
+      if (!done)
+        return
+
+      this.getBookLoansDto();
     })
   }
 

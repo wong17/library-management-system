@@ -100,28 +100,26 @@
     <th mat-header-cell *matHeaderCellDef>Opciones</th>
     <!-- Iconos a mostrar en la columna -->
     <mat-cell *matCellDef="let element" class="options-mat-cell">
-      @if(element?.isActive) {
-        <div class="options-div"> 
-          <mat-icon
-            fontIcon="assignment"
-            matTooltip="Préstar libro"
-            matTooltipPosition="below"
-            (click)="updateBorrowedBookLoanClick(element)"
-          ></mat-icon>
-          <mat-icon
-            fontIcon="assignment_return"
-            matTooltip="Devolver libro"
-            matTooltipPosition="below"
-            (click)="updateReturnedBookLoanClick(element)"
-          ></mat-icon>
-          <mat-icon
-            fontIcon="delete"
-            matTooltip="Eliminar"
-            matTooltipPosition="below"
-            (click)="deleteBookLoanClick(element)"
-          ></mat-icon>
-        </div>
-      }
+      <div class="options-div"> 
+        <mat-icon
+          fontIcon="assignment"
+          matTooltip="Préstar"
+          matTooltipPosition="below"
+          (click)="updateBorrowedBookLoanClick(element)"
+        ></mat-icon>
+        <mat-icon
+          fontIcon="assignment_return"
+          matTooltip="Devolver"
+          matTooltipPosition="below"
+          (click)="updateReturnedBookLoanClick(element)"
+        ></mat-icon>
+        <mat-icon
+          fontIcon="delete"
+          matTooltip="Eliminar"
+          matTooltipPosition="below"
+          (click)="deleteBookLoanClick(element)"
+        ></mat-icon>
+      </div>
     </mat-cell>
   </ng-container>
 

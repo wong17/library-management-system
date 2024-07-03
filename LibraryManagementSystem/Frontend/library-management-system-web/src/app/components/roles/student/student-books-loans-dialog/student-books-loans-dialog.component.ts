@@ -26,6 +26,7 @@ import { BookDto } from '../../../../entities/dtos/library/book-dto';
 export class StudentBooksLoansDialogComponent {
 
   /* Referencia del formulario */
+  studentForm: FormGroup;
   studentBookLoanForm: FormGroup;
   /* */
   matcher: ControlStateMatcher = new ControlStateMatcher()
@@ -33,6 +34,8 @@ export class StudentBooksLoansDialogComponent {
   bookLoanInsertDto: BookLoanInsertDto = { bookId: 0, studentId: 0, typeOfLoan: '' }
   studentDto: StudentDto | undefined
   bookDto: BookDto | undefined
+
+  isFormFilled: boolean = false
 
   constructor(
     public dialogRef: MatDialogRef<StudentBooksLoansDialogComponent>,
@@ -43,9 +46,12 @@ export class StudentBooksLoansDialogComponent {
     private toastr: ToastrService
   ) {
     /* Agrupar controles, crear formulario y agregar validaciones */
-    this.studentBookLoanForm = this.formBuilder.group({
+    this.studentForm = this.formBuilder.group({
       carnet: ['', [Validators.required, Validators.minLength(10)]],
-      typeOfLoan: ['', [Validators.required]],
+      typeOfLoan: ['', [Validators.required]]
+    })
+
+    this.studentBookLoanForm = this.formBuilder.group({
       fullName: [''],
       career: [''],
       sex: [''],
@@ -58,10 +64,13 @@ export class StudentBooksLoansDialogComponent {
     if (loanDialogData.data) {
       this.bookDto = this.loanDialogData.data as BookDto
 
+      this.studentForm.patchValue({
+        typeOfLoan: loanDialogData.typeOfLoan === TypeOfLoan.Home ? 'DOMICILIO' : 'SALA'
+      })
+
       this.studentBookLoanForm.patchValue({
-        typeOfLoan: loanDialogData.typeOfLoan === TypeOfLoan.Home ? 'DOMICILIO' : 'SALA', 
         classification: this.bookDto.classification,
-        title: this.bookDto.title, 
+        title: this.bookDto.title,
         publicationYear: this.bookDto.publicationYear
       })
 
@@ -72,6 +81,18 @@ export class StudentBooksLoansDialogComponent {
       }
 
     }
+  }
+
+  clearForm() {
+    this.studentForm.get('carnet')?.reset();
+    this.studentBookLoanForm.patchValue({
+      fullName: '',
+      career: '',
+      sex: '',
+      shift: ''
+    });
+    this.studentDto = undefined;
+    this.isFormFilled = false;
   }
 
   /* Guardar o actualizar */
@@ -116,43 +137,10 @@ export class StudentBooksLoansDialogComponent {
     })
   }
 
-  private saveLibraryRoomRequest(): void {
-    // Obtener informacion del estudiante
-    if (!this.studentDto?.studentId) {
-      this.toastr.error(`Estudiante es obligatorio`, 'Error', {
-        timeOut: 5000
-      });
-      return;
-    }
-    // Obtener id del estudiante
-    this.bookLoanInsertDto.studentId = this.studentDto.studentId
-    // Realizar solicitud http
-    this.bookLoanService.create(this.bookLoanInsertDto).subscribe({
-      next: response => {
-        // Ocurrio un error
-        if (response.isSuccess !== 0 || response.statusCode !== 200) {
-          this.toastr.error(`${response.message}`, 'Error', {
-            timeOut: 5000
-          })
-          return;
-        }
-        // Solicitud exitosa
-        this.toastr.success(`${response.message}`, 'Exito', {
-          timeOut: 5000
-        })
-
-        this.closeDialog(true);
-      },
-      error: (error: ApiResponse) => {
-        this.toastr.error(`${error.message}`, 'Error', {
-          timeOut: 5000
-        });
-      }
-    })
-  }
-
-
   searchStudent() {
+    // Validar que se haya ingresdo un carnet
+    if (!this.isFormFilled && !this.carnet?.value) return;
+
     // Obtener informacion de los campos
     if (!this.carnet?.value) {
       this.toastr.error(`Carnet del estudiante es obligatorio`, 'Error', {
@@ -182,6 +170,7 @@ export class StudentBooksLoansDialogComponent {
           sex: `${this.studentDto.sex}`,
           shift: `${this.studentDto.shift}`
         })
+        this.isFormFilled = true;
       },
       error: (error: ApiResponse) => {
         this.toastr.error(`${error.message}`, 'Error', {
@@ -198,11 +187,11 @@ export class StudentBooksLoansDialogComponent {
 
   /* Getters */
   get carnet() {
-    return this.studentBookLoanForm.get('carnet');
+    return this.studentForm.get('carnet');
   }
 
   get typeOfLoan() {
-    return this.studentBookLoanForm.get('typeOfLoan');
+    return this.studentForm.get('typeOfLoan');
   }
 
   get fullName() {
