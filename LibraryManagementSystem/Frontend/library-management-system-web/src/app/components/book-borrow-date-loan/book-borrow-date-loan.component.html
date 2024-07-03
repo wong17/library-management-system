@@ -10,12 +10,17 @@
   >
     <!--Fecha de devolución-->
     <h4>Selecciona fecha de devolución del libro</h4>
-    <input type="datetime-local" formControlName="borrowDate" [min]="minDate" [max]="maxDate" />
+    <input
+      type="datetime-local"
+      formControlName="borrowDate"
+      [min]="minDate"
+      [max]="maxDate"
+    />
 
     <!-- Mostrar mensaje de error si la fecha es inválida -->
-     @if (borrowDateForm.get('borrowDate')?.errors?.['invalidDate']) {
-      <div>La fecha seleccionada no es válida.</div>
-     }
+    @if (borrowDateForm.get('borrowDate')?.errors?.['invalidDate']) {
+    <div>La fecha seleccionada no es válida.</div>
+    }
 
     <!--Acciones-->
     <mat-dialog-actions align="end" class="dialog-actions">
