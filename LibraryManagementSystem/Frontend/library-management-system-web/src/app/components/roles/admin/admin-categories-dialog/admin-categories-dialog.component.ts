@@ -83,7 +83,7 @@ export class AdminCategoriesDialogComponent {
       next: response => {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
-          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+          this.toastr.error(`${response.message}`, 'Error', {
             timeOut: 5000
           })
           return;
@@ -115,7 +115,7 @@ export class AdminCategoriesDialogComponent {
       next: response => {
         // Ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
-          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+          this.toastr.error(`${response.message}`, 'Error', {
             timeOut: 5000
           })
           return;

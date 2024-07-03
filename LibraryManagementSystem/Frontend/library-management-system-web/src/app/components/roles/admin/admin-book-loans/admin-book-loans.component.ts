@@ -102,7 +102,7 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
       next: response => {
         // Verificar si ocurrio un error
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
-          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+          this.toastr.error(`${response.message}`, 'Error', {
             timeOut: 5000,
             easeTime: 1000
           })
@@ -154,7 +154,7 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
         next: response => {
           // Ocurrio un error
           if (response.isSuccess !== 0 || response.statusCode !== 200) {
-            this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+            this.toastr.error(`${response.message}`, 'Error', {
               timeOut: 5000,
               easeTime: 1000
             })
@@ -265,7 +265,7 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
     this.bookLoanService.getByState(state.trim()).subscribe({
       next: response => {
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
-          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+          this.toastr.error(`${response.message}`, 'Error', {
             timeOut: 5000,
             easeTime: 1000
           });
@@ -296,7 +296,7 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
     this.bookLoanService.getByStudentCarnet(carnet.trim()).subscribe({
       next: response => {
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
-          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+          this.toastr.error(`${response.message}`, 'Error', {
             timeOut: 5000,
             easeTime: 1000
           });
@@ -324,7 +324,7 @@ export class AdminBookLoansComponent implements AfterViewInit, OnInit {
     this.bookLoanService.getByTypeOfLoan(type).subscribe({
       next: response => {
         if (response.isSuccess !== 0 || response.statusCode !== 200) {
-          this.toastr.error(`Ocurrio un error ${response.message}`, 'Error', {
+          this.toastr.error(`${response.message}`, 'Error', {
             timeOut: 5000,
             easeTime: 1000
           });
