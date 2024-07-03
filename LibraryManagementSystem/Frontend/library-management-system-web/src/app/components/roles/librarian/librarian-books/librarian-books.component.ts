@@ -26,6 +26,7 @@ import { CategoryDto } from '../../../../entities/dtos/library/category-dto';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
 import { BookSignalRService } from '../../../../services/signalr-hubs/book-signal-r.service';
+import { Year } from '../../../../util/year';
 
 @Component({
   selector: 'app-librarian-books',
@@ -57,7 +58,7 @@ export class LibrarianBooksComponent {
   /* Sub categorias */
   subCategories: SubCategoryDto[] | undefined;
   /* Años que se publicaron los libros */
-  availableYears: number[] = [];
+  availableYears: Year[] = [];
 
   filterBookDto: FilterBookDto = { authors: null, categories: null, publishers: null, subCategories: null, publicationYear: null };
 
@@ -117,9 +118,12 @@ export class LibrarianBooksComponent {
       this.getAuthorsDto(),
       this.getSubCategoriesDto()
     ]);
+    //
+    this.availableYears.push({ year: 0, text: 'Todos' })
+    //
     const currentYear = new Date().getFullYear();
     for (let year = currentYear; year >= 1900; year--) {
-      this.availableYears.push(year);
+      this.availableYears.push({ text: `${year}`, year: year });
     }
   }
 
@@ -139,7 +143,7 @@ export class LibrarianBooksComponent {
       publishers: selectedPublishers.map((id: number) => ({ publisherId: id, name: "" })),
       categories: selectedCategories.map((id: number) => ({ categoryId: id, name: "" })),
       subCategories: selectedSubCategories.map((id: number) => ({ subCategoryId: id, categoryId: id, name: "" })),
-      publicationYear: this.publicationYear?.value === '' ? null : this.publicationYear?.value as number
+      publicationYear: this.publicationYear?.value === 0 ? null : this.publicationYear?.value as number
     };
 
     // realizar solicitud a la api

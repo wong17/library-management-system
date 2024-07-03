@@ -32,6 +32,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FilterBookDto } from '../../../../entities/dtos/library/filter-book-dto';
 import { StringUtil } from '../../../../util/string-util';
 import { BookSignalRService } from '../../../../services/signalr-hubs/book-signal-r.service';
+import { Year } from '../../../../util/year';
 
 @Component({
   selector: 'app-admin-books',
@@ -57,7 +58,7 @@ export class AdminBooksComponent implements AfterViewInit, OnInit {
   /* Sub categorias */
   subCategories: SubCategoryDto[] | undefined;
   /* Años que se publicaron los libros */
-  availableYears: number[] = [];
+  availableYears: Year[] = [];
 
   filterBookDto: FilterBookDto = { authors: null, categories: null, publishers: null, subCategories: null, publicationYear: null };
 
@@ -125,9 +126,12 @@ export class AdminBooksComponent implements AfterViewInit, OnInit {
       this.getAuthorsDto(),
       this.getSubCategoriesDto()
     ]);
+    //
+    this.availableYears.push({ year: 0, text: 'Todos' })
+    //
     const currentYear = new Date().getFullYear();
     for (let year = currentYear; year >= 1900; year--) {
-      this.availableYears.push(year);
+      this.availableYears.push({ text: `${year}`, year: year });
     }
   }
 
@@ -271,9 +275,9 @@ export class AdminBooksComponent implements AfterViewInit, OnInit {
       publishers: selectedPublishers.map((id: number) => ({ publisherId: id, name: "" })),
       categories: selectedCategories.map((id: number) => ({ categoryId: id, name: "" })),
       subCategories: selectedSubCategories.map((id: number) => ({ subCategoryId: id, categoryId: id, name: "" })),
-      publicationYear: this.publicationYear?.value === '' ? null : this.publicationYear?.value as number
+      publicationYear: this.publicationYear?.value === 0 ? null : this.publicationYear?.value as number
     };
-
+    
     // realizar solicitud a la api
     this.bookService.getFilteredBook(this.filterBookDto).subscribe({
       next: response => {

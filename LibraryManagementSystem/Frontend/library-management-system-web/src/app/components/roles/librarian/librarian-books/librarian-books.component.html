@@ -64,8 +64,8 @@
         <span class="text-span span-width">Año: </span>
         <mat-select formControlName="publicationYear" class="filter-matselect">
           @for (year of availableYears; track year) {
-          <mat-option [value]="year">
-            {{ year }}
+          <mat-option [value]="year.year">
+            {{ year.text }}
           </mat-option>
           }
         </mat-select>

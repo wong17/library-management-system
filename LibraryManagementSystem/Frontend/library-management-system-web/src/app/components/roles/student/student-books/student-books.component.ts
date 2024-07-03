@@ -29,6 +29,7 @@ import { PublisherService } from '../../../../services/library/publisher.service
 import { AuthorService } from '../../../../services/library/author.service';
 import { StringUtil } from '../../../../util/string-util';
 import { BookSignalRService } from '../../../../services/signalr-hubs/book-signal-r.service';
+import { Year } from '../../../../util/year';
 
 @Component({
   selector: 'app-student-books',
@@ -60,7 +61,7 @@ export class StudentBooksComponent {
   /* Sub categorias */
   subCategories: SubCategoryDto[] | undefined;
   /* Años que se publicaron los libros */
-  availableYears: number[] = [];
+  availableYears: Year[] = [];
 
   filterBookDto: FilterBookDto = { authors: null, categories: null, publishers: null, subCategories: null, publicationYear: null };
 
@@ -121,9 +122,12 @@ export class StudentBooksComponent {
       this.getAuthorsDto(),
       this.getSubCategoriesDto()
     ]);
+    //
+    this.availableYears.push({ year: 0, text: 'Todos' })
+    //
     const currentYear = new Date().getFullYear();
     for (let year = currentYear; year >= 1900; year--) {
-      this.availableYears.push(year);
+      this.availableYears.push({ text: `${year}`, year: year });
     }
   }
 
@@ -173,7 +177,7 @@ export class StudentBooksComponent {
       publishers: selectedPublishers.map((id: number) => ({ publisherId: id, name: "" })),
       categories: selectedCategories.map((id: number) => ({ categoryId: id, name: "" })),
       subCategories: selectedSubCategories.map((id: number) => ({ subCategoryId: id, categoryId: id, name: "" })),
-      publicationYear: this.publicationYear?.value === '' ? null : this.publicationYear?.value as number
+      publicationYear: this.publicationYear?.value === 0 ? null : this.publicationYear?.value as number
     };
 
     // realizar solicitud a la api
