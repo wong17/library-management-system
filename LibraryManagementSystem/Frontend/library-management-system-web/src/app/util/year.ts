@@ -1,4 +1,4 @@
 export interface Year {
-    year: number,
-    text: string
+    year: number | null,
+    text: string | null
 }

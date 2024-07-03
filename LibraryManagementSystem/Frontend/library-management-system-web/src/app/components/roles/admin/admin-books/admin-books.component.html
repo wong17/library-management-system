@@ -267,7 +267,6 @@
         <th mat-header-cell *matHeaderCellDef>Opciones</th>
         <!-- Iconos a mostrar en la columna -->
         <mat-cell *matCellDef="let element" class="options-mat-cell">
-          @if (element?.isActive) {
           <div class="options-div">
             <mat-icon
               fontIcon="category"
@@ -294,7 +293,6 @@
               (click)="deleteBookClick(element)"
             ></mat-icon>
           </div>
-          }
         </mat-cell>
       </ng-container>
 

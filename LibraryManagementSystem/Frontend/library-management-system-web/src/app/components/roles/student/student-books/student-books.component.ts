@@ -63,7 +63,7 @@ export class StudentBooksComponent {
   /* Años que se publicaron los libros */
   availableYears: Year[] = [];
 
-  filterBookDto: FilterBookDto = { authors: null, categories: null, publishers: null, subCategories: null, publicationYear: null };
+  filterBookDto: FilterBookDto = { authors: null, categories: null, publishers: null, subCategories: null, publicationYear: 0 };
 
   constructor(
     private bookService: BookService,
@@ -123,7 +123,7 @@ export class StudentBooksComponent {
       this.getSubCategoriesDto()
     ]);
     //
-    this.availableYears.push({ year: 0, text: 'Todos' })
+    this.availableYears.push({ year: null, text: 'Todos' })
     //
     const currentYear = new Date().getFullYear();
     for (let year = currentYear; year >= 1900; year--) {
@@ -177,7 +177,8 @@ export class StudentBooksComponent {
       publishers: selectedPublishers.map((id: number) => ({ publisherId: id, name: "" })),
       categories: selectedCategories.map((id: number) => ({ categoryId: id, name: "" })),
       subCategories: selectedSubCategories.map((id: number) => ({ subCategoryId: id, categoryId: id, name: "" })),
-      publicationYear: this.publicationYear?.value === 0 ? null : this.publicationYear?.value as number
+      publicationYear: (!this.publicationYear?.value || this.publicationYear?.value === 0 || this.publicationYear?.value === '') 
+                        ? null : this.publicationYear?.value as number
     };
 
     // realizar solicitud a la api
