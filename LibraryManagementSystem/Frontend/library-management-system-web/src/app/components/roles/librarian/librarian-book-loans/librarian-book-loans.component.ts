@@ -43,7 +43,7 @@ export class LibrarianBookLoansComponent implements OnInit, AfterViewInit {
   matcher: ControlStateMatcher = new ControlStateMatcher()
 
 
-  displayedColumns: string[] = ['bookLoanId', 'typeOfLoan', 'state', 'loanDate', 'dueDate', 'returnDate', 'student', 'book', 'borrowedUser', 'returnedUser', 'options'];
+  displayedColumns: string[] = ['bookLoanId', 'student', 'book', 'typeOfLoan', 'state', 'loanDate', 'dueDate', 'returnDate', 'borrowedUser', 'returnedUser', 'options'];
 
   /*  */
   dataSource: MatTableDataSource<BookLoanDto> = new MatTableDataSource<BookLoanDto>();

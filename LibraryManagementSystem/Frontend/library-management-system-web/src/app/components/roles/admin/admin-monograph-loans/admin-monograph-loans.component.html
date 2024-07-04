@@ -85,6 +85,22 @@
         <td mat-cell *matCellDef="let element">{{ element.monographLoanId }}</td>
       </ng-container>
     
+      <!-- Definición de la columna student -->
+      <ng-container matColumnDef="student">
+        <th mat-header-cell *matHeaderCellDef>Estudiante</th>
+        <td mat-cell *matCellDef="let element">
+          <app-student-card [student]="element?.student"></app-student-card>
+        </td>
+      </ng-container>
+    
+      <!-- Definición de la columna monograph -->
+      <ng-container matColumnDef="monograph">
+        <th mat-header-cell *matHeaderCellDef>Monografía</th>
+        <td mat-cell *matCellDef="let element">
+          <app-monograph-card [monograph]="element.monograph"></app-monograph-card>
+        </td>
+      </ng-container>
+
       <!-- Definición de la columna state -->
       <ng-container matColumnDef="state">
         <th mat-header-cell *matHeaderCellDef>Estado</th>
@@ -119,22 +135,6 @@
           } @else {
             SIN ENTREGAR
           }
-        </td>
-      </ng-container>
-    
-      <!-- Definición de la columna student -->
-      <ng-container matColumnDef="student">
-        <th mat-header-cell *matHeaderCellDef>Estudiante</th>
-        <td mat-cell *matCellDef="let element">
-          <app-student-card [student]="element?.student"></app-student-card>
-        </td>
-      </ng-container>
-    
-      <!-- Definición de la columna monograph -->
-      <ng-container matColumnDef="monograph">
-        <th mat-header-cell *matHeaderCellDef>Monografía</th>
-        <td mat-cell *matCellDef="let element">
-          <app-monograph-card [monograph]="element.monograph"></app-monograph-card>
         </td>
       </ng-container>
     

@@ -42,7 +42,7 @@ export class LibrarianMonographLoansComponent implements OnInit, AfterViewInit {
   /* */
   matcher: ControlStateMatcher = new ControlStateMatcher()
 
-  displayedColumns: string[] = ['monographLoanId', 'state', 'loanDate', 'dueDate', 'returnDate', 'student', 'monograph', 'borrowedUser', 'returnedUser', 'options'];
+  displayedColumns: string[] = ['monographLoanId', 'student', 'monograph', 'state', 'loanDate', 'dueDate', 'returnDate', 'borrowedUser', 'returnedUser', 'options'];
 
   /*  */
   dataSource: MatTableDataSource<MonographLoanDto> = new MatTableDataSource<MonographLoanDto>();
