@@ -6,8 +6,6 @@ EXEC [Library].uspInsertPublisher 'Limusa'
 GO
 EXEC [Library].uspInsertPublisher 'McGraw Hill'
 GO
-EXEC [Library].uspInsertPublisher 'Schaum'
-GO
 EXEC [Library].uspInsertPublisher 'Mir Moscú'
 GO
 EXEC [Library].uspInsertPublisher 'Cengage Learning'
