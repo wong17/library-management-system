@@ -44,14 +44,14 @@ builder.Services.AddBusinessLogicLayer();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.DocumentTitle = "Swagger UI - Library Management System";
     });
-}
+//}
 
 /* Habilitar CORS */
 app.UseCors("AllowAngularApp");
