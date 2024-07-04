@@ -48,7 +48,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             // Notifica a clientes con rol admin o bibliotecario
             await _hubContext.Clients.All.SendLoanNotification(true);
             // Notifica a todos los clientes
-            await _bookHubContext.Clients.All.SendBookStillAvailableNotification(true);
+            await _bookHubContext.Clients.All.SendBookNotification(true);
 
             return Ok(response);
         }
@@ -81,7 +81,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             // Notifica a clientes con rol admin o bibliotecario
             await _hubContext.Clients.All.SendLoanNotification(true);
             // Notifica a todos los clientes
-            await _bookHubContext.Clients.All.SendBookStillAvailableNotification(true);
+            await _bookHubContext.Clients.All.SendBookNotification(true);
 
             return Ok(response);
         }
@@ -221,7 +221,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             // Notifica a clientes con rol admin o bibliotecario
             await _hubContext.Clients.All.SendLoanNotification(true);
             // Notifica a todos los clientes
-            await _bookHubContext.Clients.All.SendBookStillAvailableNotification(true);
+            await _bookHubContext.Clients.All.SendBookNotification(true);
 
             return Ok(response);
         }
@@ -254,7 +254,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             // Notifica a clientes con rol admin o bibliotecario
             await _hubContext.Clients.All.SendLoanNotification(true);
             // Notifica a todos los clientes
-            await _bookHubContext.Clients.All.SendBookStillAvailableNotification(true);
+            await _bookHubContext.Clients.All.SendBookNotification(true);
 
             return Ok(response);
         }

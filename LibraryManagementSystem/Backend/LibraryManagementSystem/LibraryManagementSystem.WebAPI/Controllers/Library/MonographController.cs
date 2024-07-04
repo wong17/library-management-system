@@ -3,7 +3,9 @@ using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
 using LibraryManagementSystem.Entities.Models.Library;
+using LibraryManagementSystem.WebAPI.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 using System.Text.Json;
 
@@ -11,10 +13,12 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 {
     [Route("api/monographs")]
     [ApiController]
-    public class MonographController(IMonographBll monographBll, IMapper mapper) : ControllerBase
+    public class MonographController(IMonographBll monographBll, IMapper mapper, 
+        IHubContext<MonographNotificationHub, IMonographNotification> monographHubContext) : ControllerBase
     {
         private readonly IMonographBll _monographBll = monographBll;
         private readonly IMapper _mapper = mapper;
+        private readonly IHubContext<MonographNotificationHub, IMonographNotification> _monographHubContext = monographHubContext;
         private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
         /// <summary>
@@ -40,6 +44,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notifica a todos los clientes
+            await _monographHubContext.Clients.All.SendMonographNotification(true);
 
             return Ok(response);
         }
@@ -68,6 +75,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notifica a todos los clientes
+            await _monographHubContext.Clients.All.SendMonographNotification(true);
 
             return Ok(response);
         }
@@ -163,6 +173,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notifica a todos los clientes
+            await _monographHubContext.Clients.All.SendMonographNotification(true);
 
             return Ok(response);
         }

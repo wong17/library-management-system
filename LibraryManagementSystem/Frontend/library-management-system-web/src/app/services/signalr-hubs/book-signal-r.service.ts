@@ -25,7 +25,7 @@ export class BookSignalRService {
             .then(() => console.log('Connected to Book Hub'))
             .catch(err => console.error('Error connecting to BookLoan Hub:', err));
 
-        this.bookHubConnection.on('SendBookStillAvailableNotification', (value: boolean) => {
+        this.bookHubConnection.on('SendBookNotification', (value: boolean) => {
             this.bookNotification.next(value);
         });
     }

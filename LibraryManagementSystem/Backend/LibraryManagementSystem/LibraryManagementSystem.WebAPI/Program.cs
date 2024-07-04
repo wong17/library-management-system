@@ -67,5 +67,9 @@ app.MapHub<BookLoanNotificationHub>("/hubs/bookloan_hub");
 app.MapHub<MonographLoanNotificationHub>("/hubs/monographloan_hub");
 app.MapHub<BookLoanNotificationHub>("/hubs/book_hub");
 app.MapHub<MonographNotificationHub>("/hubs/monograph_hub");
+app.MapHub<PublisherNotificationHub>("/hubs/publisher_hub");
+app.MapHub<CategoryNotificationHub>("/hubs/category_hub");
+app.MapHub<AuthorNotificationHub>("/hubs/author_hub");
+app.MapHub<SubCategoryNotificationHub>("/hubs/sub_category_hub");
 
 app.Run();

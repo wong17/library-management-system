@@ -2,6 +2,6 @@
 {
     public interface IMonographNotification
     {
-        Task SendMonographStillAvailableNotification(bool value);
+        Task SendMonographNotification(bool value);
     }
 }

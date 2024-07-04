@@ -3,7 +3,9 @@ using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
 using LibraryManagementSystem.Entities.Models.Library;
+using LibraryManagementSystem.WebAPI.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 using System.Text.Json;
 
@@ -11,10 +13,11 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 {
     [Route("api/books")]
     [ApiController]
-    public class BookController(IBookBll bookBll, IMapper mapper) : ControllerBase
+    public class BookController(IBookBll bookBll, IMapper mapper, IHubContext<BookNotificationHub, IBookNotification> bookHubContext) : ControllerBase
     {
         private readonly IBookBll _bookBll = bookBll;
         private readonly IMapper _mapper = mapper;
+        private readonly IHubContext<BookNotificationHub, IBookNotification> _bookHubContext = bookHubContext;
         private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
         /// <summary>
@@ -40,6 +43,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notifica a todos los clientes
+            await _bookHubContext.Clients.All.SendBookNotification(true);
 
             return Ok(response);
         }
@@ -68,6 +74,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notifica a todos los clientes
+            await _bookHubContext.Clients.All.SendBookNotification(true);
 
             return Ok(response);
         }
@@ -171,6 +180,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notifica a todos los clientes
+            await _bookHubContext.Clients.All.SendBookNotification(true);
 
             return Ok(response);
         }

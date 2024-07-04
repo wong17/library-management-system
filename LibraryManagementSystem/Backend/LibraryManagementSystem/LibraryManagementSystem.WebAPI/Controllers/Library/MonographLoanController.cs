@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using LibraryManagementSystem.Bll.Implements.Library;
 using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
@@ -49,7 +48,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             // Notifica a clientes con rol admin o bibliotecario
             await _hubContext.Clients.All.SendLoanNotification(true);
             // Notifica a todos los clientes
-            await _monographHubContext.Clients.All.SendMonographStillAvailableNotification(true);
+            await _monographHubContext.Clients.All.SendMonographNotification(true);
 
             return Ok(response);
         }
@@ -82,7 +81,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             // Notifica a clientes con rol admin o bibliotecario
             await _hubContext.Clients.All.SendLoanNotification(true);
             // Notifica a todos los clientes
-            await _monographHubContext.Clients.All.SendMonographStillAvailableNotification(true);
+            await _monographHubContext.Clients.All.SendMonographNotification(true);
 
             return Ok(response);
         }
@@ -200,7 +199,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             // Notifica a clientes con rol admin o bibliotecario
             await _hubContext.Clients.All.SendLoanNotification(true);
             // Notifica a todos los clientes
-            await _monographHubContext.Clients.All.SendMonographStillAvailableNotification(true);
+            await _monographHubContext.Clients.All.SendMonographNotification(true);
 
             return Ok(response);
         }
@@ -233,7 +232,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             // Notifica a clientes con rol admin o bibliotecario
             await _hubContext.Clients.All.SendLoanNotification(true);
             // Notifica a todos los clientes
-            await _monographHubContext.Clients.All.SendMonographStillAvailableNotification(true);
+            await _monographHubContext.Clients.All.SendMonographNotification(true);
 
             return Ok(response);
         }

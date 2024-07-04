@@ -25,7 +25,7 @@ export class MonographSignalRService {
             .then(() => console.log('Connected to Monograph Hub'))
             .catch(err => console.error('Error connecting to BookLoan Hub:', err));
 
-        this.monographHubConnection.on('SendMonographStillAvailableNotification', (value: boolean) => {
+        this.monographHubConnection.on('SendMonographNotification', (value: boolean) => {
             this.monographNotification.next(value);
         });
     }

@@ -3,17 +3,21 @@ using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
 using LibraryManagementSystem.Entities.Models.Library;
+using LibraryManagementSystem.WebAPI.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 
 namespace LibraryManagementSystem.WebAPI.Controllers
 {
     [Route("api/publishers")]
     [ApiController]
-    public class PublisherController(IPublisherBll publisherBll, IMapper mapper) : ControllerBase
+    public class PublisherController(IPublisherBll publisherBll, IMapper mapper,
+        IHubContext<PublisherNotificationHub, IPublisherNotification> publisherHubContext) : ControllerBase
     {
         private readonly IPublisherBll _publisherBll = publisherBll;
         private readonly IMapper _mapper = mapper;
+        private readonly IHubContext<PublisherNotificationHub, IPublisherNotification> _publisherHubContext = publisherHubContext;
 
         /// <summary>
         /// Inserta una Editorial
@@ -35,6 +39,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notifica a todos los clientes
+            await _publisherHubContext.Clients.All.SendPublisherNotification(true);
 
             return Ok(response);
         }
@@ -63,6 +70,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
+            // Notifica a todos los clientes
+            await _publisherHubContext.Clients.All.SendPublisherNotification(true);
+
             return Ok(response);
         }
 
@@ -90,6 +100,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notifica a todos los clientes
+            await _publisherHubContext.Clients.All.SendPublisherNotification(true);
 
             return Ok(response);
         }
@@ -160,6 +173,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
+            // Notifica a todos los clientes
+            await _publisherHubContext.Clients.All.SendPublisherNotification(true);
+
             return Ok(response);
         }
 
@@ -190,6 +206,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notifica a todos los clientes
+            await _publisherHubContext.Clients.All.SendPublisherNotification(true);
 
             return Ok(response);
         }

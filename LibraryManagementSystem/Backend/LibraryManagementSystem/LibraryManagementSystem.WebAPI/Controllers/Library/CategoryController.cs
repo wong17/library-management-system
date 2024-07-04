@@ -3,17 +3,21 @@ using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
 using LibraryManagementSystem.Entities.Models.Library;
+using LibraryManagementSystem.WebAPI.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 
 namespace LibraryManagementSystem.WebAPI.Controllers
 {
     [Route("api/categories")]
     [ApiController]
-    public class CategoryController(ICategoryBll categoryBll, IMapper mapper) : ControllerBase
+    public class CategoryController(ICategoryBll categoryBll, IMapper mapper,
+        IHubContext<CategoryNotificationHub, ICategoryNotification> categoryHubContext) : ControllerBase
     {
         private readonly ICategoryBll _categoryBll = categoryBll;
         private readonly IMapper _mapper = mapper;
+        private readonly IHubContext<CategoryNotificationHub, ICategoryNotification> _categoryHubContext = categoryHubContext;
 
         /// <summary>
         /// Inserta una Categoria
@@ -35,6 +39,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notificar de cambios a los clientes
+            await _categoryHubContext.Clients.All.SendCategoryNotification(true);
 
             return Ok(response);
         }
@@ -63,6 +70,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
+            // Notificar de cambios a los clientes
+            await _categoryHubContext.Clients.All.SendCategoryNotification(true);
+
             return Ok(response);
         }
 
@@ -90,6 +100,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notificar de cambios a los clientes
+            await _categoryHubContext.Clients.All.SendCategoryNotification(true);
 
             return Ok(response);
         }
@@ -160,6 +173,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
+            // Notificar de cambios a los clientes
+            await _categoryHubContext.Clients.All.SendCategoryNotification(true);
+
             return Ok(response);
         }
 
@@ -190,6 +206,9 @@ namespace LibraryManagementSystem.WebAPI.Controllers
 
             if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            // Notificar de cambios a los clientes
+            await _categoryHubContext.Clients.All.SendCategoryNotification(true);
 
             return Ok(response);
         }

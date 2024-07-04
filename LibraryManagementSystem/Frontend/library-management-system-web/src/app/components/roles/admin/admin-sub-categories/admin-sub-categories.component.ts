@@ -15,6 +15,7 @@ import { AdminSubCategoriesDialogComponent } from '../admin-sub-categories-dialo
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
 import { ApiResponse } from '../../../../entities/api/api-response';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { SubCategorySignalRService } from '../../../../services/signalr-hubs/sub-category-signal-r.service';
 
 @Component({
   selector: 'app-admin-sub-categories',
@@ -34,7 +35,12 @@ export class AdminSubCategoriesComponent implements AfterViewInit, OnInit {
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
 
-  constructor(private subCategoryService: SubCategoryService, private dialog: MatDialog, private toastr: ToastrService) { }
+  constructor(
+    private subCategoryService: SubCategoryService, 
+    private dialog: MatDialog, 
+    private toastr: ToastrService,
+    private scSignalR: SubCategorySignalRService
+  ) { }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
@@ -52,6 +58,10 @@ export class AdminSubCategoriesComponent implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     this.getSubCategoriesDto();
+    // Conectarse al Hub de monografias
+    this.scSignalR.subCategoryNotification.subscribe((value: boolean) => {
+      this.getSubCategoriesDto();
+    });
   }
 
   insertSubCategoryClick(): void {

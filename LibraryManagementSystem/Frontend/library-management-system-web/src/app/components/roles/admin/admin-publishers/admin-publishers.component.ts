@@ -15,6 +15,7 @@ import { ToastrService } from 'ngx-toastr';
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ApiResponse } from '../../../../entities/api/api-response';
+import { PublisherSignalRService } from '../../../../services/signalr-hubs/publisher-signal-r.service';
 
 @Component({
   selector: 'app-admin-publishers',
@@ -34,10 +35,20 @@ export class AdminPublishersComponent implements AfterViewInit, OnInit {
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
 
-  constructor(private publisherService: PublisherService, private dialog: MatDialog, private toastr: ToastrService) { }
+  constructor(
+    private publisherService: PublisherService, 
+    private dialog: MatDialog, 
+    private toastr: ToastrService,
+    private pSignalR: PublisherSignalRService
+  ) { }
 
   ngOnInit(): void {
     this.getPublishersDto();
+
+    // Conectarse al Hub de monografias
+    this.pSignalR.publisherNotification.subscribe((value: boolean) => {
+      this.getPublishersDto();
+    });
   }
 
   ngAfterViewInit(): void {

@@ -2,6 +2,6 @@
 {
     public interface IBookNotification
     {
-        Task SendBookStillAvailableNotification(bool value);
+        Task SendBookNotification(bool value);
     }
 }

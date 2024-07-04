@@ -16,6 +16,7 @@ import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.comp
 import { ApiResponse } from '../../../../entities/api/api-response';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { AuthorSignalRService } from '../../../../services/signalr-hubs/author-signal-r.service';
 
 @Component({
   selector: 'app-admin-authors',
@@ -35,10 +36,20 @@ export class AdminAuthorsComponent implements AfterViewInit, OnInit {
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
 
-  constructor(private authorService: AuthorService, private dialog: MatDialog, private toastr: ToastrService) { }
+  constructor(
+    private authorService: AuthorService, 
+    private dialog: MatDialog, 
+    private toastr: ToastrService,
+    private aSignalR: AuthorSignalRService
+  ) { }
 
   ngOnInit(): void {
     this.getAuthorsDto();
+
+    // Conectarse al Hub de monografias
+    this.aSignalR.authorNotification.subscribe((value: boolean) => {
+      this.getAuthorsDto();
+    });
   }
 
   ngAfterViewInit(): void {

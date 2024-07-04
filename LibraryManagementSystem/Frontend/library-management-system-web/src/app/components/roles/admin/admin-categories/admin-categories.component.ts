@@ -15,6 +15,7 @@ import { AdminCategoriesDialogComponent } from '../admin-categories-dialog/admin
 import { DeleteDialogComponent } from '../../../delete-dialog/delete-dialog.component';
 import { ApiResponse } from '../../../../entities/api/api-response';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { CategorySignalRService } from '../../../../services/signalr-hubs/category-signal-r.service';
 
 @Component({
   selector: 'app-admin-categories',
@@ -34,10 +35,20 @@ export class AdminCategoriesComponent implements AfterViewInit, OnInit {
   /* Obtener el objeto de ordenamiento */
   @ViewChild(MatSort) sort: MatSort | null = null;
 
-  constructor(private categoryService: CategoryService, private dialog: MatDialog, private toastr: ToastrService) { }
+  constructor(
+    private categoryService: CategoryService, 
+    private dialog: MatDialog, 
+    private toastr: ToastrService,
+    private cSignalR: CategorySignalRService
+  ) {
+   }
 
   ngOnInit(): void {
     this.getCategoriesDto();
+    // Conectarse al Hub de monografias
+    this.cSignalR.categoryNotification.subscribe((value: boolean) => {
+      this.getCategoriesDto();
+    });
   }
 
   ngAfterViewInit(): void {

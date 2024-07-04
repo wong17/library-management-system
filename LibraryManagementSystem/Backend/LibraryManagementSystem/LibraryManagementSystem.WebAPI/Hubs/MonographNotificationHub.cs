@@ -5,9 +5,9 @@ namespace LibraryManagementSystem.WebAPI.Hubs
 {
     public class MonographNotificationHub : Hub<IMonographNotification>
     {
-        public async Task SendMonographStillAvailableNotification(bool value)
+        public async Task SendMonographNotification(bool value)
         {
-            await Clients.All.SendMonographStillAvailableNotification(value);
+            await Clients.All.SendMonographNotification(value);
         }
     }
 }
