@@ -1,4 +1,4 @@
 export const environment = {
     production: false,
-    apiUrl: 'https://localhost:7288'
+    apiUrl: 'http://xwong21-001-site1.ctempurl.com'
 };
