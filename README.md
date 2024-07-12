@@ -6,7 +6,7 @@
 - SignalR para notificaciones a clientes en tiempo real al momento de realizar una solicitud de préstamo de libro o monografía.
 - Base de datos (SQL Server Management Studio)
 
-## Vistas y acciones según el rol dentro del sistema
+## Vistas y acciones según los roles
 
 - admin
 
