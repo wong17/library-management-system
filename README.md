@@ -11,7 +11,7 @@
 - admin
 | Vistas                   | Acciones         |
 | ------------------------ | ---------------- |
-| Dashboard                | Dashboard        | 
+| Dashboard                | Dashboard | 
 | Libros                   | Crear, editar, eliminar y actualizar la información de los libros, realizar búsquedas por título, editorial, autores, categorías o sub categorías a las que pertenece y por fecha de publicación.  |
 | Monografías              | Crear, editar, eliminar y actualizar la información de las monografías, realizar búsquedas por título, carrera a la que pertenece, año de presentación y autor. |
 | Préstamo de libros       | Aprobar préstamos de libros realizados por los estudiantes asignando una fecha y hora límite para la devolución según el tipo de préstamo si es para sala o domicilio y así también realizar devoluciones de libros anteriormente prestados. |            
@@ -22,7 +22,7 @@
 | Sub Categorias           | Crear, editar, eliminar y actualizar información sobre sub categorías a las que pertenecen los libros, permitiendo realiza búsquedas aún más especificas. |
 
 - bibliotecario
-| Vistas                  | Acciones  |
+| Vistas                  | Acciones |
 | ----------------------- | ----------- |
 | Dashboard               | Dashboard |
 | Libros                  | Realizar búsquedas por título, editorial, autores, categorías o sub categorías a las que pertenece y por fecha de publicación. |
