@@ -9,6 +9,7 @@
 ## Vistas y acciones según el rol dentro del sistema
 
 - admin
+
 | Vistas                   | Acciones         |
 | ------------------------ | ---------------- |
 | Dashboard                | Dashboard | 
@@ -22,6 +23,7 @@
 | Sub Categorias           | Crear, editar, eliminar y actualizar información sobre sub categorías a las que pertenecen los libros, permitiendo realiza búsquedas aún más especificas. |
 
 - bibliotecario
+
 | Vistas                  | Acciones |
 | ----------------------- | ----------- |
 | Dashboard               | Dashboard |
@@ -31,10 +33,45 @@
 | Préstamo de Monografías | Aprobar préstamos de monografías realizados por los estudiantes asignando una hora limité dentro de la sala de lectura y así también realizar devoluciones de monografías anteriormente prestadas. |    
 
 - estudiante
+
 | Vistas      | Acciones |
 | ----------- | ------------ |
 | Libros      | Solicitar un libro para utilizar en sala o a domicilio, así también realizar búsquedas por título, editorial, autores, categorías o sub categorías a las que pertenece y por fecha de publicación. |
 | Monografías | Solicitar una monografía para uso en sala de lectura, así también realizar búsquedas por título, carrera a la que pertenece, año de presentación y autor.|
+
+## Ejecutar aplicación web
+
+Por defecto la API tiene configurado 3 origenes:
+
+```javascript
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularApp", policy =>
+    {
+        policy.WithOrigins(
+            "http://localhost:4200",    // admin 
+            "http://localhost:4201",    // bibliotecario
+            "http://localhost:4202")    // estudiante
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); 
+    });
+});
+
+```
+Ejecutando cualquiera de los siguientes comandos podemos lanzar más rápido la app, cabe aclarar que una vez arranque la app no es necesario iniciar sesión con el rol que indica el comando, se dio el nombre simplemente por distinguir y hacer las pruebas con cada uno de los roles.
+
+```bash
+  npm run start:admin 
+```
+
+```bash
+  npm run start:librarian 
+```
+
+```bash
+  npm run start:student 
+```
 
 ![image](https://github.com/wong17/library-management-system/assets/64237085/7aebf9f9-63de-4a02-ae51-5af5af76e6e9)
 ![image](https://github.com/wong17/library-management-system/assets/64237085/f7a50a14-27e7-4790-8ea3-1e21e1922901)
