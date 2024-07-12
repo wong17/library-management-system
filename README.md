@@ -72,6 +72,15 @@ Ejecutando cualquiera de los siguientes comandos podemos lanzar más rápido la 
 ```bash
   npm run start:student 
 ```
+# Inicio de sesión
+
+El .bak incluye 3 usuarios con las siguientes credenciales:
+
+| Usuario       | Contraseña |
+| ------------- | -------- |
+| admin         | Abcd1234 |
+| bibliotecario | Abcd1234 |
+| estudiante    | Abcd1234 |
 
 ![image](https://github.com/wong17/library-management-system/assets/64237085/7aebf9f9-63de-4a02-ae51-5af5af76e6e9)
 ![image](https://github.com/wong17/library-management-system/assets/64237085/f7a50a14-27e7-4790-8ea3-1e21e1922901)
