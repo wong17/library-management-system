@@ -36,8 +36,8 @@
 
 | Vistas      | Acciones |
 | ----------- | ------------ |
-| Libros      | Solicitar un libro para utilizar en sala o a domicilio, así también realizar búsquedas por título, editorial, autores, categorías o sub categorías a las que pertenece y por fecha de publicación. |
-| Monografías | Solicitar una monografía para uso en sala de lectura, así también realizar búsquedas por título, carrera a la que pertenece, año de presentación y autor.|
+| Libros      | Solicitar libros solamente usando su número de carnet para llenar el formulario y utilizarlos en sala o a domicilio, así también realizar búsquedas por título, editorial, autores, categorías o sub categorías a las que pertenece y por fecha de publicación. |
+| Monografías | Solicitar monografías solamente usando su número de carnet para llenar el formulario y utilizarla en sala de lectura, así también realizar búsquedas por título, carrera a la que pertenece, año de presentación y autor.|
 
 ## Ejecutar aplicación web
 
