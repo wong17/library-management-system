@@ -1,7 +1,7 @@
 # Library management system
 
 ## Tecnologías utilizadas
-- Aplicación web (Angular 18 y Typescript)
+- Aplicación web (Angular 18)
 - Web API (C# .NET 8)
 - SignalR para notificaciones a clientes en tiempo real al momento de realizar una solicitud de préstamo de libro o monografía.
 - Base de datos (SQL Server Management Studio)
