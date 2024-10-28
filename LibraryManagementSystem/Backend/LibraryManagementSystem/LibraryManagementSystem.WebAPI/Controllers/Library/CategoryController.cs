@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
@@ -6,9 +7,8 @@ using LibraryManagementSystem.Entities.Models.Library;
 using LibraryManagementSystem.WebAPI.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using System.Net;
 
-namespace LibraryManagementSystem.WebAPI.Controllers
+namespace LibraryManagementSystem.WebAPI.Controllers.Library
 {
     [Route("api/categories")]
     [ApiController]

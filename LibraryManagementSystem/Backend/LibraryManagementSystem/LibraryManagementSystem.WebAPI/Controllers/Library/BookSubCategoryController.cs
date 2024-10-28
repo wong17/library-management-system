@@ -1,12 +1,12 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
 using LibraryManagementSystem.Entities.Models.Library;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
-namespace LibraryManagementSystem.WebAPI.Controllers
+namespace LibraryManagementSystem.WebAPI.Controllers.Library
 {
     [Route("api/book_subcategories")]
     [ApiController]
