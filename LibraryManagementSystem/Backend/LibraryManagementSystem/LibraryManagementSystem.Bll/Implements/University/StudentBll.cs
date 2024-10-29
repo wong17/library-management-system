@@ -9,20 +9,16 @@ namespace LibraryManagementSystem.Bll.Implements.University
 {
     public class StudentBll(IStudentRepository repository, ICareerBll careerBll, IMapper mapper) : IStudentBll
     {
-        private readonly IStudentRepository _repository = repository;
-        private readonly ICareerBll _careerBll = careerBll;
-        private readonly IMapper _mapper = mapper;
-        
         public async Task<ApiResponse> GetAll()
         {
             // Comprobar si hay estudiantes registrados
-            var response = await _repository.GetAll();
-            if (response.Result is null || response.Result is not IEnumerable<Student> students)
+            var response = await repository.GetAll();
+            if (response.Result is not IEnumerable<Student> students)
                 return response;
 
             // Comprobar si hay carreras registradas
-            var careersResponse = await _careerBll.GetAll();
-            if (careersResponse.Result is null || careersResponse.Result is not IEnumerable<CareerDto> careers)
+            var careersResponse = await careerBll.GetAll();
+            if (careersResponse.Result is not IEnumerable<CareerDto> careers)
                 return response;
             
             // Crear diccionario de carreras
@@ -30,10 +26,10 @@ namespace LibraryManagementSystem.Bll.Implements.University
 
             // Obtener ids de carreras de los estudiantes
             var careerIds = students.Select(s => s.CareerId).ToList();
-            var studentDtos = _mapper.Map<IEnumerable<StudentDto>>(students).ToList();
+            var studentDtos = mapper.Map<IEnumerable<StudentDto>>(students).ToList();
 
             // Asignar CareerDto a cada StudentDto basado en los ids de carreras
-            for (int i = 0; i < studentDtos.Count; i++)
+            for (var i = 0; i < studentDtos.Count; i++)
             {
                 var studentDto = studentDtos[i];
                 var careerId = careerIds[i];
@@ -53,17 +49,17 @@ namespace LibraryManagementSystem.Bll.Implements.University
         public async Task<ApiResponse> GetByCarnet(string? carnet)
         {
             // Comprobar si existe el estudiante
-            var response = await _repository.GetByCarnet(carnet);
-            if (response.Result is null || response.Result is not Student student)
+            var response = await repository.GetByCarnet(carnet);
+            if (response.Result is not Student student)
                 return response;
 
             // Obtener ids de carreras de los estudiantes
             var careerId = student.CareerId;
-            var studentDto = _mapper.Map<StudentDto>(student);
+            var studentDto = mapper.Map<StudentDto>(student);
 
             // Comprobar si hay carreras registradas
-            var careerResponse = await _careerBll.GetById(careerId);
-            if (careerResponse.Result is null || careerResponse.Result is not CareerDto career)
+            var careerResponse = await careerBll.GetById(careerId);
+            if (careerResponse.Result is not CareerDto career)
                 return response;
 
             studentDto.Career = career;
@@ -77,17 +73,17 @@ namespace LibraryManagementSystem.Bll.Implements.University
         public async Task<ApiResponse> GetById(int id)
         {
             // Comprobar si existe el estudiante
-            var response = await _repository.GetById(id);
-            if (response.Result is null || response.Result is not Student student)
+            var response = await repository.GetById(id);
+            if (response.Result is not Student student)
                 return response;
 
             // Obtener ids de carreras de los estudiantes
             var careerId = student.CareerId;
-            var studentDto = _mapper.Map<StudentDto>(student);
+            var studentDto = mapper.Map<StudentDto>(student);
 
             // Comprobar si hay carreras registradas
-            var careerResponse = await _careerBll.GetById(careerId);
-            if (careerResponse.Result is null || careerResponse.Result is not CareerDto career)
+            var careerResponse = await careerBll.GetById(careerId);
+            if (careerResponse.Result is not CareerDto career)
                 return response;
 
             studentDto.Career = career;

@@ -9,39 +9,36 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 {
     public class MonographAuthorBll(IMonographAuthorRepository repository, IMapper mapper) : IMonographAuthorBll
     {
-        private readonly IMonographAuthorRepository _repository = repository;
-        private readonly IMapper _mapper = mapper;
+        public async Task<ApiResponse> Create(MonographAuthor entity) => await repository.Create(entity);
 
-        public async Task<ApiResponse> Create(MonographAuthor entity) => await _repository.Create(entity);
+        public async Task<ApiResponse> CreateMany(IEnumerable<MonographAuthor> entities) => await repository.CreateMany(entities);
 
-        public async Task<ApiResponse> CreateMany(IEnumerable<MonographAuthor> entities) => await _repository.CreateMany(entities);
-
-        public async Task<ApiResponse> Delete(int monographId, int authorId) => await _repository.Delete(monographId, authorId);
+        public async Task<ApiResponse> Delete(int monographId, int authorId) => await repository.Delete(monographId, authorId);
 
         public async Task<ApiResponse> GetAll()
         {
-            var response = await _repository.GetAll();
+            var response = await repository.GetAll();
             // Comprobar si hay elementos
-            if (response.Result is null || response.Result is not IEnumerable<MonographAuthor> monographAuthors)
+            if (response.Result is not IEnumerable<MonographAuthor> monographAuthors)
                 return response;
             // Retornar Dtos
-            response.Result = _mapper.Map<IEnumerable<MonographAuthorDto>>(monographAuthors);
+            response.Result = mapper.Map<IEnumerable<MonographAuthorDto>>(monographAuthors);
 
             return response;
         }
 
         public async Task<ApiResponse> GetById(int monographId, int authorId)
         {
-            var response = await _repository.GetById(monographId, authorId);
+            var response = await repository.GetById(monographId, authorId);
             // Comprobar si hay un elemento
-            if (response.Result is null || response.Result is not MonographAuthor monographAuthor)
+            if (response.Result is not MonographAuthor monographAuthor)
                 return response;
             // Retornar Dto
-            response.Result = _mapper.Map<MonographAuthorDto>(monographAuthor);
+            response.Result = mapper.Map<MonographAuthorDto>(monographAuthor);
 
             return response;
         }
 
-        public async Task<ApiResponse> UpdateMany(IEnumerable<MonographAuthor> entities) => await _repository.UpdateMany(entities);
+        public async Task<ApiResponse> UpdateMany(IEnumerable<MonographAuthor> entities) => await repository.UpdateMany(entities);
     }
 }

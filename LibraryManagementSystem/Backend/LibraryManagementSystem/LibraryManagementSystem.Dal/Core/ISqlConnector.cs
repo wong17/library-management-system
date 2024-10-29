@@ -10,8 +10,8 @@ namespace LibraryManagementSystem.Dal.Core
         Task<DataTable> ExecuteDataTableAsync(string commandText, CommandType commandType, SqlParameter[] parameters);
 
         /* Para ejecutar procedimientos almacenados que reciben por parámetro una tabla como tipo de dato y devuelven por medio de una o varias sentencias SELECT la respuesta */
-        Task<DataTable> ExecuteSPWithTVP(DataTable dataTable, string tableTypeName, string procedureName, string procedureParameterName);
-        Task<DataSet> ExecuteSPWithTVPMany(DataTable dataTable, string tableTypeName, string procedureName, string procedureParameterName);
+        Task<DataTable> ExecuteSpWithTvp(DataTable dataTable, string tableTypeName, string procedureName, string procedureParameterName);
+        Task<DataSet> ExecuteSpWithTvpMany(DataTable dataTable, string tableTypeName, string procedureName, string procedureParameterName);
 
         /* Convierte un objeto T a un DataTable */
         DataTable ObjectToDataTable<T>(T obj) where T : class;

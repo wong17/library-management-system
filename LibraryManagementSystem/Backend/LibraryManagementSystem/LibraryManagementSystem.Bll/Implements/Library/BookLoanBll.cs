@@ -13,41 +13,36 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 {
     public class BookLoanBll(IBookLoanRepository repository, IBookBll bookBll, IStudentBll studentBll, IUserBll userBll, IMapper mapper) : IBookLoanBll
     {
-        private readonly IBookLoanRepository _repository = repository;
-        private readonly IBookBll _bookBll = bookBll;
-        private readonly IStudentBll _studentBll = studentBll;
-        private readonly IUserBll _userBll = userBll;
-        private readonly IMapper _mapper = mapper;
+        public async Task<ApiResponse> Create(BookLoan entity) => await repository.Create(entity);
 
-        public async Task<ApiResponse> Create(BookLoan entity) => await _repository.Create(entity);
-
-        public async Task<ApiResponse> Delete(int id) => await _repository.Delete(id);
+        public async Task<ApiResponse> Delete(int id) => await repository.Delete(id);
 
         public async Task<ApiResponse> GetAll()
         {
-            var response = await _repository.GetAll();
+            var response = await repository.GetAll();
             // Comprobar si hay elementos
-            if (response.Result is null || response.Result is not IEnumerable<BookLoan> bookLoans)
+            if (response.Result is not IEnumerable<BookLoan> bookLoans)
                 return response;
 
             // Obtener ids de los estudiantes de todos los prestamos
-            var studentIds = bookLoans.Select(b => b.StudentId).ToList();
+            var bookLoanList = bookLoans.ToList();
+            var studentIds = bookLoanList.Select(b => b.StudentId).ToList();
             // Obtener ids de los libros de todos los prestamos
-            var bookIds = bookLoans.Select(b => b.BookId).ToList();
+            var bookIds = bookLoanList.Select(b => b.BookId).ToList();
             // Obtener ids de los usuarios que aprobaron el prestamo del libro
-            var borrowedUserIds = bookLoans.Select(b => b.BorrowedUserId).ToList();
+            var borrowedUserIds = bookLoanList.Select(b => b.BorrowedUserId).ToList();
             // Obtener ids de los usuarios que recibieron el libro
-            var returnedUserIds = bookLoans.Select(b => b.ReturnedUserId).ToList();
+            var returnedUserIds = bookLoanList.Select(b => b.ReturnedUserId).ToList();
             // Convertir bookloans a BookLoanDto
-            var bookLoansDto = _mapper.Map<IEnumerable<BookLoanDto>>(bookLoans).ToList();
+            var bookLoansDto = mapper.Map<IEnumerable<BookLoanDto>>(bookLoans).ToList();
 
             // 1. Comprobar si hay estudiantes
-            var studentsResponse = await _studentBll.GetAll();
-            if (studentsResponse.Result is not null && studentsResponse.Result is IEnumerable<StudentDto> students)
+            var studentsResponse = await studentBll.GetAll();
+            if (studentsResponse.Result is IEnumerable<StudentDto> students)
             {
                 var studentsDictionary = students.ToDictionary(s => s.StudentId);
 
-                for(int i = 0; i < bookLoansDto.Count; i++)
+                for(var i = 0; i < bookLoansDto.Count; i++)
                 {
                     var bookLoanDto = bookLoansDto[i];
                     var studentId = studentIds[i];
@@ -60,12 +55,12 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             }
 
             // 2. Comprobar si hay libros
-            var booksResponse = await _bookBll.GetAll();
-            if (booksResponse.Result is not null && booksResponse.Result is IEnumerable<BookDto> books)
+            var booksResponse = await bookBll.GetAll();
+            if (booksResponse.Result is IEnumerable<BookDto> books)
             {
                 var booksDictionary = books.ToDictionary(b => b.BookId);
 
-                for (int i = 0;i < bookLoansDto.Count; i++)
+                for (var i = 0;i < bookLoansDto.Count; i++)
                 {
                     var bookLoanDto = bookLoansDto[i];
                     var bookId = bookIds[i];
@@ -78,12 +73,12 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             }
 
             // 3. Borrowed users y Returned users
-            var usersResponse = await _userBll.GetAll();
-            if (usersResponse.Result is not null && usersResponse.Result is IEnumerable<UserDto> users)
+            var usersResponse = await userBll.GetAll();
+            if (usersResponse.Result is IEnumerable<UserDto> users)
             {
                 var usersDictionary = users.ToDictionary(u => u.UserId);
 
-                for (int i = 0; i < bookLoansDto.Count; i++)
+                for (var i = 0; i < bookLoansDto.Count; i++)
                 {
                     var bookLoanDto = bookLoansDto[i];
 
@@ -109,29 +104,30 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 
         public async Task<ApiResponse> GetBookLoanByState(string? state)
         {
-            var response = await _repository.GetBookLoanByState(state);
+            var response = await repository.GetBookLoanByState(state);
             // Comprobar si hay elementos
-            if (response.Result is null || response.Result is not IEnumerable<BookLoan> bookLoans)
+            if (response.Result is not IEnumerable<BookLoan> bookLoans)
                 return response;
 
             // Obtener ids de los estudiantes de todos los prestamos
-            var studentIds = bookLoans.Select(b => b.StudentId).ToList();
+            var bookLoanList = bookLoans.ToList();
+            var studentIds = bookLoanList.Select(b => b.StudentId).ToList();
             // Obtener ids de los libros de todos los prestamos
-            var bookIds = bookLoans.Select(b => b.BookId).ToList();
+            var bookIds = bookLoanList.Select(b => b.BookId).ToList();
             // Obtener ids de los usuarios que aprobaron el prestamo del libro
-            var borrowedUserIds = bookLoans.Select(b => b.BorrowedUserId).ToList();
+            var borrowedUserIds = bookLoanList.Select(b => b.BorrowedUserId).ToList();
             // Obtener ids de los usuarios que recibieron el libro
-            var returnedUserIds = bookLoans.Select(b => b.ReturnedUserId).ToList();
+            var returnedUserIds = bookLoanList.Select(b => b.ReturnedUserId).ToList();
             // Convertir bookloans a BookLoanDto
-            var bookLoansDto = _mapper.Map<IEnumerable<BookLoanDto>>(bookLoans).ToList();
+            var bookLoansDto = mapper.Map<IEnumerable<BookLoanDto>>(bookLoans).ToList();
 
             // 1. Comprobar si hay estudiantes
-            var studentsResponse = await _studentBll.GetAll();
-            if (studentsResponse.Result is not null && studentsResponse.Result is IEnumerable<StudentDto> students)
+            var studentsResponse = await studentBll.GetAll();
+            if (studentsResponse.Result is IEnumerable<StudentDto> students)
             {
                 var studentsDictionary = students.ToDictionary(s => s.StudentId);
 
-                for (int i = 0; i < bookLoansDto.Count; i++)
+                for (var i = 0; i < bookLoansDto.Count; i++)
                 {
                     var bookLoanDto = bookLoansDto[i];
                     var studentId = studentIds[i];
@@ -144,12 +140,12 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             }
 
             // 2. Comprobar si hay libros
-            var booksResponse = await _bookBll.GetAll();
-            if (booksResponse.Result is not null && booksResponse.Result is IEnumerable<BookDto> books)
+            var booksResponse = await bookBll.GetAll();
+            if (booksResponse.Result is IEnumerable<BookDto> books)
             {
                 var booksDictionary = books.ToDictionary(b => b.BookId);
 
-                for (int i = 0; i < bookLoansDto.Count; i++)
+                for (var i = 0; i < bookLoansDto.Count; i++)
                 {
                     var bookLoanDto = bookLoansDto[i];
                     var bookId = bookIds[i];
@@ -162,12 +158,12 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             }
 
             // 3. Borrowed users y Returned users
-            var usersResponse = await _userBll.GetAll();
-            if (usersResponse.Result is not null && usersResponse.Result is IEnumerable<UserDto> users)
+            var usersResponse = await userBll.GetAll();
+            if (usersResponse.Result is IEnumerable<UserDto> users)
             {
                 var usersDictionary = users.ToDictionary(u => u.UserId);
 
-                for (int i = 0; i < bookLoansDto.Count; i++)
+                for (var i = 0; i < bookLoansDto.Count; i++)
                 {
                     var bookLoanDto = bookLoansDto[i];
 
@@ -193,29 +189,30 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 
         public async Task<ApiResponse> GetBookLoanByStudentCarnet(string? carnet)
         {
-            var response = await _repository.GetBookLoanByStudentCarnet(carnet);
+            var response = await repository.GetBookLoanByStudentCarnet(carnet);
             // Comprobar si hay elementos
-            if (response.Result is null || response.Result is not IEnumerable<BookLoan> bookLoans)
+            if (response.Result is not IEnumerable<BookLoan> bookLoans)
                 return response;
 
             // Obtener ids de los estudiantes de todos los prestamos
-            var studentIds = bookLoans.Select(b => b.StudentId).ToList();
+            var bookLoanList = bookLoans.ToList();
+            var studentIds = bookLoanList.Select(b => b.StudentId).ToList();
             // Obtener ids de los libros de todos los prestamos
-            var bookIds = bookLoans.Select(b => b.BookId).ToList();
+            var bookIds = bookLoanList.Select(b => b.BookId).ToList();
             // Obtener ids de los usuarios que aprobaron el prestamo del libro
-            var borrowedUserIds = bookLoans.Select(b => b.BorrowedUserId).ToList();
+            var borrowedUserIds = bookLoanList.Select(b => b.BorrowedUserId).ToList();
             // Obtener ids de los usuarios que recibieron el libro
-            var returnedUserIds = bookLoans.Select(b => b.ReturnedUserId).ToList();
+            var returnedUserIds = bookLoanList.Select(b => b.ReturnedUserId).ToList();
             // Convertir bookloans a BookLoanDto
-            var bookLoansDto = _mapper.Map<IEnumerable<BookLoanDto>>(bookLoans).ToList();
+            var bookLoansDto = mapper.Map<IEnumerable<BookLoanDto>>(bookLoans).ToList();
 
             // 1. Comprobar si hay estudiantes
-            var studentsResponse = await _studentBll.GetAll();
-            if (studentsResponse.Result is not null && studentsResponse.Result is IEnumerable<StudentDto> students)
+            var studentsResponse = await studentBll.GetAll();
+            if (studentsResponse.Result is IEnumerable<StudentDto> students)
             {
                 var studentsDictionary = students.ToDictionary(s => s.StudentId);
 
-                for (int i = 0; i < bookLoansDto.Count; i++)
+                for (var i = 0; i < bookLoansDto.Count; i++)
                 {
                     var bookLoanDto = bookLoansDto[i];
                     var studentId = studentIds[i];
@@ -228,12 +225,12 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             }
 
             // 2. Comprobar si hay libros
-            var booksResponse = await _bookBll.GetAll();
-            if (booksResponse.Result is not null && booksResponse.Result is IEnumerable<BookDto> books)
+            var booksResponse = await bookBll.GetAll();
+            if (booksResponse.Result is IEnumerable<BookDto> books)
             {
                 var booksDictionary = books.ToDictionary(b => b.BookId);
 
-                for (int i = 0; i < bookLoansDto.Count; i++)
+                for (var i = 0; i < bookLoansDto.Count; i++)
                 {
                     var bookLoanDto = bookLoansDto[i];
                     var bookId = bookIds[i];
@@ -246,12 +243,12 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             }
 
             // 3. Borrowed users y Returned users
-            var usersResponse = await _userBll.GetAll();
-            if (usersResponse.Result is not null && usersResponse.Result is IEnumerable<UserDto> users)
+            var usersResponse = await userBll.GetAll();
+            if (usersResponse.Result is IEnumerable<UserDto> users)
             {
                 var usersDictionary = users.ToDictionary(u => u.UserId);
 
-                for (int i = 0; i < bookLoansDto.Count; i++)
+                for (var i = 0; i < bookLoansDto.Count; i++)
                 {
                     var bookLoanDto = bookLoansDto[i];
 
@@ -277,29 +274,30 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 
         public async Task<ApiResponse> GetBookLoanByTypeOfLoan(string? typeOfLoan)
         {
-            var response = await _repository.GetBookLoanByTypeOfLoan(typeOfLoan);
+            var response = await repository.GetBookLoanByTypeOfLoan(typeOfLoan);
             // Comprobar si hay elementos
-            if (response.Result is null || response.Result is not IEnumerable<BookLoan> bookLoans)
+            if (response.Result is not IEnumerable<BookLoan> bookLoans)
                 return response;
 
             // Obtener ids de los estudiantes de todos los prestamos
-            var studentIds = bookLoans.Select(b => b.StudentId).ToList();
+            var bookLoanList = bookLoans.ToList();
+            var studentIds = bookLoanList.Select(b => b.StudentId).ToList();
             // Obtener ids de los libros de todos los prestamos
-            var bookIds = bookLoans.Select(b => b.BookId).ToList();
+            var bookIds = bookLoanList.Select(b => b.BookId).ToList();
             // Obtener ids de los usuarios que aprobaron el prestamo del libro
-            var borrowedUserIds = bookLoans.Select(b => b.BorrowedUserId).ToList();
+            var borrowedUserIds = bookLoanList.Select(b => b.BorrowedUserId).ToList();
             // Obtener ids de los usuarios que recibieron el libro
-            var returnedUserIds = bookLoans.Select(b => b.ReturnedUserId).ToList();
+            var returnedUserIds = bookLoanList.Select(b => b.ReturnedUserId).ToList();
             // Convertir bookloans a BookLoanDto
-            var bookLoansDto = _mapper.Map<IEnumerable<BookLoanDto>>(bookLoans).ToList();
+            var bookLoansDto = mapper.Map<IEnumerable<BookLoanDto>>(bookLoans).ToList();
 
             // 1. Comprobar si hay estudiantes
-            var studentsResponse = await _studentBll.GetAll();
-            if (studentsResponse.Result is not null && studentsResponse.Result is IEnumerable<StudentDto> students)
+            var studentsResponse = await studentBll.GetAll();
+            if (studentsResponse.Result is IEnumerable<StudentDto> students)
             {
                 var studentsDictionary = students.ToDictionary(s => s.StudentId);
 
-                for (int i = 0; i < bookLoansDto.Count; i++)
+                for (var i = 0; i < bookLoansDto.Count; i++)
                 {
                     var bookLoanDto = bookLoansDto[i];
                     var studentId = studentIds[i];
@@ -312,12 +310,12 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             }
 
             // 2. Comprobar si hay libros
-            var booksResponse = await _bookBll.GetAll();
-            if (booksResponse.Result is not null && booksResponse.Result is IEnumerable<BookDto> books)
+            var booksResponse = await bookBll.GetAll();
+            if (booksResponse.Result is IEnumerable<BookDto> books)
             {
                 var booksDictionary = books.ToDictionary(b => b.BookId);
 
-                for (int i = 0; i < bookLoansDto.Count; i++)
+                for (var i = 0; i < bookLoansDto.Count; i++)
                 {
                     var bookLoanDto = bookLoansDto[i];
                     var bookId = bookIds[i];
@@ -330,12 +328,12 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             }
 
             // 3. Borrowed users y Returned users
-            var usersResponse = await _userBll.GetAll();
-            if (usersResponse.Result is not null && usersResponse.Result is IEnumerable<UserDto> users)
+            var usersResponse = await userBll.GetAll();
+            if (usersResponse.Result is IEnumerable<UserDto> users)
             {
                 var usersDictionary = users.ToDictionary(u => u.UserId);
 
-                for (int i = 0; i < bookLoansDto.Count; i++)
+                for (var i = 0; i < bookLoansDto.Count; i++)
                 {
                     var bookLoanDto = bookLoansDto[i];
 
@@ -361,9 +359,9 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 
         public async Task<ApiResponse> GetById(int id)
         {
-            var response = await _repository.GetById(id);
+            var response = await repository.GetById(id);
             // Comprobar si hay un elemento
-            if (response.Result is null || response.Result is not BookLoan bookLoan)
+            if (response.Result is not BookLoan bookLoan)
                 return response;
 
             // Obtener id del estudiante que realizo el prestamo
@@ -375,31 +373,31 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             // Obtener id del usuario que recibio el libro
             var returnedUserId = bookLoan.ReturnedUserId;
             // Convertir bookloans a BookLoanDto
-            var bookLoanDto = _mapper.Map<BookLoanDto>(bookLoan);
+            var bookLoanDto = mapper.Map<BookLoanDto>(bookLoan);
 
             // 1. Comprobar si existe el estudiante (deberia...)
-            var studentResponse = await _studentBll.GetById(studentId);
-            if (studentResponse.Result is not null && studentResponse.Result is StudentDto student)
+            var studentResponse = await studentBll.GetById(studentId);
+            if (studentResponse.Result is StudentDto student)
             {
                 bookLoanDto.Student = student;
             }
 
             // 2. Comprobar si existe el libro (deberia...)
-            var bookResponse = await _bookBll.GetById(bookId);
-            if (bookResponse.Result is not null && bookResponse.Result is BookDto book)
+            var bookResponse = await bookBll.GetById(bookId);
+            if (bookResponse.Result is BookDto book)
             {
                 bookLoanDto.Book = book;
             }
 
             // 3. Borrowed user y returned user
-            var borrowedUserResponse = await _userBll.GetById(borrowedUserId);
-            if (borrowedUserResponse.Result is not null && borrowedUserResponse.Result is UserDto borrowedUserDto)
+            var borrowedUserResponse = await userBll.GetById(borrowedUserId);
+            if (borrowedUserResponse.Result is UserDto borrowedUserDto)
             {
                 bookLoanDto.BorrowedUser = borrowedUserDto;
             }
 
-            var returnedUserResponse = await _userBll.GetById(returnedUserId);
-            if (returnedUserResponse.Result is not null && returnedUserResponse.Result is UserDto returnedUserDto)
+            var returnedUserResponse = await userBll.GetById(returnedUserId);
+            if (returnedUserResponse.Result is UserDto returnedUserDto)
             {
                 bookLoanDto.ReturnedUser = returnedUserDto;
             }
@@ -410,9 +408,9 @@ namespace LibraryManagementSystem.Bll.Implements.Library
         }
 
         public async Task<ApiResponse> UpdateBorrowedBookLoan(UpdateBorrowedBookLoanDto updateBorrowedBookLoanDto) => 
-            await _repository.UpdateBorrowedBookLoan(updateBorrowedBookLoanDto);
+            await repository.UpdateBorrowedBookLoan(updateBorrowedBookLoanDto);
 
         public async Task<ApiResponse> UpdateReturnedBookLoan(UpdateReturnedBookLoanDto updateReturnedBookLoanDto) => 
-            await _repository.UpdateReturnedBookLoan(updateReturnedBookLoanDto);
+            await repository.UpdateReturnedBookLoan(updateReturnedBookLoanDto);
     }
 }

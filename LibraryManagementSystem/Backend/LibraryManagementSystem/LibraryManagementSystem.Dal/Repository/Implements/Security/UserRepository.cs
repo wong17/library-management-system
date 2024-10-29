@@ -10,8 +10,6 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
 {
     public class UserRepository(ISqlConnector sqlConnector) : IUserRepository
     {
-        private readonly ISqlConnector _sqlConnector = sqlConnector;
-
         /* Para insertar un usuario en la base de datos */
 
         public async Task<ApiResponse> Create(User entity)
@@ -23,9 +21,9 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
             try
             {
                 /* Ejecutar procedimiento almacenado que recibe cada atributo por parámetro */
-                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Security].uspInsertUser", CommandType.StoredProcedure, parameters);
+                var result = await sqlConnector.ExecuteDataTableAsync("[Security].uspInsertUser", CommandType.StoredProcedure, parameters);
                 /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
-                response = _sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
+                response = sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
                 if (response is null)
                 {
@@ -36,18 +34,19 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
                     };
                     return response;
                 }
-                /* No paso una validación en el procedimiento almacenado */
-                if (response.IsSuccess == 1)
+
+                switch (response.IsSuccess)
                 {
-                    response.StatusCode = HttpStatusCode.BadRequest;
-                    return response;
+                    /* No paso una validación en el procedimiento almacenado */
+                    case 1:
+                        response.StatusCode = HttpStatusCode.BadRequest;
+                        return response;
+                    /* Ocurrio algún error en el procedimiento almacenado */
+                    case 3:
+                        response.StatusCode = HttpStatusCode.InternalServerError;
+                        return response;
                 }
-                /* Ocurrio algún error en el procedimiento almacenado */
-                if (response.IsSuccess == 3)
-                {
-                    response.StatusCode = HttpStatusCode.InternalServerError;
-                    return response;
-                }
+
                 /* Retornar código de éxito y objeto registrado */
                 response.StatusCode = HttpStatusCode.OK;
                 entity.UserId = Convert.ToInt32(response.Result);
@@ -75,9 +74,9 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
             try
             {
                 /* Ejecutar procedimiento almacenado para eliminar registro por medio del ID */
-                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Security].uspDeleteUser", CommandType.StoredProcedure, parameters);
+                var result = await sqlConnector.ExecuteDataTableAsync("[Security].uspDeleteUser", CommandType.StoredProcedure, parameters);
                 /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
-                response = _sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
+                response = sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
                 if (response is null)
                 {
@@ -88,26 +87,26 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
                     };
                     return response;
                 }
-                /* No paso una validación en el procedimiento almacenado */
-                if (response.IsSuccess == 1)
+
+                switch (response.IsSuccess)
                 {
-                    response.StatusCode = HttpStatusCode.BadRequest;
-                    return response;
+                    /* No paso una validación en el procedimiento almacenado */
+                    case 1:
+                        response.StatusCode = HttpStatusCode.BadRequest;
+                        return response;
+                    /* No existe el registro a eliminar */
+                    case 2:
+                        response.StatusCode = HttpStatusCode.NotFound;
+                        return response;
+                    /* Ocurrio algún error en el procedimiento almacenado */
+                    case 3:
+                        response.StatusCode = HttpStatusCode.InternalServerError;
+                        return response;
+                    default:
+                        /* Retornar código de éxito */
+                        response.StatusCode = HttpStatusCode.OK;
+                        break;
                 }
-                /* No existe el registro a eliminar */
-                if (response.IsSuccess == 2)
-                {
-                    response.StatusCode = HttpStatusCode.NotFound;
-                    return response;
-                }
-                /* Ocurrio algún error en el procedimiento almacenado */
-                if (response.IsSuccess == 3)
-                {
-                    response.StatusCode = HttpStatusCode.InternalServerError;
-                    return response;
-                }
-                /* Retornar código de éxito */
-                response.StatusCode = HttpStatusCode.OK;
             }
             catch (Exception ex)
             {
@@ -129,9 +128,9 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
             try
             {
                 /* Ejecutar procedimiento almacenado */
-                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Security].uspGetUser", CommandType.StoredProcedure);
+                var result = await sqlConnector.ExecuteDataTableAsync("[Security].uspGetUser", CommandType.StoredProcedure);
                 /* Convertir DataTable a una Lista */
-                IEnumerable<User> users = _sqlConnector.DataTableToList<User>(result);
+                var users = sqlConnector.DataTableToList<User>(result);
                 /* Retornar lista de elementos y código de éxito */
                 response.IsSuccess = 0;
                 response.Result = users;
@@ -156,7 +155,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
             try
             {
                 /* Ejecutar procedimiento almacenado */
-                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Security].uspGetUser", CommandType.StoredProcedure, parameters);
+                var result = await sqlConnector.ExecuteDataTableAsync("[Security].uspGetUser", CommandType.StoredProcedure, parameters);
                 if (result.Rows.Count <= 0)
                 {
                     response.IsSuccess = 2;
@@ -165,7 +164,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
                     return response;
                 }
                 /* Convertir fila a un objeto */
-                User? user = _sqlConnector.DataRowToObject<User>(result.Rows[0]);
+                var user = sqlConnector.DataRowToObject<User>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto */
                 if (user is null)
                 {
@@ -199,9 +198,9 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
             try
             {
                 /* Ejecutar procedimiento almacenado que recibe cada atributo por parámetro */
-                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Security].uspUpdateUser", CommandType.StoredProcedure, parameters);
+                var result = await sqlConnector.ExecuteDataTableAsync("[Security].uspUpdateUser", CommandType.StoredProcedure, parameters);
                 /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
-                response = _sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
+                response = sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
                 if (response is null)
                 {
@@ -212,26 +211,26 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
                     };
                     return response;
                 }
-                /* No paso una validación en el procedimiento almacenado */
-                if (response.IsSuccess == 1)
+
+                switch (response.IsSuccess)
                 {
-                    response.StatusCode = HttpStatusCode.BadRequest;
-                    return response;
+                    /* No paso una validación en el procedimiento almacenado */
+                    case 1:
+                        response.StatusCode = HttpStatusCode.BadRequest;
+                        return response;
+                    /* No existe el registro a actualizar */
+                    case 2:
+                        response.StatusCode = HttpStatusCode.NotFound;
+                        return response;
+                    /* Ocurrio algún error en el procedimiento almacenado */
+                    case 3:
+                        response.StatusCode = HttpStatusCode.InternalServerError;
+                        return response;
+                    default:
+                        /* Retornar código de éxito */
+                        response.StatusCode = HttpStatusCode.OK;
+                        break;
                 }
-                /* No existe el registro a actualizar */
-                if (response.IsSuccess == 2)
-                {
-                    response.StatusCode = HttpStatusCode.NotFound;
-                    return response;
-                }
-                /* Ocurrio algún error en el procedimiento almacenado */
-                if (response.IsSuccess == 3)
-                {
-                    response.StatusCode = HttpStatusCode.InternalServerError;
-                    return response;
-                }
-                /* Retornar código de éxito */
-                response.StatusCode = HttpStatusCode.OK;
             }
             catch (Exception ex)
             {
@@ -256,9 +255,9 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
             try
             {
                 /* Ejecutar procedimiento almacenado que recibe cada atributo por parámetro */
-                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Security].uspLogInUser", CommandType.StoredProcedure, parameters);
+                var result = await sqlConnector.ExecuteDataTableAsync("[Security].uspLogInUser", CommandType.StoredProcedure, parameters);
                 /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
-                response = _sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
+                response = sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
                 if (response is null)
                 {
@@ -269,18 +268,19 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
                     };
                     return response;
                 }
-                /* Ocurrio algún error o no paso una validación en el procedimiento almacenado */
-                if (response.IsSuccess == 1)
+
+                switch (response.IsSuccess)
                 {
-                    response.StatusCode = HttpStatusCode.BadRequest;
-                    return response;
+                    /* Ocurrio algún error o no paso una validación en el procedimiento almacenado */
+                    case 1:
+                        response.StatusCode = HttpStatusCode.BadRequest;
+                        return response;
+                    /* No existe un usuario con el nombre ingresado */
+                    case 2:
+                        response.StatusCode = HttpStatusCode.NotFound;
+                        return response;
                 }
-                /* No existe un usuario con el nombre ingresado */
-                if (response.IsSuccess == 2)
-                {
-                    response.StatusCode = HttpStatusCode.NotFound;
-                    return response;
-                }
+
                 /* Retornar código de éxito y UserId */
                 response.StatusCode = HttpStatusCode.OK;
                 entity.UserId = Convert.ToInt32(response.Result);

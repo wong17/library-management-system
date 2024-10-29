@@ -10,8 +10,6 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
 {
     public class SubCategoryRepository(ISqlConnector sqlConnector) : ISubCategoryRepository
     {
-        private readonly ISqlConnector _sqlConnector = sqlConnector;
-
         /* Para insertar una Sub categoria en la base de datos */
 
         public async Task<ApiResponse> Create(SubCategory entity)
@@ -23,9 +21,9 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
             try
             {
                 /* Ejecutar procedimiento almacenado que recibe cada atributo por parámetro */
-                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Library].uspInsertSubCategory", CommandType.StoredProcedure, parameters);
+                var result = await sqlConnector.ExecuteDataTableAsync("[Library].uspInsertSubCategory", CommandType.StoredProcedure, parameters);
                 /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
-                response = _sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
+                response = sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
                 if (response is null)
                 {
@@ -36,24 +34,23 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                     };
                     return response;
                 }
-                /* No paso una validación en el procedimiento almacenado */
-                if (response.IsSuccess == 1)
+
+                switch (response.IsSuccess)
                 {
-                    response.StatusCode = HttpStatusCode.BadRequest;
-                    return response;
+                    /* No paso una validación en el procedimiento almacenado */
+                    case 1:
+                        response.StatusCode = HttpStatusCode.BadRequest;
+                        return response;
+                    /* No existe el registro a eliminar */
+                    case 2:
+                        response.StatusCode = HttpStatusCode.NotFound;
+                        return response;
+                    /* Ocurrio algún error en el procedimiento almacenado */
+                    case 3:
+                        response.StatusCode = HttpStatusCode.InternalServerError;
+                        return response;
                 }
-                /* No existe el registro a eliminar */
-                if (response.IsSuccess == 2)
-                {
-                    response.StatusCode = HttpStatusCode.NotFound;
-                    return response;
-                }
-                /* Ocurrio algún error en el procedimiento almacenado */
-                if (response.IsSuccess == 3)
-                {
-                    response.StatusCode = HttpStatusCode.InternalServerError;
-                    return response;
-                }
+
                 /* Retornar código de éxito y objeto registrado */
                 response.StatusCode = HttpStatusCode.OK;
                 entity.SubCategoryId = Convert.ToInt32(response.Result);
@@ -76,14 +73,15 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
         public async Task<ApiResponse> CreateMany(IEnumerable<SubCategory> entities)
         {
             /* Convertir lista a DataTable */
-            DataTable table = _sqlConnector.ListToDataTable(entities);
+            var subCategories = entities.ToList();
+            var table = sqlConnector.ListToDataTable(subCategories);
             ApiResponse? response;
             try
             {
                 /* Ejecutar procedimiento almacenado que recibe tabla por parámetro */
-                DataSet result = await _sqlConnector.ExecuteSPWithTVPMany(table, "[Library].SubCategoryType", "[Library].uspInsertManySubCategory", "@SubCategories");
+                var result = await sqlConnector.ExecuteSpWithTvpMany(table, "[Library].SubCategoryType", "[Library].uspInsertManySubCategory", "@SubCategories");
                 /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
-                response = _sqlConnector.DataRowToObject<ApiResponse>(result.Tables[0].Rows[0]);
+                response = sqlConnector.DataRowToObject<ApiResponse>(result.Tables[0].Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
                 if (response is null)
                 {
@@ -94,31 +92,30 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                     };
                     return response;
                 }
-                /* No paso una validación en el procedimiento almacenado */
-                if (response.IsSuccess == 1)
+
+                switch (response.IsSuccess)
                 {
-                    response.StatusCode = HttpStatusCode.BadRequest;
-                    return response;
+                    /* No paso una validación en el procedimiento almacenado */
+                    case 1:
+                        response.StatusCode = HttpStatusCode.BadRequest;
+                        return response;
+                    /* No existe el registro a eliminar */
+                    case 2:
+                        response.StatusCode = HttpStatusCode.NotFound;
+                        return response;
+                    /* Ocurrio algún error en el procedimiento almacenado */
+                    case 3:
+                        response.StatusCode = HttpStatusCode.InternalServerError;
+                        return response;
                 }
-                /* No existe el registro a eliminar */
-                if (response.IsSuccess == 2)
-                {
-                    response.StatusCode = HttpStatusCode.NotFound;
-                    return response;
-                }
-                /* Ocurrio algún error en el procedimiento almacenado */
-                if (response.IsSuccess == 3)
-                {
-                    response.StatusCode = HttpStatusCode.InternalServerError;
-                    return response;
-                }
+
                 /* Retornar código de éxito y objeto registrado */
                 response.StatusCode = HttpStatusCode.OK;
                 /* Obtener los IDs insertados del segundo DataTable */
                 List<int> insertedIds = [.. result.Tables[1].AsEnumerable().Select(row => row.Field<int>("InsertedID"))];
                 /* Asignar IDs a los elementos correspondientes en la lista de entidades */
-                int index = 0;
-                foreach (var entity in entities)
+                var index = 0;
+                foreach (var entity in subCategories)
                 {
                     entity.SubCategoryId = insertedIds[index++];
                 }
@@ -146,9 +143,9 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
             try
             {
                 /* Ejecutar procedimiento almacenado para eliminar registro por medio del ID */
-                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Library].uspDeleteSubCategory", CommandType.StoredProcedure, parameters);
+                var result = await sqlConnector.ExecuteDataTableAsync("[Library].uspDeleteSubCategory", CommandType.StoredProcedure, parameters);
                 /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
-                response = _sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
+                response = sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
                 if (response is null)
                 {
@@ -159,26 +156,26 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                     };
                     return response;
                 }
-                /* No paso una validación en el procedimiento almacenado */
-                if (response.IsSuccess == 1)
+
+                switch (response.IsSuccess)
                 {
-                    response.StatusCode = HttpStatusCode.BadRequest;
-                    return response;
+                    /* No paso una validación en el procedimiento almacenado */
+                    case 1:
+                        response.StatusCode = HttpStatusCode.BadRequest;
+                        return response;
+                    /* No existe el registro a eliminar */
+                    case 2:
+                        response.StatusCode = HttpStatusCode.NotFound;
+                        return response;
+                    /* Ocurrio algún error en el procedimiento almacenado */
+                    case 3:
+                        response.StatusCode = HttpStatusCode.InternalServerError;
+                        return response;
+                    default:
+                        /* Retornar código de éxito */
+                        response.StatusCode = HttpStatusCode.OK;
+                        break;
                 }
-                /* No existe el registro a eliminar */
-                if (response.IsSuccess == 2)
-                {
-                    response.StatusCode = HttpStatusCode.NotFound;
-                    return response;
-                }
-                /* Ocurrio algún error en el procedimiento almacenado */
-                if (response.IsSuccess == 3)
-                {
-                    response.StatusCode = HttpStatusCode.InternalServerError;
-                    return response;
-                }
-                /* Retornar código de éxito */
-                response.StatusCode = HttpStatusCode.OK;
             }
             catch (Exception ex)
             {
@@ -200,9 +197,9 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
             try
             {
                 /* Ejecutar procedimiento almacenado */
-                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Library].uspGetSubCategory", CommandType.StoredProcedure);
+                var result = await sqlConnector.ExecuteDataTableAsync("[Library].uspGetSubCategory", CommandType.StoredProcedure);
                 /* Convertir DataTable a una Lista */
-                IEnumerable<SubCategory> subCategories = _sqlConnector.DataTableToList<SubCategory>(result);
+                var subCategories = sqlConnector.DataTableToList<SubCategory>(result);
                 /* Retornar lista de elementos y código de éxito */
                 response.IsSuccess = 0;
                 response.Result = subCategories;
@@ -227,7 +224,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
             try
             {
                 /* Ejecutar procedimiento almacenado */
-                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Library].uspGetSubCategory", CommandType.StoredProcedure, parameters);
+                var result = await sqlConnector.ExecuteDataTableAsync("[Library].uspGetSubCategory", CommandType.StoredProcedure, parameters);
                 if (result.Rows.Count <= 0)
                 {
                     response.IsSuccess = 2;
@@ -236,7 +233,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                     return response;
                 }
                 /* Convertir fila a un objeto */
-                SubCategory? subCategory = _sqlConnector.DataRowToObject<SubCategory>(result.Rows[0]);
+                var subCategory = sqlConnector.DataRowToObject<SubCategory>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto */
                 if (subCategory is null)
                 {
@@ -270,9 +267,9 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
             try
             {
                 /* Ejecutar procedimiento almacenado que recibe cada atributo por parámetro */
-                DataTable result = await _sqlConnector.ExecuteDataTableAsync("[Library].uspUpdateSubCategory", CommandType.StoredProcedure, parameters);
+                var result = await sqlConnector.ExecuteDataTableAsync("[Library].uspUpdateSubCategory", CommandType.StoredProcedure, parameters);
                 /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
-                response = _sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
+                response = sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
                 if (response is null)
                 {
@@ -283,26 +280,26 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                     };
                     return response;
                 }
-                /* No paso una validación en el procedimiento almacenado */
-                if (response.IsSuccess == 1)
+
+                switch (response.IsSuccess)
                 {
-                    response.StatusCode = HttpStatusCode.BadRequest;
-                    return response;
+                    /* No paso una validación en el procedimiento almacenado */
+                    case 1:
+                        response.StatusCode = HttpStatusCode.BadRequest;
+                        return response;
+                    /* No existe el registro a eliminar */
+                    case 2:
+                        response.StatusCode = HttpStatusCode.NotFound;
+                        return response;
+                    /* Ocurrio algún error en el procedimiento almacenado */
+                    case 3:
+                        response.StatusCode = HttpStatusCode.InternalServerError;
+                        return response;
+                    default:
+                        /* Retornar código de éxito */
+                        response.StatusCode = HttpStatusCode.OK;
+                        break;
                 }
-                /* No existe el registro a eliminar */
-                if (response.IsSuccess == 2)
-                {
-                    response.StatusCode = HttpStatusCode.NotFound;
-                    return response;
-                }
-                /* Ocurrio algún error en el procedimiento almacenado */
-                if (response.IsSuccess == 3)
-                {
-                    response.StatusCode = HttpStatusCode.InternalServerError;
-                    return response;
-                }
-                /* Retornar código de éxito */
-                response.StatusCode = HttpStatusCode.OK;
             }
             catch (Exception ex)
             {
@@ -321,14 +318,14 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
         public async Task<ApiResponse> UpdateMany(IEnumerable<SubCategory> entities)
         {
             /* Convertir lista a DataTable */
-            DataTable table = _sqlConnector.ListToDataTable(entities);
+            var table = sqlConnector.ListToDataTable(entities);
             ApiResponse? response;
             try
             {
                 /* Ejecutar procedimiento almacenado que recibe tabla por parámetro */
-                DataTable result = await _sqlConnector.ExecuteSPWithTVP(table, "[Library].SubCategoryType", "[Library].uspUpdateManySubCategory", "@SubCategories");
+                var result = await sqlConnector.ExecuteSpWithTvp(table, "[Library].SubCategoryType", "[Library].uspUpdateManySubCategory", "@SubCategories");
                 /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
-                response = _sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
+                response = sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
                 if (response is null)
                 {
@@ -339,27 +336,27 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                     };
                     return response;
                 }
-                /* No paso una validación en el procedimiento almacenado */
-                if (response.IsSuccess == 1)
+
+                switch (response.IsSuccess)
                 {
-                    response.StatusCode = HttpStatusCode.BadRequest;
-                    return response;
+                    /* No paso una validación en el procedimiento almacenado */
+                    case 1:
+                        response.StatusCode = HttpStatusCode.BadRequest;
+                        return response;
+                    /* No existe el registro a eliminar */
+                    case 2:
+                        response.StatusCode = HttpStatusCode.NotFound;
+                        return response;
+                    /* Ocurrio algún error en el procedimiento almacenado */
+                    case 3:
+                        response.StatusCode = HttpStatusCode.InternalServerError;
+                        return response;
+                    default:
+                        /* Retornar código de éxito y objeto registrado */
+                        response.StatusCode = HttpStatusCode.OK;
+                        response.Result = entities;
+                        break;
                 }
-                /* No existe el registro a eliminar */
-                if (response.IsSuccess == 2)
-                {
-                    response.StatusCode = HttpStatusCode.NotFound;
-                    return response;
-                }
-                /* Ocurrio algún error en el procedimiento almacenado */
-                if (response.IsSuccess == 3)
-                {
-                    response.StatusCode = HttpStatusCode.InternalServerError;
-                    return response;
-                }
-                /* Retornar código de éxito y objeto registrado */
-                response.StatusCode = HttpStatusCode.OK;
-                response.Result = entities;
             }
             catch (Exception ex)
             {

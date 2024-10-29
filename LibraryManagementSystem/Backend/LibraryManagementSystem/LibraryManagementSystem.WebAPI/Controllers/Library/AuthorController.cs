@@ -15,10 +15,6 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
     public class AuthorController(IAuthorBll authorBll, IMapper mapper,
         IHubContext<AuthorNotificationHub, IAuthorNotification> authorHubContext) : ControllerBase
     {
-        private readonly IAuthorBll _authorBll = authorBll;
-        private readonly IMapper _mapper = mapper;
-        private readonly IHubContext<AuthorNotificationHub, IAuthorNotification> _authorHubContext = authorHubContext;
-
         /// <summary>
         /// Inserta un Autor
         /// </summary>
@@ -33,7 +29,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (value is null)
                 return BadRequest(new ApiResponse() { Message = "Autor es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _authorBll.Create(_mapper.Map<Author>(value));
+            var response = await authorBll.Create(mapper.Map<Author>(value));
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
                 return BadRequest(response);
 
@@ -41,7 +37,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             // Notifica a todos los clientes
-            await _authorHubContext.Clients.All.SendAuthorNotification(true);
+            await authorHubContext.Clients.All.SendAuthorNotification(true);
 
             return Ok(response);
         }
@@ -63,7 +59,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (!list.Any())
                 return BadRequest(new ApiResponse() { Message = "La lista no tiene elementos a insertar.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _authorBll.CreateMany(_mapper.Map<IEnumerable<Author>>(list));
+            var response = await authorBll.CreateMany(mapper.Map<IEnumerable<Author>>(list));
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
                 return BadRequest(response);
 
@@ -71,7 +67,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             // Notifica a todos los clientes
-            await _authorHubContext.Clients.All.SendAuthorNotification(true);
+            await authorHubContext.Clients.All.SendAuthorNotification(true);
 
             return Ok(response);
         }
@@ -91,7 +87,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (id <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _authorBll.Delete(id);
+            var response = await authorBll.Delete(id);
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
                 return BadRequest(response);
 
@@ -102,7 +98,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             // Notifica a todos los clientes
-            await _authorHubContext.Clients.All.SendAuthorNotification(true);
+            await authorHubContext.Clients.All.SendAuthorNotification(true);
 
             return Ok(response);
         }
@@ -116,7 +112,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
         {
-            var response = await _authorBll.GetAll();
+            var response = await authorBll.GetAll();
             if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
@@ -138,7 +134,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (id <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _authorBll.GetById(id);
+            var response = await authorBll.GetById(id);
             if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
                 return NotFound(response);
 
@@ -163,7 +159,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (value is null)
                 return BadRequest(new ApiResponse() { Message = "Autor es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _authorBll.Update(_mapper.Map<Author>(value));
+            var response = await authorBll.Update(mapper.Map<Author>(value));
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
                 return BadRequest(response);
 
@@ -174,7 +170,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             // Notifica a todos los clientes
-            await _authorHubContext.Clients.All.SendAuthorNotification(true);
+            await authorHubContext.Clients.All.SendAuthorNotification(true);
 
             return Ok(response);
         }
@@ -197,7 +193,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (!list.Any())
                 return BadRequest(new ApiResponse() { Message = "La lista no tiene elementos a actualizar.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _authorBll.UpdateMany(_mapper.Map<IEnumerable<Author>>(list));
+            var response = await authorBll.UpdateMany(mapper.Map<IEnumerable<Author>>(list));
             if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
                 return BadRequest(response);
 
@@ -208,7 +204,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             // Notifica a todos los clientes
-            await _authorHubContext.Clients.All.SendAuthorNotification(true);
+            await authorHubContext.Clients.All.SendAuthorNotification(true);
 
             return Ok(response);
         }

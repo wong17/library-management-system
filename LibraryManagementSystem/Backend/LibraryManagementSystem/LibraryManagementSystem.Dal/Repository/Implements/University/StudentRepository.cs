@@ -10,8 +10,6 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.University
 {
     public class StudentRepository(ISqlConnector sqlConnector) : IStudentRepository
     {
-        private readonly ISqlConnector _sqlConnector = sqlConnector;
-
         /* Para obtener a todos los estudiantes de la base de datos */
 
         public async Task<ApiResponse> GetAll()
@@ -20,9 +18,9 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.University
             try
             {
                 /* Ejecutar procedimiento almacenado */
-                DataTable result = await _sqlConnector.ExecuteDataTableAsync("University.uspGetStudent", CommandType.StoredProcedure);
+                var result = await sqlConnector.ExecuteDataTableAsync("University.uspGetStudent", CommandType.StoredProcedure);
                 /* Convertir DataTable a una Lista */
-                IEnumerable<Student> students = _sqlConnector.DataTableToList<Student>(result);
+                var students = sqlConnector.DataTableToList<Student>(result);
                 /* Retornar lista de elementos y código de éxito */
                 response.IsSuccess = 0;
                 response.Result = students;
@@ -45,7 +43,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.University
             try
             {
                 /* Ejecutar procedimiento almacenado */
-                DataTable result = await _sqlConnector.ExecuteDataTableAsync("University.uspGetStudentByCarnet", CommandType.StoredProcedure, parameters);
+                var result = await sqlConnector.ExecuteDataTableAsync("University.uspGetStudentByCarnet", CommandType.StoredProcedure, parameters);
                 if (result.Rows.Count <= 0)
                 {
                     response.IsSuccess = 2;
@@ -54,7 +52,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.University
                     return response;
                 }
                 /* Convertir fila a un objeto */
-                Student? student = _sqlConnector.DataRowToObject<Student>(result.Rows[0]);
+                var student = sqlConnector.DataRowToObject<Student>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto */
                 if (student is null)
                 {
@@ -86,7 +84,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.University
             try
             {
                 /* Ejecutar procedimiento almacenado */
-                DataTable result = await _sqlConnector.ExecuteDataTableAsync("University.uspGetStudent", CommandType.StoredProcedure, parameters);
+                var result = await sqlConnector.ExecuteDataTableAsync("University.uspGetStudent", CommandType.StoredProcedure, parameters);
                 if (result.Rows.Count <= 0)
                 {
                     response.IsSuccess = 2;
@@ -95,7 +93,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.University
                     return response;
                 }
                 /* Convertir fila a un objeto */
-                Student? student = _sqlConnector.DataRowToObject<Student>(result.Rows[0]);
+                var student = sqlConnector.DataRowToObject<Student>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto */
                 if (student is null)
                 {

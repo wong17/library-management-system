@@ -10,8 +10,6 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.University
 {
     public class CareerRepository(ISqlConnector sqlConnector) : ICareerRepository
     {
-        private readonly ISqlConnector _sqlConnector = sqlConnector;
-
         /* Para obtener todas las carreras de la base de datos */
 
         public async Task<ApiResponse> GetAll()
@@ -20,9 +18,9 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.University
             try
             {
                 /* Ejecutar procedimiento almacenado */
-                DataTable result = await _sqlConnector.ExecuteDataTableAsync("University.uspGetCareer", CommandType.StoredProcedure);
+                var result = await sqlConnector.ExecuteDataTableAsync("University.uspGetCareer", CommandType.StoredProcedure);
                 /* Convertir DataTable a una Lista */
-                IEnumerable<Career> careers = _sqlConnector.DataTableToList<Career>(result);
+                var careers = sqlConnector.DataTableToList<Career>(result);
                 /* Retornar lista de elementos y código de éxito */
                 response.IsSuccess = 0;
                 response.Result = careers;
@@ -47,7 +45,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.University
             try
             {
                 /* Ejecutar procedimiento almacenado */
-                DataTable result = await _sqlConnector.ExecuteDataTableAsync("University.uspGetCareer", CommandType.StoredProcedure, parameters);
+                var result = await sqlConnector.ExecuteDataTableAsync("University.uspGetCareer", CommandType.StoredProcedure, parameters);
                 if (result.Rows.Count <= 0)
                 {
                     response.IsSuccess = 2;
@@ -56,7 +54,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.University
                     return response;
                 }
                 /* Convertir fila a un objeto */
-                Career? career = _sqlConnector.DataRowToObject<Career>(result.Rows[0]);
+                var career = sqlConnector.DataRowToObject<Career>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto */
                 if (career is null)
                 {

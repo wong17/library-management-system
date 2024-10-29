@@ -10,37 +10,31 @@ namespace LibraryManagementSystem.Bll.Implements.Security
 {
     public class UserBll(IUserRepository repository, IRoleBll roleBll, IUserRoleBll userRoleBll, IMapper mapper) : IUserBll
     {
-        private readonly IUserRepository _repository = repository;
-        private readonly IRoleBll _roleBll = roleBll;
-        private readonly IUserRoleBll _userRoleBll = userRoleBll;
-        private readonly IMapper _mapper = mapper;
+        public async Task<ApiResponse> Create(User entity) => await repository.Create(entity);
 
-        public async Task<ApiResponse> Create(User entity) => await _repository.Create(entity);
-
-        public async Task<ApiResponse> Delete(int id) => await _repository.Delete(id);
+        public async Task<ApiResponse> Delete(int id) => await repository.Delete(id);
 
         public async Task<ApiResponse> GetAll()
         {
-            var response = await _repository.GetAll();
+            var response = await repository.GetAll();
             // Comprobar si hay elementos
-            if (response.Result is null || response.Result is not IEnumerable<User> users)
+            if (response.Result is not IEnumerable<User> users)
                 return response;
 
             // Convertir users a UserDto
-            var usersDto = _mapper.Map<IEnumerable<UserDto>>(users).ToList();
+            var usersDto = mapper.Map<IEnumerable<UserDto>>(users).ToList();
 
             // Comprobar si hay roles
-            var rolesResponse = _roleBll.GetAll();
-            var userRolesResponse = _userRoleBll.GetAll();
+            var rolesResponse = roleBll.GetAll();
+            var userRolesResponse = userRoleBll.GetAll();
             if ((rolesResponse.Result.Result is not null && rolesResponse.Result.Result is IEnumerable<RoleDto> roles) && 
                 (userRolesResponse.Result.Result is not null && userRolesResponse.Result.Result is IEnumerable<UserRoleDto> userRoles))
             {
                 var rolesDictionary = roles.ToDictionary(r => r.RoleId);
                 var userRolesDictionary = ListHelper.ListToDictionary(userRoles.ToList(), ur => ur.UserId, ur => ur.RoleId);
 
-                for (int i = 0; i < usersDto.Count; i++)
+                foreach (var userDto in usersDto)
                 {
-                    var userDto = usersDto[i];
                     var allRoles = new List<RoleDto>();
 
                     // Si no se puede obtener la lista con id de todos los roles del usuario actual...
@@ -48,9 +42,8 @@ namespace LibraryManagementSystem.Bll.Implements.Security
                         continue;
 
                     // Recorrer lista de id de roles para obtener el RoleDto
-                    for (int j = 0; j < rolesList.Count; j++)
+                    foreach (var authorId in rolesList)
                     {
-                        var authorId = rolesList[j];
                         // Obtener role en base a su id
                         if (rolesDictionary.TryGetValue(authorId, out var authorDto))
                         {
@@ -70,19 +63,19 @@ namespace LibraryManagementSystem.Bll.Implements.Security
 
         public async Task<ApiResponse> GetById(int id)
         {
-            var response = await _repository.GetById(id);
+            var response = await repository.GetById(id);
             // Comprobar si hay un elemento
-            if (response.Result is null || response.Result is not User user)
+            if (response.Result is not User user)
                 return response;
 
             // Convertir user a UserDto
-            var userDto = _mapper.Map<UserDto>(user);
+            var userDto = mapper.Map<UserDto>(user);
 
             // Comprobar si hay roles
-            var rolesResponse = _roleBll.GetAll();
-            var userRolesResponse = _userRoleBll.GetAll();
-            if ((rolesResponse.Result.Result is not null && rolesResponse.Result.Result is IEnumerable<RoleDto> roles) &&
-                (userRolesResponse.Result.Result is not null && userRolesResponse.Result.Result is IEnumerable<UserRoleDto> userRoles))
+            var rolesResponse = roleBll.GetAll();
+            var userRolesResponse = userRoleBll.GetAll();
+            if (rolesResponse.Result.Result is IEnumerable<RoleDto> roles &&
+                userRolesResponse.Result.Result is IEnumerable<UserRoleDto> userRoles)
             {
                 var rolesDictionary = roles.ToDictionary(r => r.RoleId);
                 var userRolesDictionary = ListHelper.ListToDictionary(userRoles.ToList(), ur => ur.UserId, ur => ur.RoleId);
@@ -93,15 +86,15 @@ namespace LibraryManagementSystem.Bll.Implements.Security
                 if (userRolesDictionary.TryGetValue(userDto.UserId, out var rolesList))
                 {
                     // Recorrer lista de id de roles para obtener el RoleDto
-                    for (int j = 0; j < rolesList.Count; j++)
+                    foreach (var authorId in rolesList)
                     {
-                        var authorId = rolesList[j];
                         // Obtener role en base a su id
                         if (rolesDictionary.TryGetValue(authorId, out var authorDto))
                         {
                             allRoles.Add(authorDto);
                         }
                     }
+
                     // Asignar lista
                     userDto.Roles = allRoles;
                 }
@@ -113,24 +106,24 @@ namespace LibraryManagementSystem.Bll.Implements.Security
             return response;
         }
 
-        public async Task<ApiResponse> Update(User entity) => await _repository.Update(entity);
+        public async Task<ApiResponse> Update(User entity) => await repository.Update(entity);
 
         public async Task<ApiResponse> LogIn(User entity)
         {
-            var response = await _repository.LogIn(entity);
+            var response = await repository.LogIn(entity);
 
             // Comprobar si hay un elemento
-            if (response.Result is null || response.Result is not User user)
+            if (response.Result is not User user)
                 return response;
 
             // Convertir user a UserDto
-            var userDto = _mapper.Map<UserDto>(user);
+            var userDto = mapper.Map<UserDto>(user);
 
             // Comprobar si hay roles
-            var rolesResponse = _roleBll.GetAll();
-            var userRolesResponse = _userRoleBll.GetAll();
-            if ((rolesResponse.Result.Result is not null && rolesResponse.Result.Result is IEnumerable<RoleDto> roles) &&
-                (userRolesResponse.Result.Result is not null && userRolesResponse.Result.Result is IEnumerable<UserRoleDto> userRoles))
+            var rolesResponse = roleBll.GetAll();
+            var userRolesResponse = userRoleBll.GetAll();
+            if (rolesResponse.Result.Result is IEnumerable<RoleDto> roles &&
+                userRolesResponse.Result.Result is IEnumerable<UserRoleDto> userRoles)
             {
                 var rolesDictionary = roles.ToDictionary(r => r.RoleId);
                 var userRolesDictionary = ListHelper.ListToDictionary(userRoles.ToList(), ur => ur.UserId, ur => ur.RoleId);
@@ -141,15 +134,15 @@ namespace LibraryManagementSystem.Bll.Implements.Security
                 if (userRolesDictionary.TryGetValue(userDto.UserId, out var rolesList))
                 {
                     // Recorrer lista de id de roles para obtener el RoleDto
-                    for (int j = 0; j < rolesList.Count; j++)
+                    foreach (var authorId in rolesList)
                     {
-                        var authorId = rolesList[j];
                         // Obtener role en base a su id
                         if (rolesDictionary.TryGetValue(authorId, out var authorDto))
                         {
                             allRoles.Add(authorDto);
                         }
                     }
+
                     // Asignar lista
                     userDto.Roles = allRoles;
                 }

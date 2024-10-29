@@ -2,6 +2,6 @@
 {
     public enum TargetDatabase
     {
-        LibraryManagementDB
+        LibraryManagementDb
     }
 }

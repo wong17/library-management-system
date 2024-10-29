@@ -9,31 +9,27 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 {
     public class SubCategoryBll(ISubCategoryRepository repository, ICategoryBll categoryBll, IMapper mapper) : ISubCategoryBll
     {
-        private readonly ISubCategoryRepository _repository = repository;
-        private readonly ICategoryBll _categoryBll = categoryBll;
-        private readonly IMapper _mapper = mapper;
-
-        public async Task<ApiResponse> Create(SubCategory entity) => await _repository.Create(entity);
+        public async Task<ApiResponse> Create(SubCategory entity) => await repository.Create(entity);
 
         public async Task<ApiResponse> CreateMany(IEnumerable<SubCategory> entities)
         {
-            var response = await _repository.CreateMany(entities);
+            var response = await repository.CreateMany(entities);
             // Comprobar si hay elementos
-            if (response.Result is null || response.Result is not IEnumerable<SubCategory> subCategories)
+            if (response.Result is not IEnumerable<SubCategory> subCategories)
                 return response;
 
             // Obtener todos los ids de las categorias
             var categoryIds = subCategories.Select(sc => sc.CategoryId).ToList();
             // Convertir subCategories a SubCategoryDto
-            var subCategoriesDto = _mapper.Map<IEnumerable<SubCategoryDto>>(subCategories).ToList();
+            var subCategoriesDto = mapper.Map<IEnumerable<SubCategoryDto>>(subCategories).ToList();
 
             // 1. Comprobar si hay categorias
-            var categoriesResponse = _categoryBll.GetAll();
-            if (categoriesResponse.Result.Result is not null && categoriesResponse.Result.Result is IEnumerable<CategoryDto> categories)
+            var categoriesResponse = categoryBll.GetAll();
+            if (categoriesResponse.Result.Result is IEnumerable<CategoryDto> categories)
             {
                 var categoriesDictionary = categories.ToDictionary(c => c.CategoryId);
 
-                for (int i = 0; i < subCategoriesDto.Count; i++)
+                for (var i = 0; i < subCategoriesDto.Count; i++)
                 {
                     var subCategoryDto = subCategoriesDto[i];
                     var categoryId = categoryIds[i];
@@ -48,27 +44,27 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             return response;
         }
 
-        public async Task<ApiResponse> Delete(int id) => await _repository.Delete(id);
+        public async Task<ApiResponse> Delete(int id) => await repository.Delete(id);
 
         public async Task<ApiResponse> GetAll()
         {
-            var response = await _repository.GetAll();
+            var response = await repository.GetAll();
             // Comprobar si hay elementos
-            if (response.Result is null || response.Result is not IEnumerable<SubCategory> subCategories)
+            if (response.Result is not IEnumerable<SubCategory> subCategories)
                 return response;
 
             // Obtener todos los ids de las categorias
             var categoryIds = subCategories.Select(sc => sc.CategoryId).ToList();
             // Convertir subCategories a SubCategoryDto
-            var subCategoriesDto = _mapper.Map<IEnumerable<SubCategoryDto>>(subCategories).ToList();
+            var subCategoriesDto = mapper.Map<IEnumerable<SubCategoryDto>>(subCategories).ToList();
 
             // 1. Comprobar si hay categorias
-            var categoriesResponse = _categoryBll.GetAll();
-            if (categoriesResponse.Result.Result is not null && categoriesResponse.Result.Result is IEnumerable<CategoryDto> categories)
+            var categoriesResponse = categoryBll.GetAll();
+            if (categoriesResponse.Result.Result is IEnumerable<CategoryDto> categories)
             {
                 var categoriesDictionary = categories.ToDictionary(c => c.CategoryId);
 
-                for (int i = 0; i < subCategoriesDto.Count; i++)
+                for (var i = 0; i < subCategoriesDto.Count; i++)
                 {
                     var subCategoryDto = subCategoriesDto[i];
                     var categoryId = categoryIds[i];
@@ -85,19 +81,19 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 
         public async Task<ApiResponse> GetById(int id)
         {
-            var response = await _repository.GetById(id);
+            var response = await repository.GetById(id);
             // Comprobar si hay un elemento
-            if (response.Result is null || response.Result is not SubCategory subCategory)
+            if (response.Result is not SubCategory subCategory)
                 return response;
 
             // Obtener id de la categoria
             var categoryId = subCategory.CategoryId;
             // Convertir subCategory a SubCategoryDto
-            var subCategoryDto = _mapper.Map<SubCategoryDto>(subCategory);
+            var subCategoryDto = mapper.Map<SubCategoryDto>(subCategory);
 
             // 1. Comprobar si existe la categoria
-            var categoryResponse = _categoryBll.GetById(categoryId);
-            if (categoryResponse.Result.Result is not null && categoryResponse.Result.Result is CategoryDto category)
+            var categoryResponse = categoryBll.GetById(categoryId);
+            if (categoryResponse.Result.Result is CategoryDto category)
             {
                 subCategoryDto.Category = category;
             }
@@ -108,8 +104,8 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             return response;
         }
 
-        public async Task<ApiResponse> Update(SubCategory entity) => await _repository.Update(entity);
+        public async Task<ApiResponse> Update(SubCategory entity) => await repository.Update(entity);
 
-        public async Task<ApiResponse> UpdateMany(IEnumerable<SubCategory> entities) => await _repository.UpdateMany(entities);
+        public async Task<ApiResponse> UpdateMany(IEnumerable<SubCategory> entities) => await repository.UpdateMany(entities);
     }
 }

@@ -79,7 +79,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
             try
             {
                 /* Ejecutar procedimiento almacenado que recibe tabla por parámetro */
-                DataSet result = await _sqlConnector.ExecuteSPWithTVPMany(table, "[Library].BookSubCategoryType", "[Library].uspInsertManyBookSubCategory", "@BookSubCategories");
+                DataSet result = await _sqlConnector.ExecuteSpWithTvpMany(table, "[Library].BookSubCategoryType", "[Library].uspInsertManyBookSubCategory", "@BookSubCategories");
                 /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
                 response = _sqlConnector.DataRowToObject<ApiResponse>(result.Tables[0].Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
@@ -256,7 +256,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
             try
             {
                 /* Ejecutar procedimiento almacenado que recibe tabla por parámetro */
-                DataTable result = await _sqlConnector.ExecuteSPWithTVP(table, "[Library].BookSubcategoryType", "[Library].uspUpdateManyBookSubCategory", "@BookSubCategories");
+                var result = await _sqlConnector.ExecuteSpWithTvp(table, "[Library].BookSubcategoryType", "[Library].uspUpdateManyBookSubCategory", "@BookSubCategories");
                 /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
                 response = _sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
@@ -269,27 +269,27 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                     };
                     return response;
                 }
-                /* No paso una validación en el procedimiento almacenado */
-                if (response.IsSuccess == 1)
+
+                switch (response.IsSuccess)
                 {
-                    response.StatusCode = HttpStatusCode.BadRequest;
-                    return response;
+                    /* No paso una validación en el procedimiento almacenado */
+                    case 1:
+                        response.StatusCode = HttpStatusCode.BadRequest;
+                        return response;
+                    /* No existe el registro a eliminar */
+                    case 2:
+                        response.StatusCode = HttpStatusCode.NotFound;
+                        return response;
+                    /* Ocurrio algún error en el procedimiento almacenado */
+                    case 3:
+                        response.StatusCode = HttpStatusCode.InternalServerError;
+                        return response;
+                    default:
+                        /* Retornar código de éxito y objeto registrado */
+                        response.StatusCode = HttpStatusCode.OK;
+                        response.Result = entities;
+                        break;
                 }
-                /* No existe el registro a eliminar */
-                if (response.IsSuccess == 2)
-                {
-                    response.StatusCode = HttpStatusCode.NotFound;
-                    return response;
-                }
-                /* Ocurrio algún error en el procedimiento almacenado */
-                if (response.IsSuccess == 3)
-                {
-                    response.StatusCode = HttpStatusCode.InternalServerError;
-                    return response;
-                }
-                /* Retornar código de éxito y objeto registrado */
-                response.StatusCode = HttpStatusCode.OK;
-                response.Result = entities;
             }
             catch (Exception ex)
             {

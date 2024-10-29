@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LibraryManagementSystem.Bll.Configuration
 {
-    public static class ConfigureServicesBussinessLogic
+    public static class ConfigureServicesBusinessLogic
     {
         public static IServiceCollection AddBusinessLogicLayer(this IServiceCollection services)
         {
