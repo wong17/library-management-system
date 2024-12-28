@@ -9,9 +9,10 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 {
     public class MonographAuthorBll(IMonographAuthorRepository repository, IMapper mapper) : IMonographAuthorBll
     {
-        public async Task<ApiResponse> Create(MonographAuthor entity) => await repository.Create(entity);
+        public async Task<ApiResponse> Create(MonographAuthorInsertDto entity) => await repository.Create(mapper.Map<MonographAuthor>(entity));
 
-        public async Task<ApiResponse> CreateMany(IEnumerable<MonographAuthor> entities) => await repository.CreateMany(entities);
+        public async Task<ApiResponse> CreateMany(IEnumerable<MonographAuthorInsertDto> entities) =>
+            await repository.CreateMany(mapper.Map<IEnumerable<MonographAuthor>>(entities));
 
         public async Task<ApiResponse> Delete(int monographId, int authorId) => await repository.Delete(monographId, authorId);
 
@@ -35,10 +36,10 @@ namespace LibraryManagementSystem.Bll.Implements.Library
                 return response;
             // Retornar Dto
             response.Result = mapper.Map<MonographAuthorDto>(monographAuthor);
-
             return response;
         }
 
-        public async Task<ApiResponse> UpdateMany(IEnumerable<MonographAuthor> entities) => await repository.UpdateMany(entities);
+        public async Task<ApiResponse> UpdateMany(IEnumerable<MonographAuthorInsertDto> entities) =>
+            await repository.UpdateMany(mapper.Map<IEnumerable<MonographAuthor>>(entities));
     }
 }

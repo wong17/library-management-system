@@ -10,10 +10,10 @@ using LibraryManagementSystem.Entities.Models.Library;
 
 namespace LibraryManagementSystem.Bll.Implements.Library
 {
-    public class MonographBll(IMonographRepository repository, ICareerBll careerBll, IAuthorBll authorBll, 
+    public class MonographBll(IMonographRepository repository, ICareerBll careerBll, IAuthorBll authorBll,
         IMonographAuthorBll monographAuthorBll, IMapper mapper) : IMonographBll
     {
-        public async Task<ApiResponse> Create(Monograph entity) => await repository.Create(entity);
+        public async Task<ApiResponse> Create(MonographInsertDto entity) => await repository.Create(mapper.Map<Monograph>(entity));
 
         public async Task<ApiResponse> Delete(int id) => await repository.Delete(id);
 
@@ -34,12 +34,12 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             {
                 var careersDictionary = careers.ToDictionary(c => c.CareerId);
 
-                for(var i = 0; i < monographDtos.Count; i++)
+                for (var i = 0; i < monographDtos.Count; i++)
                 {
                     var monographDto = monographDtos[i];
                     var careerId = careerIds[i];
 
-                    if(careersDictionary.TryGetValue(Convert.ToByte(careerId), out var careerDto))
+                    if (careersDictionary.TryGetValue(Convert.ToByte(careerId), out var careerDto))
                     {
                         monographDto.Career = careerDto;
                     }
@@ -198,6 +198,6 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             return response;
         }
 
-        public async Task<ApiResponse> Update(Monograph entity) => await repository.Update(entity);
+        public async Task<ApiResponse> Update(MonographUpdateDto entity) => await repository.Update(mapper.Map<Monograph>(entity));
     }
 }

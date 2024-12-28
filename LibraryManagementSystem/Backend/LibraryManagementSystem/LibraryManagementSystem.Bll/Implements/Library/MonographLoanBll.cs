@@ -14,7 +14,7 @@ namespace LibraryManagementSystem.Bll.Implements.Library
     public class MonographLoanBll(IMonographLoanRepository repository, IMonographBll monographBll, IStudentBll studentBll,
         IUserBll userBll, IMapper mapper) : IMonographLoanBll
     {
-        public async Task<ApiResponse> Create(MonographLoan entity) => await repository.Create(entity);
+        public async Task<ApiResponse> Create(MonographLoanInsertDto entity) => await repository.Create(mapper.Map<MonographLoan>(entity));
 
         public async Task<ApiResponse> Delete(int id) => await repository.Delete(id);
 
@@ -323,7 +323,7 @@ namespace LibraryManagementSystem.Bll.Implements.Library
         public async Task<ApiResponse> UpdateBorrowedMonographLoan(UpdateBorrowedMonographLoanDto updateBorrowedMonographLoanDto) =>
             await repository.UpdateBorrowedMonographLoan(updateBorrowedMonographLoanDto);
 
-        public async Task<ApiResponse> UpdateReturnedMonographLoan(UpdateReturnedMonographLoanDto updateReturnedMonographLoanDto) => 
+        public async Task<ApiResponse> UpdateReturnedMonographLoan(UpdateReturnedMonographLoanDto updateReturnedMonographLoanDto) =>
             await repository.UpdateReturnedMonographLoan(updateReturnedMonographLoanDto);
     }
 }

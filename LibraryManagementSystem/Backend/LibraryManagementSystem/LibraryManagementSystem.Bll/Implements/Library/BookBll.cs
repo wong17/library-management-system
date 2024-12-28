@@ -8,10 +8,10 @@ using LibraryManagementSystem.Entities.Models.Library;
 
 namespace LibraryManagementSystem.Bll.Implements.Library
 {
-    public class BookBll(IBookRepository repository, IAuthorBll authorBll, IPublisherBll publisherBll, ICategoryBll categoryBll, 
+    public class BookBll(IBookRepository repository, IAuthorBll authorBll, IPublisherBll publisherBll, ICategoryBll categoryBll,
         ISubCategoryBll subCategoryBll, IBookAuthorBll bookAuthorBll, IBookSubCategoryBll bookSubCategoryBll, IMapper mapper) : IBookBll
     {
-        public async Task<ApiResponse> Create(Book entity) => await repository.Create(entity);
+        public async Task<ApiResponse> Create(BookInsertDto entity) => await repository.Create(mapper.Map<Book>(entity));
 
         public async Task<ApiResponse> Delete(int id) => await repository.Delete(id);
 
@@ -45,7 +45,6 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 
                     if (publishersDictionary.TryGetValue(publisherId, out var publisherDto)) { bookDto.Publisher = publisherDto; }
                 }
-
             }
 
             #endregion Publisher
@@ -74,12 +73,12 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             // 3. Comprobar si hay autores
             var authorsResponse = authorBll.GetAll();
             var bookAuthorsResponse = bookAuthorBll.GetAll();
-            if (authorsResponse.Result.Result is IEnumerable<AuthorDto> authors && 
+            if (authorsResponse.Result.Result is IEnumerable<AuthorDto> authors &&
                 bookAuthorsResponse.Result.Result is IEnumerable<BookAuthorDto> bookAuthors)
             {
                 var authorsDictionary = authors.ToDictionary(a => a.AuthorId);
                 var bookAuthorsDictionary = ListHelper.ListToDictionary(bookAuthors.ToList(), ba => ba.BookId, ba => ba.AuthorId);
-                
+
                 foreach (var bookDto in bookDtos)
                 {
                     var allAuthors = new List<AuthorDto>();
@@ -237,7 +236,7 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             return response;
         }
 
-        public async Task<ApiResponse> Update(Book entity) => await repository.Update(entity);
+        public async Task<ApiResponse> Update(BookUpdateDto entity) => await repository.Update(mapper.Map<Book>(entity));
 
         public async Task<ApiResponse> GetFilteredBook(FilterBookDto filterBookDto)
         {
@@ -269,7 +268,6 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 
                     if (publishersDictionary.TryGetValue(publisherId, out var publisherDto)) { bookDto.Publisher = publisherDto; }
                 }
-
             }
 
             #endregion Publisher

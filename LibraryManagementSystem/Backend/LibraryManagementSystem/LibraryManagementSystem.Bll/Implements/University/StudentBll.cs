@@ -20,7 +20,7 @@ namespace LibraryManagementSystem.Bll.Implements.University
             var careersResponse = await careerBll.GetAll();
             if (careersResponse.Result is not IEnumerable<CareerDto> careers)
                 return response;
-            
+
             // Crear diccionario de carreras
             var careerDictionary = careers.ToDictionary(c => c.CareerId);
 

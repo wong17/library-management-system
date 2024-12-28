@@ -7,7 +7,7 @@ namespace LibraryManagementSystem.Entities.Dtos.Library
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Id del préstamo de libro debe ser mayor que 0")]
         public int BookLoanId { get; set; }
-        
+
         [Required]
         public DateTime DueDate { get; set; }
 

@@ -9,9 +9,10 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 {
     public class BookSubCategoryBll(IBookSubCategoryRepository repository, IMapper mapper) : IBookSubCategoryBll
     {
-        public async Task<ApiResponse> Create(BookSubCategory entity) => await repository.Create(entity);
+        public async Task<ApiResponse> Create(BookSubCategoryInsertDto entity) => await repository.Create(mapper.Map<BookSubCategory>(entity));
 
-        public async Task<ApiResponse> CreateMany(IEnumerable<BookSubCategory> entities) => await repository.CreateMany(entities);
+        public async Task<ApiResponse> CreateMany(IEnumerable<BookSubCategoryInsertDto> entities) =>
+            await repository.CreateMany(mapper.Map<IEnumerable<BookSubCategory>>(entities));
 
         public async Task<ApiResponse> Delete(int bookId, int subCategoryId) => await repository.Delete(bookId, subCategoryId);
 
@@ -35,10 +36,10 @@ namespace LibraryManagementSystem.Bll.Implements.Library
                 return response;
             // Retornar Dto
             response.Result = mapper.Map<BookSubCategoryDto>(bookSubCategory);
-
             return response;
         }
 
-        public async Task<ApiResponse> UpdateMany(IEnumerable<BookSubCategory> entities) => await repository.UpdateMany(entities);
+        public async Task<ApiResponse> UpdateMany(IEnumerable<BookSubCategoryInsertDto> entities) =>
+            await repository.UpdateMany(mapper.Map<IEnumerable<BookSubCategory>>(entities));
     }
 }

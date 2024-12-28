@@ -13,7 +13,7 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 {
     public class BookLoanBll(IBookLoanRepository repository, IBookBll bookBll, IStudentBll studentBll, IUserBll userBll, IMapper mapper) : IBookLoanBll
     {
-        public async Task<ApiResponse> Create(BookLoan entity) => await repository.Create(entity);
+        public async Task<ApiResponse> Create(BookLoanInsertDto entity) => await repository.Create(mapper.Map<BookLoan>(entity));
 
         public async Task<ApiResponse> Delete(int id) => await repository.Delete(id);
 
@@ -42,12 +42,12 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             {
                 var studentsDictionary = students.ToDictionary(s => s.StudentId);
 
-                for(var i = 0; i < bookLoansDto.Count; i++)
+                for (var i = 0; i < bookLoansDto.Count; i++)
                 {
                     var bookLoanDto = bookLoansDto[i];
                     var studentId = studentIds[i];
 
-                    if(studentsDictionary.TryGetValue(studentId, out var studentDto))
+                    if (studentsDictionary.TryGetValue(studentId, out var studentDto))
                     {
                         bookLoanDto.Student = studentDto;
                     }
@@ -60,7 +60,7 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             {
                 var booksDictionary = books.ToDictionary(b => b.BookId);
 
-                for (var i = 0;i < bookLoansDto.Count; i++)
+                for (var i = 0; i < bookLoansDto.Count; i++)
                 {
                     var bookLoanDto = bookLoansDto[i];
                     var bookId = bookIds[i];
@@ -407,10 +407,10 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             return response;
         }
 
-        public async Task<ApiResponse> UpdateBorrowedBookLoan(UpdateBorrowedBookLoanDto updateBorrowedBookLoanDto) => 
+        public async Task<ApiResponse> UpdateBorrowedBookLoan(UpdateBorrowedBookLoanDto updateBorrowedBookLoanDto) =>
             await repository.UpdateBorrowedBookLoan(updateBorrowedBookLoanDto);
 
-        public async Task<ApiResponse> UpdateReturnedBookLoan(UpdateReturnedBookLoanDto updateReturnedBookLoanDto) => 
+        public async Task<ApiResponse> UpdateReturnedBookLoan(UpdateReturnedBookLoanDto updateReturnedBookLoanDto) =>
             await repository.UpdateReturnedBookLoan(updateReturnedBookLoanDto);
     }
 }

@@ -9,11 +9,11 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 {
     public class AuthorBll(IAuthorRepository repository, IMapper mapper) : IAuthorBll
     {
-        public async Task<ApiResponse> Create(Author entity) => await repository.Create(entity);
+        public async Task<ApiResponse> Create(AuthorInsertDto entity) => await repository.Create(mapper.Map<Author>(entity));
 
-        public async Task<ApiResponse> CreateMany(IEnumerable<Author> entities)
+        public async Task<ApiResponse> CreateMany(IEnumerable<AuthorInsertDto> entities)
         {
-            var response = await repository.CreateMany(entities);
+            var response = await repository.CreateMany(mapper.Map<IEnumerable<Author>>(entities));
             // Comprobar si hay elementos
             if (response.Result is not IEnumerable<Author> authors)
                 return response;
@@ -49,8 +49,9 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             return response;
         }
 
-        public async Task<ApiResponse> Update(Author entity) => await repository.Update(entity);
+        public async Task<ApiResponse> Update(AuthorUpdateDto entity) => await repository.Update(mapper.Map<Author>(entity));
 
-        public async Task<ApiResponse> UpdateMany(IEnumerable<Author> entities) => await repository.UpdateMany(entities);
+        public async Task<ApiResponse> UpdateMany(IEnumerable<AuthorUpdateDto> entities) => 
+            await repository.UpdateMany(mapper.Map<IEnumerable<Author>>(entities));
     }
 }

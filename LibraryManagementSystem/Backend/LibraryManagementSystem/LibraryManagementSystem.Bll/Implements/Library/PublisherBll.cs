@@ -9,11 +9,11 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 {
     public class PublisherBll(IPublisherRepository repository, IMapper mapper) : IPublisherBll
     {
-        public async Task<ApiResponse> Create(Publisher entity) => await repository.Create(entity);
+        public async Task<ApiResponse> Create(PublisherInsertDto entity) => await repository.Create(mapper.Map<Publisher>(entity));
 
-        public async Task<ApiResponse> CreateMany(IEnumerable<Publisher> entities)
+        public async Task<ApiResponse> CreateMany(IEnumerable<PublisherInsertDto> entities)
         {
-            var response = await repository.CreateMany(entities);
+            var response = await repository.CreateMany(mapper.Map<IEnumerable<Publisher>>(entities));
             // Comprobar si hay elementos
             if (response.Result is not IEnumerable<Publisher> publishers)
                 return response;
@@ -49,8 +49,9 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             return response;
         }
 
-        public async Task<ApiResponse> Update(Publisher entity) => await repository.Update(entity);
+        public async Task<ApiResponse> Update(PublisherUpdateDto entity) => await repository.Update(mapper.Map<Publisher>(entity));
 
-        public async Task<ApiResponse> UpdateMany(IEnumerable<Publisher> entities) => await repository.UpdateMany(entities);
+        public async Task<ApiResponse> UpdateMany(IEnumerable<PublisherUpdateDto> entities) =>
+            await repository.UpdateMany(mapper.Map<IEnumerable<Publisher>>(entities));
     }
 }

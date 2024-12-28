@@ -34,6 +34,7 @@
         public decimal Fine { get => fine; set => fine = value; }
         public DateTime CreatedOn { get => createdOn; set => createdOn = value; }
         public DateTime ModifiedOn { get => modifiedOn; set => modifiedOn = value; }
+
         // Career
         public CareerDto? Career { get => career; set => career = value; }
     }

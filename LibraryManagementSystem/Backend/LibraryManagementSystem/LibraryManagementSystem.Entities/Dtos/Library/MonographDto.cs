@@ -25,8 +25,10 @@ namespace LibraryManagementSystem.Entities.Dtos.Library
         public string? Image { get => image; set => image = value; }
         public bool IsActive { get => isActive; set => isActive = value; }
         public bool IsAvailable { get => isAvailable; set => isAvailable = value; }
+
         // Career
         public CareerDto? Career { get => career; set => career = value; }
+
         // Authors
         public List<AuthorDto>? Authors { get => authors; set => authors = value; }
     }

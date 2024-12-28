@@ -12,7 +12,7 @@ namespace LibraryManagementSystem.Bll.Configuration
 {
     public static class ConfigureServicesBusinessLogic
     {
-        public static IServiceCollection AddBusinessLogicLayer(this IServiceCollection services)
+        public static void AddBusinessLogicLayer(this IServiceCollection services)
         {
             /* Agregar primero servicios de Data Access Layer (DAL) */
             services.AddDataAccessLayer();
@@ -37,8 +37,6 @@ namespace LibraryManagementSystem.Bll.Configuration
             services.AddScoped<IMonographAuthorBll, MonographAuthorBll>();
             /* Agregar configuración de AutoMapper */
             services.AddAutoMapper(typeof(AutoMapperProfile));
-
-            return services;
         }
     }
 }

@@ -48,7 +48,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.University
                 var result = await sqlConnector.ExecuteDataTableAsync("University.uspGetCareer", CommandType.StoredProcedure, parameters);
                 if (result.Rows.Count <= 0)
                 {
-                    response.IsSuccess = 2;
+                    response.IsSuccess = ApiResponseCode.ResourceNotFound;
                     response.StatusCode = HttpStatusCode.NotFound;
                     response.Message = "No se encontro un registro con el ID ingresado.";
                     return response;

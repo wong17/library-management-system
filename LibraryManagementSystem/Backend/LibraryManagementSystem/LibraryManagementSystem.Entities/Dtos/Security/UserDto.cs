@@ -22,6 +22,7 @@
         public DateTime RefreshTokenExpiryTime { get => refreshTokenExpiryTime; set => refreshTokenExpiryTime = value; }
         public bool LockoutEnabled { get => lockoutEnabled; set => lockoutEnabled = value; }
         public int AccessFailedCount { get => accessFailedCount; set => accessFailedCount = value; }
+
         // Roles
         public List<RoleDto>? Roles { get => roles; set => roles = value; }
     }

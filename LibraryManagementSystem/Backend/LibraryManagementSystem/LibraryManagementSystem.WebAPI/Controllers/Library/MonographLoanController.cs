@@ -1,26 +1,18 @@
-﻿using System.Net;
-using AutoMapper;
-using LibraryManagementSystem.Bll.Interfaces.Library;
+﻿using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
-using LibraryManagementSystem.Entities.Models.Library;
 using LibraryManagementSystem.WebAPI.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System.Net;
 
 namespace LibraryManagementSystem.WebAPI.Controllers.Library
 {
     [Route("api/monograph_loans")]
     [ApiController]
-    public class MonographLoanController(IMonographLoanBll monographLoanBll, IMapper mapper,
-        IHubContext<MonographLoanNotificationHub, ILoanNotification> hubContext,
+    public class MonographLoanController(IMonographLoanBll monographLoanBll, IHubContext<MonographLoanNotificationHub, ILoanNotification> hubContext,
         IHubContext<MonographNotificationHub, IMonographNotification> monographHubContext) : ControllerBase
     {
-        private readonly IMonographLoanBll _monographLoanBll = monographLoanBll;
-        private readonly IMapper _mapper = mapper;
-        private readonly IHubContext<MonographLoanNotificationHub, ILoanNotification> _hubContext = hubContext;
-        private readonly IHubContext<MonographNotificationHub, IMonographNotification> _monographHubContext = monographHubContext;
-
         /// <summary>
         /// Inserta un préstamo de monografia
         /// </summary>
@@ -30,25 +22,28 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] MonographLoanInsertDto value)
+        public async Task<IActionResult> Create([FromBody] MonographLoanInsertDto? value)
         {
             if (value is null)
                 return BadRequest(new ApiResponse() { Message = "Préstamo de monografia es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _monographLoanBll.Create(_mapper.Map<MonographLoan>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await monographLoanBll.Create(value);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
+                case { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound }:
+                    return NotFound(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
 
             // Notifica a clientes con rol admin o bibliotecario
-            await _hubContext.Clients.All.SendLoanNotification(true);
+            await hubContext.Clients.All.SendLoanNotification(true);
             // Notifica a todos los clientes
-            await _monographHubContext.Clients.All.SendMonographNotification(true);
+            await monographHubContext.Clients.All.SendMonographNotification(true);
 
             return Ok(response);
         }
@@ -68,20 +63,23 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (id <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _monographLoanBll.Delete(id);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await monographLoanBll.Delete(id);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
+                case { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound }:
+                    return NotFound(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
 
             // Notifica a clientes con rol admin o bibliotecario
-            await _hubContext.Clients.All.SendLoanNotification(true);
+            await hubContext.Clients.All.SendLoanNotification(true);
             // Notifica a todos los clientes
-            await _monographHubContext.Clients.All.SendMonographNotification(true);
+            await monographHubContext.Clients.All.SendMonographNotification(true);
 
             return Ok(response);
         }
@@ -95,8 +93,8 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
         {
-            var response = await _monographLoanBll.GetAll();
-            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
+            var response = await monographLoanBll.GetAll();
+            if (response.IsSuccess is ApiResponseCode.ValidationError or ApiResponseCode.DatabaseError && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -117,14 +115,15 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (id <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _monographLoanBll.GetById(id);
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
-
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
-            return Ok(response);
+            var response = await monographLoanBll.GetById(id);
+            return response switch
+            {
+                { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound } => NotFound(
+                    response),
+                { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError } =>
+                    StatusCode(StatusCodes.Status500InternalServerError, response),
+                _ => Ok(response)
+            };
         }
 
         /// <summary>
@@ -142,8 +141,8 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (string.IsNullOrEmpty(state))
                 return BadRequest(new ApiResponse() { Message = "State no puede ser null o vacio.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _monographLoanBll.GetMonographLoanByState(state);
-            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
+            var response = await monographLoanBll.GetMonographLoanByState(state);
+            if (response.IsSuccess is ApiResponseCode.ValidationError or ApiResponseCode.DatabaseError && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -164,8 +163,8 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (string.IsNullOrEmpty(carnet))
                 return BadRequest(new ApiResponse() { Message = "Carnet no puede ser null o vacio.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _monographLoanBll.GetMonographLoanByStudentCarnet(carnet);
-            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
+            var response = await monographLoanBll.GetMonographLoanByStudentCarnet(carnet);
+            if (response.IsSuccess is ApiResponseCode.ValidationError or ApiResponseCode.DatabaseError && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -181,25 +180,28 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateBorrowedMonographLoan(UpdateBorrowedMonographLoanDto updateBorrowedMonographLoanDto)
+        public async Task<IActionResult> UpdateBorrowedMonographLoan(UpdateBorrowedMonographLoanDto? updateBorrowedMonographLoanDto)
         {
             if (updateBorrowedMonographLoanDto is null)
                 return BadRequest(new ApiResponse() { Message = "Dto es null", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _monographLoanBll.UpdateBorrowedMonographLoan(updateBorrowedMonographLoanDto);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await monographLoanBll.UpdateBorrowedMonographLoan(updateBorrowedMonographLoanDto);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
+                case { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound }:
+                    return NotFound(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
 
             // Notifica a clientes con rol admin o bibliotecario
-            await _hubContext.Clients.All.SendLoanNotification(true);
+            await hubContext.Clients.All.SendLoanNotification(true);
             // Notifica a todos los clientes
-            await _monographHubContext.Clients.All.SendMonographNotification(true);
+            await monographHubContext.Clients.All.SendMonographNotification(true);
 
             return Ok(response);
         }
@@ -214,25 +216,28 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateReturnedMonographLoan(UpdateReturnedMonographLoanDto updateReturnedMonographLoanDto)
+        public async Task<IActionResult> UpdateReturnedMonographLoan(UpdateReturnedMonographLoanDto? updateReturnedMonographLoanDto)
         {
             if (updateReturnedMonographLoanDto is null)
                 return BadRequest(new ApiResponse() { Message = "Dto es null", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _monographLoanBll.UpdateReturnedMonographLoan(updateReturnedMonographLoanDto);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await monographLoanBll.UpdateReturnedMonographLoan(updateReturnedMonographLoanDto);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
+                case { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound }:
+                    return NotFound(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
 
             // Notifica a clientes con rol admin o bibliotecario
-            await _hubContext.Clients.All.SendLoanNotification(true);
+            await hubContext.Clients.All.SendLoanNotification(true);
             // Notifica a todos los clientes
-            await _monographHubContext.Clients.All.SendMonographNotification(true);
+            await monographHubContext.Clients.All.SendMonographNotification(true);
 
             return Ok(response);
         }

@@ -1,6 +1,6 @@
-using Microsoft.OpenApi.Models;
 using LibraryManagementSystem.Bll.Configuration;
 using LibraryManagementSystem.WebAPI.Hubs;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +11,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngularApp", policy =>
     {
         policy.WithOrigins(
-            "http://localhost:4200",    // admin 
+            "http://localhost:4200",    // admin
             "http://localhost:4201",    // bibliotecario
             "http://localhost:4202")    // estudiante
               .AllowAnyHeader()
@@ -29,8 +29,8 @@ builder.Services.AddSwaggerGen(config =>
     {
         Version = "v1",
         Title = "Swagger UI - Library Management System",
-        Description = "API - Sistema para gestión de biblioteca universitaria, diseñado para llevar el control tanto de libros como monografías y " +
-                        "préstamos de estos realizados por los estudiantes.",
+        Description = "API - Sistema para gestiÃ³n de biblioteca universitaria, diseÃ±ado para llevar el control tanto de libros como monografÃ­as y " +
+                        "prÃ©stamos de estos realizados por los estudiantes.",
         Contact = new OpenApiContact
         {
             Name = "Denis Wong",
@@ -46,11 +46,11 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.DocumentTitle = "Swagger UI - Library Management System";
-    });
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.DocumentTitle = "Swagger UI - Library Management System";
+});
 //}
 
 /* Habilitar CORS */

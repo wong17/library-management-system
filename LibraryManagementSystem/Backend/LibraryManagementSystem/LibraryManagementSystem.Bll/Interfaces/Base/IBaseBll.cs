@@ -1,4 +1,5 @@
 ﻿namespace LibraryManagementSystem.Bll.Interfaces.Base
 {
-    public interface IBaseBll { }
+    public interface IBaseBll
+    { }
 }

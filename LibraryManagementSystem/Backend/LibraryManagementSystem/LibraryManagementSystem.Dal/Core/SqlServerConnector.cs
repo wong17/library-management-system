@@ -13,6 +13,7 @@ namespace LibraryManagementSystem.Dal.Core
         private readonly string? _connectionString = configuration.GetConnectionString(database.ToString());
 
         /* Para ejecutar un procedimiento almacenado que reciba una lista de parámetros y nos devuelva por medio de una sentencia select una respuesta */
+
         public async Task<DataTable> ExecuteDataTableAsync(string commandText, CommandType commandType)
         {
             DataTable dataTable = new();
@@ -43,6 +44,7 @@ namespace LibraryManagementSystem.Dal.Core
         }
 
         /* Para ejecutar procedimientos almacenados que reciben por parámetro una tabla como tipo de dato y devuelven por medio de una o varias sentencia SELECT la respuesta */
+
         public async Task<DataTable> ExecuteSpWithTvp(DataTable dataTable, string tableTypeName, string procedureName, string procedureParameterName)
         {
             await using SqlConnection connection = new(_connectionString);
@@ -83,6 +85,7 @@ namespace LibraryManagementSystem.Dal.Core
         }
 
         /* Convierte un objeto a un DataTable */
+
         public DataTable ObjectToDataTable<T>(T obj) where T : class
         {
             DataTable dataTable = new(typeof(T).Name);
@@ -100,6 +103,7 @@ namespace LibraryManagementSystem.Dal.Core
         }
 
         /* Convierte un DataRow a un objeto, la fila de una DataTable a un objeto de tipo T */
+
         public T? DataRowToObject<T>(DataRow row) where T : class, new()
         {
             T obj = new();
@@ -117,10 +121,11 @@ namespace LibraryManagementSystem.Dal.Core
         }
 
         /* Convierte un DataTable a una lista de objetos de tipo T */
+
         public IEnumerable<T> DataTableToList<T>(DataTable table) where T : class, new()
         {
             if (table.Rows.Count == 0)
-                return Enumerable.Empty<T>();
+                return [];
 
             var list = new List<T>();
 
@@ -135,6 +140,7 @@ namespace LibraryManagementSystem.Dal.Core
         }
 
         /* Convierte una lista a un DataTable */
+
         public DataTable ListToDataTable<T>(IEnumerable<T> list) where T : class
         {
             DataTable dataTable = new(typeof(T).Name);

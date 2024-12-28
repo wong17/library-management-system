@@ -1,24 +1,17 @@
-﻿using System.Net;
-using AutoMapper;
-using LibraryManagementSystem.Bll.Interfaces.Library;
+﻿using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
-using LibraryManagementSystem.Entities.Models.Library;
 using LibraryManagementSystem.WebAPI.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System.Net;
 
 namespace LibraryManagementSystem.WebAPI.Controllers.Library
 {
     [Route("api/publishers")]
     [ApiController]
-    public class PublisherController(IPublisherBll publisherBll, IMapper mapper,
-        IHubContext<PublisherNotificationHub, IPublisherNotification> publisherHubContext) : ControllerBase
+    public class PublisherController(IPublisherBll publisherBll, IHubContext<PublisherNotificationHub, IPublisherNotification> publisherHubContext) : ControllerBase
     {
-        private readonly IPublisherBll _publisherBll = publisherBll;
-        private readonly IMapper _mapper = mapper;
-        private readonly IHubContext<PublisherNotificationHub, IPublisherNotification> _publisherHubContext = publisherHubContext;
-
         /// <summary>
         /// Inserta una Editorial
         /// </summary>
@@ -28,22 +21,26 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] PublisherInsertDto value)
+        public async Task<IActionResult> Create([FromBody] PublisherInsertDto? value)
         {
             if (value is null)
                 return BadRequest(new ApiResponse() { Message = "Editorial es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _publisherBll.Create(_mapper.Map<Publisher>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await publisherBll.Create(value);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
 
-            // Notifica a todos los clientes
-            await _publisherHubContext.Clients.All.SendPublisherNotification(true);
+                default:
+                    // Notifica a todos los clientes
+                    await publisherHubContext.Clients.All.SendPublisherNotification(true);
 
-            return Ok(response);
+                    return Ok(response);
+            }
         }
 
         /// <summary>
@@ -55,7 +52,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateMany([FromBody] IEnumerable<PublisherInsertDto> list)
+        public async Task<IActionResult> CreateMany([FromBody] IEnumerable<PublisherInsertDto>? list)
         {
             if (list is null)
                 return BadRequest(new ApiResponse() { Message = "Lista de Editoriales es null.", StatusCode = HttpStatusCode.BadRequest });
@@ -63,17 +60,21 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (!list.Any())
                 return BadRequest(new ApiResponse() { Message = "La lista no tiene elementos a insertar.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _publisherBll.CreateMany(_mapper.Map<IEnumerable<Publisher>>(list));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await publisherBll.CreateMany(list);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
 
-            // Notifica a todos los clientes
-            await _publisherHubContext.Clients.All.SendPublisherNotification(true);
+                default:
+                    // Notifica a todos los clientes
+                    await publisherHubContext.Clients.All.SendPublisherNotification(true);
 
-            return Ok(response);
+                    return Ok(response);
+            }
         }
 
         /// <summary>
@@ -91,20 +92,24 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (id <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _publisherBll.Delete(id);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await publisherBll.Delete(id);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
+                case { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound }:
+                    return NotFound(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
 
-            // Notifica a todos los clientes
-            await _publisherHubContext.Clients.All.SendPublisherNotification(true);
+                default:
+                    // Notifica a todos los clientes
+                    await publisherHubContext.Clients.All.SendPublisherNotification(true);
 
-            return Ok(response);
+                    return Ok(response);
+            }
         }
 
         /// <summary>
@@ -116,8 +121,8 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
         {
-            var response = await _publisherBll.GetAll();
-            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
+            var response = await publisherBll.GetAll();
+            if (response.IsSuccess is ApiResponseCode.ValidationError or ApiResponseCode.DatabaseError && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -138,14 +143,15 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (id <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _publisherBll.GetById(id);
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
-
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
-            return Ok(response);
+            var response = await publisherBll.GetById(id);
+            return response switch
+            {
+                { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound } => NotFound(
+                    response),
+                { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError } =>
+                    StatusCode(StatusCodes.Status500InternalServerError, response),
+                _ => Ok(response)
+            };
         }
 
         /// <summary>
@@ -158,25 +164,29 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update([FromBody] PublisherUpdateDto value)
+        public async Task<IActionResult> Update([FromBody] PublisherUpdateDto? value)
         {
             if (value is null)
                 return BadRequest(new ApiResponse() { Message = "Editorial es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _publisherBll.Update(_mapper.Map<Publisher>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await publisherBll.Update(value);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
+                case { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound }:
+                    return NotFound(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
 
-            // Notifica a todos los clientes
-            await _publisherHubContext.Clients.All.SendPublisherNotification(true);
+                default:
+                    // Notifica a todos los clientes
+                    await publisherHubContext.Clients.All.SendPublisherNotification(true);
 
-            return Ok(response);
+                    return Ok(response);
+            }
         }
 
         /// <summary>
@@ -189,7 +199,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateMany([FromBody] IEnumerable<PublisherUpdateDto> list)
+        public async Task<IActionResult> UpdateMany([FromBody] IEnumerable<PublisherUpdateDto>? list)
         {
             if (list is null)
                 return BadRequest(new ApiResponse() { Message = "Lista de Editoriales es null.", StatusCode = HttpStatusCode.BadRequest });
@@ -197,20 +207,24 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (!list.Any())
                 return BadRequest(new ApiResponse() { Message = "La lista no tiene elementos a actualizar.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _publisherBll.UpdateMany(_mapper.Map<IEnumerable<Publisher>>(list));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await publisherBll.UpdateMany(list);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
+                case { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound }:
+                    return NotFound(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
 
-            // Notifica a todos los clientes
-            await _publisherHubContext.Clients.All.SendPublisherNotification(true);
+                default:
+                    // Notifica a todos los clientes
+                    await publisherHubContext.Clients.All.SendPublisherNotification(true);
 
-            return Ok(response);
+                    return Ok(response);
+            }
         }
     }
 }

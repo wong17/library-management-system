@@ -1,20 +1,15 @@
-﻿using System.Net;
-using AutoMapper;
-using LibraryManagementSystem.Bll.Interfaces.Library;
+﻿using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
-using LibraryManagementSystem.Entities.Models.Library;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace LibraryManagementSystem.WebAPI.Controllers.Library
 {
     [Route("api/book_subcategories")]
     [ApiController]
-    public class BookSubCategoryController(IBookSubCategoryBll bookSubCategoryBll, IMapper mapper) : ControllerBase
+    public class BookSubCategoryController(IBookSubCategoryBll bookSubCategoryBll) : ControllerBase
     {
-        private readonly IBookSubCategoryBll _bookSubCategoryBll = bookSubCategoryBll;
-        private readonly IMapper _mapper = mapper;
-
         /// <summary>
         /// Inserta una Sub categoria para el libro
         /// </summary>
@@ -25,22 +20,22 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] BookSubCategoryInsertDto value)
+        public async Task<IActionResult> Create([FromBody] BookSubCategoryInsertDto? value)
         {
             if (value is null)
                 return BadRequest(new ApiResponse() { Message = "Sub categoria del libro es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookSubCategoryBll.Create(_mapper.Map<BookSubCategory>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
-
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
-
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
-            return Ok(response);
+            var response = await bookSubCategoryBll.Create(value);
+            return response switch
+            {
+                { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest } => BadRequest(
+                    response),
+                { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound } => NotFound(
+                    response),
+                { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError } =>
+                    StatusCode(StatusCodes.Status500InternalServerError, response),
+                _ => Ok(response)
+            };
         }
 
         /// <summary>
@@ -52,7 +47,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateMany([FromBody] IEnumerable<BookSubCategoryInsertDto> list)
+        public async Task<IActionResult> CreateMany([FromBody] IEnumerable<BookSubCategoryInsertDto>? list)
         {
             if (list is null)
                 return BadRequest(new ApiResponse() { Message = "Lista de Sub categorías para el libro es null.", StatusCode = HttpStatusCode.BadRequest });
@@ -60,23 +55,24 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (!list.Any())
                 return BadRequest(new ApiResponse() { Message = "La lista no tiene elementos a insertar.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookSubCategoryBll.CreateMany(_mapper.Map<IEnumerable<BookSubCategory>>(list));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
-
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
-
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
-            return Ok(response);
+            var response = await bookSubCategoryBll.CreateMany(list);
+            return response switch
+            {
+                { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest } => BadRequest(
+                    response),
+                { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound } => NotFound(
+                    response),
+                { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError } =>
+                    StatusCode(StatusCodes.Status500InternalServerError, response),
+                _ => Ok(response)
+            };
         }
 
         /// <summary>
         /// Elimina una sub categoria para el libro por su Id
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="bookId"></param>
+        /// <param name="subCategoryId"></param>
         /// <returns></returns>
         [HttpDelete("delete/{bookId:int}/{subCategoryId:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
@@ -88,17 +84,17 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (bookId <= 0 || subCategoryId <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id(s) no pueden ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookSubCategoryBll.Delete(bookId, subCategoryId);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
-
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
-
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
-            return Ok(response);
+            var response = await bookSubCategoryBll.Delete(bookId, subCategoryId);
+            return response switch
+            {
+                { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest } => BadRequest(
+                    response),
+                { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound } => NotFound(
+                    response),
+                { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError } =>
+                    StatusCode(StatusCodes.Status500InternalServerError, response),
+                _ => Ok(response)
+            };
         }
 
         /// <summary>
@@ -110,8 +106,8 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
         {
-            var response = await _bookSubCategoryBll.GetAll();
-            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
+            var response = await bookSubCategoryBll.GetAll();
+            if (response.IsSuccess is ApiResponseCode.ValidationError or ApiResponseCode.DatabaseError && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -120,7 +116,8 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         /// <summary>
         /// Devuelve una sub categoria del libro por su Id
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="bookId"></param>
+        /// <param name="subCategoryId"></param>
         /// <returns></returns>
         [HttpGet("get_by_id/{bookId:int}/{subCategoryId:int}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
@@ -132,14 +129,15 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (bookId <= 0 || subCategoryId <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id(s) no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookSubCategoryBll.GetById(bookId, subCategoryId);
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
-
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
-            return Ok(response);
+            var response = await bookSubCategoryBll.GetById(bookId, subCategoryId);
+            return response switch
+            {
+                { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound } => NotFound(
+                    response),
+                { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError } =>
+                    StatusCode(StatusCodes.Status500InternalServerError, response),
+                _ => Ok(response)
+            };
         }
 
         /// <summary>
@@ -152,7 +150,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateMany([FromBody] IEnumerable<BookSubCategoryInsertDto> list)
+        public async Task<IActionResult> UpdateMany([FromBody] IEnumerable<BookSubCategoryInsertDto>? list)
         {
             if (list is null)
                 return BadRequest(new ApiResponse() { Message = "Lista de Sub categorías es null.", StatusCode = HttpStatusCode.BadRequest });
@@ -160,17 +158,17 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (!list.Any())
                 return BadRequest(new ApiResponse() { Message = "La lista no tiene elementos a actualizar.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookSubCategoryBll.UpdateMany(_mapper.Map<IEnumerable<BookSubCategory>>(list));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
-
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
-
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
-            return Ok(response);
+            var response = await bookSubCategoryBll.UpdateMany(list);
+            return response switch
+            {
+                { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest } => BadRequest(
+                    response),
+                { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound } => NotFound(
+                    response),
+                { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError } =>
+                    StatusCode(StatusCodes.Status500InternalServerError, response),
+                _ => Ok(response)
+            };
         }
     }
 }

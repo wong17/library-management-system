@@ -3,7 +3,7 @@
     public static class ListHelper
     {
         // Esta función hace magia
-        public static IDictionary<TKey, List<TValue>>ListToDictionary<T, TKey, TValue>
+        public static IDictionary<TKey, List<TValue>> ListToDictionary<T, TKey, TValue>
             (List<T> list, Func<T, TKey> keySelector, Func<T, TValue> valueSelector) where TKey : notnull
         {
             var dictionary = new Dictionary<TKey, List<TValue>>();

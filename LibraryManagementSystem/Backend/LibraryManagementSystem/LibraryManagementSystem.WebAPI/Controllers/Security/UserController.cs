@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using LibraryManagementSystem.Bll.Interfaces.Security;
+﻿using LibraryManagementSystem.Bll.Interfaces.Security;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Security;
-using LibraryManagementSystem.Entities.Models.Security;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -10,11 +8,8 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
 {
     [Route("api/users")]
     [ApiController]
-    public class UserController(IUserBll userBll, IMapper mapper) : ControllerBase
+    public class UserController(IUserBll userBll) : ControllerBase
     {
-        private readonly IUserBll _userBll = userBll;
-        private readonly IMapper _mapper = mapper;
-
         /// <summary>
         /// Inserta un Usuario
         /// </summary>
@@ -24,19 +19,20 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] UserInsertDto value)
+        public async Task<IActionResult> Create([FromBody] UserInsertDto? value)
         {
             if (value is null)
                 return BadRequest(new ApiResponse() { Message = "Usuario es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _userBll.Create(_mapper.Map<User>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
-
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
-            return Ok(response);
+            var response = await userBll.Create(value);
+            return response switch
+            {
+                { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest } => BadRequest(
+                    response),
+                { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError } =>
+                    StatusCode(StatusCodes.Status500InternalServerError, response),
+                _ => Ok(response)
+            };
         }
 
         /// <summary>
@@ -54,17 +50,17 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
             if (id <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _userBll.Delete(id);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
-
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
-
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
-            return Ok(response);
+            var response = await userBll.Delete(id);
+            return response switch
+            {
+                { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest } => BadRequest(
+                    response),
+                { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound } => NotFound(
+                    response),
+                { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError } =>
+                    StatusCode(StatusCodes.Status500InternalServerError, response),
+                _ => Ok(response)
+            };
         }
 
         /// <summary>
@@ -76,8 +72,8 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
         {
-            var response = await _userBll.GetAll();
-            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
+            var response = await userBll.GetAll();
+            if (response.IsSuccess is ApiResponseCode.ValidationError or ApiResponseCode.DatabaseError && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -98,14 +94,15 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
             if (id <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _userBll.GetById(id);
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
-
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
-            return Ok(response);
+            var response = await userBll.GetById(id);
+            return response switch
+            {
+                { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound } => NotFound(
+                    response),
+                { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError } =>
+                    StatusCode(StatusCodes.Status500InternalServerError, response),
+                _ => Ok(response)
+            };
         }
 
         /// <summary>
@@ -118,22 +115,22 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update([FromBody] UserUpdateDto value)
+        public async Task<IActionResult> Update([FromBody] UserUpdateDto? value)
         {
             if (value is null)
                 return BadRequest(new ApiResponse() { Message = "Usuario es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _userBll.Update(_mapper.Map<User>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
-
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
-
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
-            return Ok(response);
+            var response = await userBll.Update(value);
+            return response switch
+            {
+                { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest } => BadRequest(
+                    response),
+                { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound } => NotFound(
+                    response),
+                { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError } =>
+                    StatusCode(StatusCodes.Status500InternalServerError, response),
+                _ => Ok(response)
+            };
         }
 
         /// <summary>
@@ -146,22 +143,22 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Security
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> LogIn([FromBody] UserLogInDto value)
+        public async Task<IActionResult> LogIn([FromBody] UserLogInDto? value)
         {
             if (value is null)
                 return BadRequest(new ApiResponse() { Message = "Usuario es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _userBll.LogIn(_mapper.Map<User>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
-
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
-
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
-            return Ok(response);
+            var response = await userBll.LogIn(value);
+            return response switch
+            {
+                { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest } => BadRequest(
+                    response),
+                { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound } => NotFound(
+                    response),
+                { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError } =>
+                    StatusCode(StatusCodes.Status500InternalServerError, response),
+                _ => Ok(response)
+            };
         }
     }
 }

@@ -9,11 +9,11 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 {
     public class SubCategoryBll(ISubCategoryRepository repository, ICategoryBll categoryBll, IMapper mapper) : ISubCategoryBll
     {
-        public async Task<ApiResponse> Create(SubCategory entity) => await repository.Create(entity);
+        public async Task<ApiResponse> Create(SubCategoryInsertDto entity) => await repository.Create(mapper.Map<SubCategory>(entity));
 
-        public async Task<ApiResponse> CreateMany(IEnumerable<SubCategory> entities)
+        public async Task<ApiResponse> CreateMany(IEnumerable<SubCategoryInsertDto> entities)
         {
-            var response = await repository.CreateMany(entities);
+            var response = await repository.CreateMany(mapper.Map<IEnumerable<SubCategory>>(entities));
             // Comprobar si hay elementos
             if (response.Result is not IEnumerable<SubCategory> subCategories)
                 return response;
@@ -104,8 +104,9 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             return response;
         }
 
-        public async Task<ApiResponse> Update(SubCategory entity) => await repository.Update(entity);
+        public async Task<ApiResponse> Update(SubCategoryUpdateDto entity) => await repository.Update(mapper.Map<SubCategory>(entity));
 
-        public async Task<ApiResponse> UpdateMany(IEnumerable<SubCategory> entities) => await repository.UpdateMany(entities);
+        public async Task<ApiResponse> UpdateMany(IEnumerable<SubCategoryUpdateDto> entities) =>
+            await repository.UpdateMany(mapper.Map<IEnumerable<SubCategory>>(entities));
     }
 }

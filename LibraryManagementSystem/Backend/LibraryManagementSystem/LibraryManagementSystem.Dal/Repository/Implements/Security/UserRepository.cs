@@ -2,8 +2,8 @@
 using LibraryManagementSystem.Dal.Core;
 using LibraryManagementSystem.Dal.Repository.Interfaces.Security;
 using LibraryManagementSystem.Entities.Models.Security;
-using System.Data.SqlClient;
 using System.Data;
+using System.Data.SqlClient;
 using System.Net;
 
 namespace LibraryManagementSystem.Dal.Repository.Implements.Security
@@ -38,11 +38,11 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
                 switch (response.IsSuccess)
                 {
                     /* No paso una validación en el procedimiento almacenado */
-                    case 1:
+                    case ApiResponseCode.ValidationError:
                         response.StatusCode = HttpStatusCode.BadRequest;
                         return response;
                     /* Ocurrio algún error en el procedimiento almacenado */
-                    case 3:
+                    case ApiResponseCode.DatabaseError:
                         response.StatusCode = HttpStatusCode.InternalServerError;
                         return response;
                 }
@@ -91,17 +91,19 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
                 switch (response.IsSuccess)
                 {
                     /* No paso una validación en el procedimiento almacenado */
-                    case 1:
+                    case ApiResponseCode.ValidationError:
                         response.StatusCode = HttpStatusCode.BadRequest;
                         return response;
-                    /* No existe el registro a eliminar */
-                    case 2:
+
+                    case ApiResponseCode.ResourceNotFound:
                         response.StatusCode = HttpStatusCode.NotFound;
                         return response;
                     /* Ocurrio algún error en el procedimiento almacenado */
-                    case 3:
+                    case ApiResponseCode.DatabaseError:
                         response.StatusCode = HttpStatusCode.InternalServerError;
                         return response;
+
+                    case ApiResponseCode.Success:
                     default:
                         /* Retornar código de éxito */
                         response.StatusCode = HttpStatusCode.OK;
@@ -158,7 +160,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
                 var result = await sqlConnector.ExecuteDataTableAsync("[Security].uspGetUser", CommandType.StoredProcedure, parameters);
                 if (result.Rows.Count <= 0)
                 {
-                    response.IsSuccess = 2;
+                    response.IsSuccess = ApiResponseCode.ResourceNotFound;
                     response.StatusCode = HttpStatusCode.NotFound;
                     response.Message = "No se encontro un registro con el ID ingresado.";
                     return response;
@@ -215,17 +217,19 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
                 switch (response.IsSuccess)
                 {
                     /* No paso una validación en el procedimiento almacenado */
-                    case 1:
+                    case ApiResponseCode.ValidationError:
                         response.StatusCode = HttpStatusCode.BadRequest;
                         return response;
-                    /* No existe el registro a actualizar */
-                    case 2:
+
+                    case ApiResponseCode.ResourceNotFound:
                         response.StatusCode = HttpStatusCode.NotFound;
                         return response;
                     /* Ocurrio algún error en el procedimiento almacenado */
-                    case 3:
+                    case ApiResponseCode.DatabaseError:
                         response.StatusCode = HttpStatusCode.InternalServerError;
                         return response;
+
+                    case ApiResponseCode.Success:
                     default:
                         /* Retornar código de éxito */
                         response.StatusCode = HttpStatusCode.OK;
@@ -272,11 +276,11 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Security
                 switch (response.IsSuccess)
                 {
                     /* Ocurrio algún error o no paso una validación en el procedimiento almacenado */
-                    case 1:
+                    case ApiResponseCode.ValidationError:
                         response.StatusCode = HttpStatusCode.BadRequest;
                         return response;
                     /* No existe un usuario con el nombre ingresado */
-                    case 2:
+                    case ApiResponseCode.ResourceNotFound:
                         response.StatusCode = HttpStatusCode.NotFound;
                         return response;
                 }

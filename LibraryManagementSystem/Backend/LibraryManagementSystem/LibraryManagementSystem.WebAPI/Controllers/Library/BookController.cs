@@ -1,23 +1,18 @@
-﻿using System.Net;
-using System.Text.Json;
-using AutoMapper;
-using LibraryManagementSystem.Bll.Interfaces.Library;
+﻿using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
-using LibraryManagementSystem.Entities.Models.Library;
 using LibraryManagementSystem.WebAPI.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System.Net;
+using System.Text.Json;
 
 namespace LibraryManagementSystem.WebAPI.Controllers.Library
 {
     [Route("api/books")]
     [ApiController]
-    public class BookController(IBookBll bookBll, IMapper mapper, IHubContext<BookNotificationHub, IBookNotification> bookHubContext) : ControllerBase
+    public class BookController(IBookBll bookBll, IHubContext<BookNotificationHub, IBookNotification> bookHubContext) : ControllerBase
     {
-        private readonly IBookBll _bookBll = bookBll;
-        private readonly IMapper _mapper = mapper;
-        private readonly IHubContext<BookNotificationHub, IBookNotification> _bookHubContext = bookHubContext;
         private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
         /// <summary>
@@ -29,25 +24,29 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] BookInsertDto value)
+        public async Task<IActionResult> Create([FromBody] BookInsertDto? value)
         {
             if (value is null)
                 return BadRequest(new ApiResponse() { Message = "Libro es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookBll.Create(_mapper.Map<Book>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await bookBll.Create(value);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
+                case { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound }:
+                    return NotFound(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
 
-            // Notifica a todos los clientes
-            await _bookHubContext.Clients.All.SendBookNotification(true);
+                default:
+                    // Notifica a todos los clientes
+                    await bookHubContext.Clients.All.SendBookNotification(true);
 
-            return Ok(response);
+                    return Ok(response);
+            }
         }
 
         /// <summary>
@@ -65,20 +64,24 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (id <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookBll.Delete(id);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await bookBll.Delete(id);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
+                case { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound }:
+                    return NotFound(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
 
-            // Notifica a todos los clientes
-            await _bookHubContext.Clients.All.SendBookNotification(true);
+                default:
+                    // Notifica a todos los clientes
+                    await bookHubContext.Clients.All.SendBookNotification(true);
 
-            return Ok(response);
+                    return Ok(response);
+            }
         }
 
         /// <summary>
@@ -90,8 +93,8 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
         {
-            var response = await _bookBll.GetAll();
-            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
+            var response = await bookBll.GetAll();
+            if (response.IsSuccess is ApiResponseCode.ValidationError or ApiResponseCode.DatabaseError && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -112,14 +115,15 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (id <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookBll.GetById(id);
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
-
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
-            return Ok(response);
+            var response = await bookBll.GetById(id);
+            return response switch
+            {
+                { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.NotFound } => NotFound(
+                    response),
+                { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError } =>
+                    StatusCode(StatusCodes.Status500InternalServerError, response),
+                _ => Ok(response)
+            };
         }
 
         /// <summary>
@@ -132,7 +136,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetFilteredBook([FromQuery] string filterParamsDto)
+        public async Task<IActionResult> GetFilteredBook([FromQuery] string? filterParamsDto)
         {
             if (filterParamsDto is null)
                 return BadRequest(new ApiResponse() { Message = "FilterBookDto json es null.", StatusCode = HttpStatusCode.BadRequest });
@@ -141,7 +145,8 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             try
             {
                 filterBookDto = JsonSerializer.Deserialize<FilterBookDto>(filterParamsDto, _jsonOptions);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return BadRequest(new ApiResponse() { Message = ex.Message, StatusCode = HttpStatusCode.BadRequest });
             }
@@ -149,8 +154,8 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (filterBookDto is null)
                 return BadRequest(new ApiResponse() { Message = "FilterBookDto es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookBll.GetFilteredBook(filterBookDto);
-            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
+            var response = await bookBll.GetFilteredBook(filterBookDto);
+            if (response.IsSuccess is ApiResponseCode.ValidationError or ApiResponseCode.DatabaseError && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -166,25 +171,29 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update([FromBody] BookUpdateDto value)
+        public async Task<IActionResult> Update([FromBody] BookUpdateDto? value)
         {
             if (value is null)
                 return BadRequest(new ApiResponse() { Message = "Libro es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _bookBll.Update(_mapper.Map<Book>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await bookBll.Update(value);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
+                case { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound }:
+                    return NotFound(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
 
-            // Notifica a todos los clientes
-            await _bookHubContext.Clients.All.SendBookNotification(true);
+                default:
+                    // Notifica a todos los clientes
+                    await bookHubContext.Clients.All.SendBookNotification(true);
 
-            return Ok(response);
+                    return Ok(response);
+            }
         }
     }
 }

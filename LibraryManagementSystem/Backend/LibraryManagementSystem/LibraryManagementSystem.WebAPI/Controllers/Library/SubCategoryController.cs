@@ -1,24 +1,18 @@
-﻿using System.Net;
-using AutoMapper;
-using LibraryManagementSystem.Bll.Interfaces.Library;
+﻿using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
-using LibraryManagementSystem.Entities.Models.Library;
 using LibraryManagementSystem.WebAPI.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System.Net;
 
 namespace LibraryManagementSystem.WebAPI.Controllers.Library
 {
     [Route("api/subcategories")]
     [ApiController]
-    public class SubCategoryController(ISubCategoryBll subCategoryBll, IMapper mapper,
+    public class SubCategoryController(ISubCategoryBll subCategoryBll, 
         IHubContext<SubCategoryNotificationHub, ISubCategoryNotification> subCategoryHubContext) : ControllerBase
     {
-        private readonly ISubCategoryBll _subCategoryBll = subCategoryBll;
-        private readonly IMapper _mapper = mapper;
-        private readonly IHubContext<SubCategoryNotificationHub, ISubCategoryNotification> _subCategoryHubContext = subCategoryHubContext;
-
         /// <summary>
         /// Inserta una SubCategoria
         /// </summary>
@@ -28,25 +22,29 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] SubCategoryInsertDto value)
+        public async Task<IActionResult> Create([FromBody] SubCategoryInsertDto? value)
         {
             if (value is null)
                 return BadRequest(new ApiResponse() { Message = "SubCategoría es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _subCategoryBll.Create(_mapper.Map<SubCategory>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await subCategoryBll.Create(value);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
+                case { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound }:
+                    return NotFound(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
 
-            // Notifica a todos los clientes
-            await _subCategoryHubContext.Clients.All.SendSubCategoryNotification(true);
+                default:
+                    // Notifica a todos los clientes
+                    await subCategoryHubContext.Clients.All.SendSubCategoryNotification(true);
 
-            return Ok(response);
+                    return Ok(response);
+            }
         }
 
         /// <summary>
@@ -58,7 +56,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateMany([FromBody] IEnumerable<SubCategoryInsertDto> list)
+        public async Task<IActionResult> CreateMany([FromBody] IEnumerable<SubCategoryInsertDto>? list)
         {
             if (list is null)
                 return BadRequest(new ApiResponse() { Message = "Lista de SubCategorías es null.", StatusCode = HttpStatusCode.BadRequest });
@@ -66,20 +64,24 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (!list.Any())
                 return BadRequest(new ApiResponse() { Message = "La lista no tiene elementos a insertar.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _subCategoryBll.CreateMany(_mapper.Map<IEnumerable<SubCategory>>(list));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await subCategoryBll.CreateMany(list);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
+                case { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound }:
+                    return NotFound(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
 
-            // Notifica a todos los clientes
-            await _subCategoryHubContext.Clients.All.SendSubCategoryNotification(true);
+                default:
+                    // Notifica a todos los clientes
+                    await subCategoryHubContext.Clients.All.SendSubCategoryNotification(true);
 
-            return Ok(response);
+                    return Ok(response);
+            }
         }
 
         /// <summary>
@@ -97,20 +99,24 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (id <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _subCategoryBll.Delete(id);
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await subCategoryBll.Delete(id);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
+                case { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound }:
+                    return NotFound(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
 
-            // Notifica a todos los clientes
-            await _subCategoryHubContext.Clients.All.SendSubCategoryNotification(true);
+                default:
+                    // Notifica a todos los clientes
+                    await subCategoryHubContext.Clients.All.SendSubCategoryNotification(true);
 
-            return Ok(response);
+                    return Ok(response);
+            }
         }
 
         /// <summary>
@@ -122,8 +128,8 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
         {
-            var response = await _subCategoryBll.GetAll();
-            if ((response.IsSuccess == 1 || response.IsSuccess == 3) && response.StatusCode == HttpStatusCode.InternalServerError)
+            var response = await subCategoryBll.GetAll();
+            if (response.IsSuccess is ApiResponseCode.ValidationError or ApiResponseCode.DatabaseError && response.StatusCode == HttpStatusCode.InternalServerError)
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
 
             return Ok(response);
@@ -144,14 +150,15 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (id <= 0)
                 return BadRequest(new ApiResponse() { Message = "Id no puede ser menor o igual a 0.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _subCategoryBll.GetById(id);
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
-
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-
-            return Ok(response);
+            var response = await subCategoryBll.GetById(id);
+            return response switch
+            {
+                { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound } => NotFound(
+                    response),
+                { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError } =>
+                    StatusCode(StatusCodes.Status500InternalServerError, response),
+                _ => Ok(response)
+            };
         }
 
         /// <summary>
@@ -164,25 +171,29 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update([FromBody] SubCategoryUpdateDto value)
+        public async Task<IActionResult> Update([FromBody] SubCategoryUpdateDto? value)
         {
             if (value is null)
                 return BadRequest(new ApiResponse() { Message = "Categoria es null.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _subCategoryBll.Update(_mapper.Map<SubCategory>(value));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await subCategoryBll.Update(value);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
+                case { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound }:
+                    return NotFound(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
 
-            // Notifica a todos los clientes
-            await _subCategoryHubContext.Clients.All.SendSubCategoryNotification(true);
+                default:
+                    // Notifica a todos los clientes
+                    await subCategoryHubContext.Clients.All.SendSubCategoryNotification(true);
 
-            return Ok(response);
+                    return Ok(response);
+            }
         }
 
         /// <summary>
@@ -195,7 +206,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateMany([FromBody] IEnumerable<SubCategoryUpdateDto> list)
+        public async Task<IActionResult> UpdateMany([FromBody] IEnumerable<SubCategoryUpdateDto>? list)
         {
             if (list is null)
                 return BadRequest(new ApiResponse() { Message = "Lista de SubCategorias es null.", StatusCode = HttpStatusCode.BadRequest });
@@ -203,20 +214,24 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
             if (!list.Any())
                 return BadRequest(new ApiResponse() { Message = "La lista no tiene elementos a actualizar.", StatusCode = HttpStatusCode.BadRequest });
 
-            var response = await _subCategoryBll.UpdateMany(_mapper.Map<IEnumerable<SubCategory>>(list));
-            if (response.IsSuccess == 1 && response.StatusCode == HttpStatusCode.BadRequest)
-                return BadRequest(response);
+            var response = await subCategoryBll.UpdateMany(list);
+            switch (response)
+            {
+                case { IsSuccess: ApiResponseCode.ValidationError, StatusCode: HttpStatusCode.BadRequest }:
+                    return BadRequest(response);
 
-            if (response.IsSuccess == 2 && response.StatusCode == HttpStatusCode.NotFound)
-                return NotFound(response);
+                case { IsSuccess: ApiResponseCode.ResourceNotFound, StatusCode: HttpStatusCode.NotFound }:
+                    return NotFound(response);
 
-            if (response.IsSuccess == 3 && response.StatusCode == HttpStatusCode.InternalServerError)
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                case { IsSuccess: ApiResponseCode.DatabaseError, StatusCode: HttpStatusCode.InternalServerError }:
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
 
-            // Notifica a todos los clientes
-            await _subCategoryHubContext.Clients.All.SendSubCategoryNotification(true);
+                default:
+                    // Notifica a todos los clientes
+                    await subCategoryHubContext.Clients.All.SendSubCategoryNotification(true);
 
-            return Ok(response);
+                    return Ok(response);
+            }
         }
     }
 }

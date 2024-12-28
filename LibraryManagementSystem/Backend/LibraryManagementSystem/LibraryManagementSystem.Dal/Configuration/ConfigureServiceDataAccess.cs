@@ -11,7 +11,7 @@ namespace LibraryManagementSystem.Dal.Configuration
 {
     public static class ConfigureServiceDataAccess
     {
-        public static IServiceCollection AddDataAccessLayer(this IServiceCollection services)
+        public static void AddDataAccessLayer(this IServiceCollection services)
         {
             /* Core */
             services.AddScoped<ISqlConnector, SqlServerConnector>();
@@ -34,8 +34,6 @@ namespace LibraryManagementSystem.Dal.Configuration
             services.AddScoped<IMonographRepository, MonographRepository>();
             services.AddScoped<IMonographLoanRepository, MonographLoanRepository>();
             services.AddScoped<IMonographAuthorRepository, MonographAutorRepository>();
-
-            return services;
         }
     }
 }

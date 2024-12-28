@@ -31,12 +31,16 @@
         public short NumberOfCopies { get => numberOfCopies; set => numberOfCopies = value; }
         public short BorrowedCopies { get => borrowedCopies; set => borrowedCopies = value; }
         public bool IsAvailable { get => isAvailable; set => isAvailable = value; }
+
         // Publisher
         public PublisherDto? Publisher { get => publisher; set => publisher = value; }
+
         // Category
         public CategoryDto? Category { get => category; set => category = value; }
+
         // Authors
         public List<AuthorDto>? Authors { get => authors; set => authors = value; }
+
         // SubCategories
         public List<SubCategoryDto>? SubCategories { get => subCategories; set => subCategories = value; }
     }

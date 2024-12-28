@@ -21,7 +21,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
             try
             {
                 /* Ejecutar procedimiento almacenado que recibe cada atributo por parámetro */
-                DataTable result = await sqlConnector.ExecuteDataTableAsync("[Library].uspInsertPublisher", CommandType.StoredProcedure, parameters);
+                var result = await sqlConnector.ExecuteDataTableAsync("[Library].uspInsertPublisher", CommandType.StoredProcedure, parameters);
                 /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
                 response = sqlConnector.DataRowToObject<ApiResponse>(result.Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
@@ -38,11 +38,11 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                 switch (response.IsSuccess)
                 {
                     /* No paso una validación en el procedimiento almacenado */
-                    case 1:
+                    case ApiResponseCode.ValidationError:
                         response.StatusCode = HttpStatusCode.BadRequest;
                         return response;
                     /* Ocurrio algún error en el procedimiento almacenado */
-                    case 3:
+                    case ApiResponseCode.DatabaseError:
                         response.StatusCode = HttpStatusCode.InternalServerError;
                         return response;
                 }
@@ -69,12 +69,13 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
         public async Task<ApiResponse> CreateMany(IEnumerable<Publisher> entities)
         {
             /* Convertir lista a DataTable */
-            DataTable table = sqlConnector.ListToDataTable(entities);
+            var publishers = entities.ToList();
+            var table = sqlConnector.ListToDataTable(publishers);
             ApiResponse? response;
             try
             {
                 /* Ejecutar procedimiento almacenado que recibe tabla por parámetro */
-                DataSet result = await sqlConnector.ExecuteSpWithTvpMany(table, "[Library].PublisherType", "[Library].uspInsertManyPublisher", "@Publishers");
+                var result = await sqlConnector.ExecuteSpWithTvpMany(table, "[Library].PublisherType", "[Library].uspInsertManyPublisher", "@Publishers");
                 /* Convertir respuesta de la base de datos a objeto de tipo ApiResponse */
                 response = sqlConnector.DataRowToObject<ApiResponse>(result.Tables[0].Rows[0]);
                 /* Sino se pudo convertir la fila a un objeto de tipo ApiResponse */
@@ -91,11 +92,11 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                 switch (response.IsSuccess)
                 {
                     /* No paso una validación en el procedimiento almacenado */
-                    case 1:
+                    case ApiResponseCode.ValidationError:
                         response.StatusCode = HttpStatusCode.BadRequest;
                         return response;
                     /* Ocurrio algún error en el procedimiento almacenado */
-                    case 3:
+                    case ApiResponseCode.DatabaseError:
                         response.StatusCode = HttpStatusCode.InternalServerError;
                         return response;
                 }
@@ -105,8 +106,8 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                 /* Obtener los IDs insertados del segundo DataTable */
                 List<int> insertedIds = [.. result.Tables[1].AsEnumerable().Select(row => row.Field<int>("InsertedID"))];
                 /* Asignar IDs a los elementos correspondientes en la lista de entidades */
-                int index = 0;
-                foreach (var entity in entities)
+                var index = 0;
+                foreach (var entity in publishers)
                 {
                     entity.PublisherId = insertedIds[index++];
                 }
@@ -151,17 +152,19 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                 switch (response.IsSuccess)
                 {
                     /* No paso una validación en el procedimiento almacenado */
-                    case 1:
+                    case ApiResponseCode.ValidationError:
                         response.StatusCode = HttpStatusCode.BadRequest;
                         return response;
-                    /* No existe el registro a eliminar */
-                    case 2:
+
+                    case ApiResponseCode.ResourceNotFound:
                         response.StatusCode = HttpStatusCode.NotFound;
                         return response;
                     /* Ocurrio algún error en el procedimiento almacenado */
-                    case 3:
+                    case ApiResponseCode.DatabaseError:
                         response.StatusCode = HttpStatusCode.InternalServerError;
                         return response;
+
+                    case ApiResponseCode.Success:
                     default:
                         /* Retornar código de éxito */
                         response.StatusCode = HttpStatusCode.OK;
@@ -218,7 +221,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                 var result = await sqlConnector.ExecuteDataTableAsync("[Library].uspGetPublisher", CommandType.StoredProcedure, parameters);
                 if (result.Rows.Count <= 0)
                 {
-                    response.IsSuccess = 2;
+                    response.IsSuccess = ApiResponseCode.ResourceNotFound;
                     response.StatusCode = HttpStatusCode.NotFound;
                     response.Message = "No se encontro un registro con el ID ingresado.";
                     return response;
@@ -275,17 +278,19 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                 switch (response.IsSuccess)
                 {
                     /* No paso una validación en el procedimiento almacenado */
-                    case 1:
+                    case ApiResponseCode.ValidationError:
                         response.StatusCode = HttpStatusCode.BadRequest;
                         return response;
-                    /* No existe el registro a eliminar */
-                    case 2:
+
+                    case ApiResponseCode.ResourceNotFound:
                         response.StatusCode = HttpStatusCode.NotFound;
                         return response;
                     /* Ocurrio algún error en el procedimiento almacenado */
-                    case 3:
+                    case ApiResponseCode.DatabaseError:
                         response.StatusCode = HttpStatusCode.InternalServerError;
                         return response;
+
+                    case ApiResponseCode.Success:
                     default:
                         /* Retornar código de éxito */
                         response.StatusCode = HttpStatusCode.OK;
@@ -331,21 +336,22 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                 switch (response.IsSuccess)
                 {
                     /* No paso una validación en el procedimiento almacenado */
-                    case 1:
+                    case ApiResponseCode.ValidationError:
                         response.StatusCode = HttpStatusCode.BadRequest;
                         return response;
-                    /* No existe el registro a eliminar */
-                    case 2:
+
+                    case ApiResponseCode.ResourceNotFound:
                         response.StatusCode = HttpStatusCode.NotFound;
                         return response;
                     /* Ocurrio algún error en el procedimiento almacenado */
-                    case 3:
+                    case ApiResponseCode.DatabaseError:
                         response.StatusCode = HttpStatusCode.InternalServerError;
                         return response;
+
+                    case ApiResponseCode.Success:
                     default:
-                        /* Retornar código de éxito y objeto registrado */
+                        /* Retornar código de éxito */
                         response.StatusCode = HttpStatusCode.OK;
-                        response.Result = entities;
                         break;
                 }
             }

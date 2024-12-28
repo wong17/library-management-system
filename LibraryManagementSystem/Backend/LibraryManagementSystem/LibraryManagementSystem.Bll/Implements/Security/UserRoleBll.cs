@@ -9,9 +9,10 @@ namespace LibraryManagementSystem.Bll.Implements.Security
 {
     public class UserRoleBll(IUserRoleRepository repository, IMapper mapper) : IUserRoleBll
     {
-        public async Task<ApiResponse> Create(UserRole entity) => await repository.Create(entity);
+        public async Task<ApiResponse> Create(UserRoleInsertDto entity) => await repository.Create(mapper.Map<UserRole>(entity));
 
-        public async Task<ApiResponse> CreateMany(IEnumerable<UserRole> entities) => await repository.CreateMany(entities);
+        public async Task<ApiResponse> CreateMany(IEnumerable<UserRoleInsertDto> entities) =>
+            await repository.CreateMany(mapper.Map<IEnumerable<UserRole>>(entities));
 
         public async Task<ApiResponse> Delete(int userId, int roleId) => await repository.Delete(userId, roleId);
 

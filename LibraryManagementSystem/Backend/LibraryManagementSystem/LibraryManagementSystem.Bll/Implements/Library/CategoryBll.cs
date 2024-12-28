@@ -9,11 +9,11 @@ namespace LibraryManagementSystem.Bll.Implements.Library
 {
     public class CategoryBll(ICategoryRepository repository, IMapper mapper) : ICategoryBll
     {
-        public async Task<ApiResponse> Create(Category entity) => await repository.Create(entity);
+        public async Task<ApiResponse> Create(CategoryInsertDto entity) => await repository.Create(mapper.Map<Category>(entity));
 
-        public async Task<ApiResponse> CreateMany(IEnumerable<Category> entities)
+        public async Task<ApiResponse> CreateMany(IEnumerable<CategoryInsertDto> entities)
         {
-            var response = await repository.CreateMany(entities);
+            var response = await repository.CreateMany(mapper.Map<IEnumerable<Category>>(entities));
             // Comprobar si hay elementos
             if (response.Result is not IEnumerable<Category> category)
                 return response;
@@ -49,8 +49,9 @@ namespace LibraryManagementSystem.Bll.Implements.Library
             return response;
         }
 
-        public async Task<ApiResponse> Update(Category entity) => await repository.Update(entity);
+        public async Task<ApiResponse> Update(CategoryUpdateDto entity) => await repository.Update(mapper.Map<Category>(entity));
 
-        public async Task<ApiResponse> UpdateMany(IEnumerable<Category> entities) => await repository.UpdateMany(entities);
+        public async Task<ApiResponse> UpdateMany(IEnumerable<CategoryUpdateDto> entities) =>
+            await repository.UpdateMany(mapper.Map<IEnumerable<Category>>(entities));
     }
 }

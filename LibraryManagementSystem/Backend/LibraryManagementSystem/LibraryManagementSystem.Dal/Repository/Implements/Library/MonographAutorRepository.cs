@@ -1,10 +1,10 @@
 ﻿using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Dal.Core;
-using LibraryManagementSystem.Entities.Models.Library;
-using System.Data.SqlClient;
-using System.Data;
-using System.Net;
 using LibraryManagementSystem.Dal.Repository.Interfaces.Library;
+using LibraryManagementSystem.Entities.Models.Library;
+using System.Data;
+using System.Data.SqlClient;
+using System.Net;
 
 namespace LibraryManagementSystem.Dal.Repository.Implements.Library
 {
@@ -38,17 +38,19 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                 switch (response.IsSuccess)
                 {
                     /* No paso una validación en el procedimiento almacenado */
-                    case 1:
+                    case ApiResponseCode.ValidationError:
                         response.StatusCode = HttpStatusCode.BadRequest;
                         return response;
-                    /* No existe el registro a eliminar */
-                    case 2:
+
+                    case ApiResponseCode.ResourceNotFound:
                         response.StatusCode = HttpStatusCode.NotFound;
                         return response;
                     /* Ocurrio algún error en el procedimiento almacenado */
-                    case 3:
+                    case ApiResponseCode.DatabaseError:
                         response.StatusCode = HttpStatusCode.InternalServerError;
                         return response;
+
+                    case ApiResponseCode.Success:
                     default:
                         /* Retornar código de éxito y objeto registrado */
                         response.StatusCode = HttpStatusCode.OK;
@@ -94,17 +96,19 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                 switch (response.IsSuccess)
                 {
                     /* No paso una validación en el procedimiento almacenado */
-                    case 1:
+                    case ApiResponseCode.ValidationError:
                         response.StatusCode = HttpStatusCode.BadRequest;
                         return response;
-                    /* No existe el registro a eliminar */
-                    case 2:
+
+                    case ApiResponseCode.ResourceNotFound:
                         response.StatusCode = HttpStatusCode.NotFound;
                         return response;
                     /* Ocurrio algún error en el procedimiento almacenado */
-                    case 3:
+                    case ApiResponseCode.DatabaseError:
                         response.StatusCode = HttpStatusCode.InternalServerError;
                         return response;
+
+                    case ApiResponseCode.Success:
                     default:
                         /* Retornar código de éxito y objeto registrado */
                         response.StatusCode = HttpStatusCode.OK;
@@ -150,17 +154,19 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                 switch (response.IsSuccess)
                 {
                     /* No paso una validación en el procedimiento almacenado */
-                    case 1:
+                    case ApiResponseCode.ValidationError:
                         response.StatusCode = HttpStatusCode.BadRequest;
                         return response;
-                    /* No existe el registro a eliminar */
-                    case 2:
+
+                    case ApiResponseCode.ResourceNotFound:
                         response.StatusCode = HttpStatusCode.NotFound;
                         return response;
                     /* Ocurrio algún error en el procedimiento almacenado */
-                    case 3:
+                    case ApiResponseCode.DatabaseError:
                         response.StatusCode = HttpStatusCode.InternalServerError;
                         return response;
+
+                    case ApiResponseCode.Success:
                     default:
                         /* Retornar código de éxito */
                         response.StatusCode = HttpStatusCode.OK;
@@ -217,7 +223,7 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                 var result = await sqlConnector.ExecuteDataTableAsync("[Library].uspGetMonographAuthor", CommandType.StoredProcedure, parameters);
                 if (result.Rows.Count <= 0)
                 {
-                    response.IsSuccess = 2;
+                    response.IsSuccess = ApiResponseCode.ResourceNotFound;
                     response.StatusCode = HttpStatusCode.NotFound;
                     response.Message = "No se encontro un registro con el ID ingresado.";
                     return response;
@@ -271,17 +277,19 @@ namespace LibraryManagementSystem.Dal.Repository.Implements.Library
                 switch (response.IsSuccess)
                 {
                     /* No paso una validación en el procedimiento almacenado */
-                    case 1:
+                    case ApiResponseCode.ValidationError:
                         response.StatusCode = HttpStatusCode.BadRequest;
                         return response;
-                    /* No existe el registro a eliminar */
-                    case 2:
+
+                    case ApiResponseCode.ResourceNotFound:
                         response.StatusCode = HttpStatusCode.NotFound;
                         return response;
                     /* Ocurrio algún error en el procedimiento almacenado */
-                    case 3:
+                    case ApiResponseCode.DatabaseError:
                         response.StatusCode = HttpStatusCode.InternalServerError;
                         return response;
+
+                    case ApiResponseCode.Success:
                     default:
                         /* Retornar código de éxito y objeto registrado */
                         response.StatusCode = HttpStatusCode.OK;

@@ -10,7 +10,7 @@ namespace LibraryManagementSystem.Bll.Implements.Security
 {
     public class UserBll(IUserRepository repository, IRoleBll roleBll, IUserRoleBll userRoleBll, IMapper mapper) : IUserBll
     {
-        public async Task<ApiResponse> Create(User entity) => await repository.Create(entity);
+        public async Task<ApiResponse> Create(UserInsertDto entity) => await repository.Create(mapper.Map<User>(entity));
 
         public async Task<ApiResponse> Delete(int id) => await repository.Delete(id);
 
@@ -27,7 +27,7 @@ namespace LibraryManagementSystem.Bll.Implements.Security
             // Comprobar si hay roles
             var rolesResponse = roleBll.GetAll();
             var userRolesResponse = userRoleBll.GetAll();
-            if ((rolesResponse.Result.Result is not null && rolesResponse.Result.Result is IEnumerable<RoleDto> roles) && 
+            if ((rolesResponse.Result.Result is not null && rolesResponse.Result.Result is IEnumerable<RoleDto> roles) &&
                 (userRolesResponse.Result.Result is not null && userRolesResponse.Result.Result is IEnumerable<UserRoleDto> userRoles))
             {
                 var rolesDictionary = roles.ToDictionary(r => r.RoleId);
@@ -106,11 +106,11 @@ namespace LibraryManagementSystem.Bll.Implements.Security
             return response;
         }
 
-        public async Task<ApiResponse> Update(User entity) => await repository.Update(entity);
+        public async Task<ApiResponse> Update(UserUpdateDto entity) => await repository.Update(mapper.Map<User>(entity));
 
-        public async Task<ApiResponse> LogIn(User entity)
+        public async Task<ApiResponse> LogIn(UserLogInDto entity)
         {
-            var response = await repository.LogIn(entity);
+            var response = await repository.LogIn(mapper.Map<User>(entity));
 
             // Comprobar si hay un elemento
             if (response.Result is not User user)

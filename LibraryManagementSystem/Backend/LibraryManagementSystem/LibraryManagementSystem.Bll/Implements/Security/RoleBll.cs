@@ -9,7 +9,7 @@ namespace LibraryManagementSystem.Bll.Implements.Security
 {
     public class RoleBll(IRoleRepository repository, IMapper mapper) : IRoleBll
     {
-        public async Task<ApiResponse> Create(Role entity) => await repository.Create(entity);
+        public async Task<ApiResponse> Create(RoleInsertDto entity) => await repository.Create(mapper.Map<Role>(entity));
 
         public async Task<ApiResponse> Delete(int id) => await repository.Delete(id);
 
@@ -37,6 +37,6 @@ namespace LibraryManagementSystem.Bll.Implements.Security
             return response;
         }
 
-        public async Task<ApiResponse> Update(Role entity) => await repository.Update(entity);
+        public async Task<ApiResponse> Update(RoleUpdateDto entity) => await repository.Update(mapper.Map<Role>(entity));
     }
 }
