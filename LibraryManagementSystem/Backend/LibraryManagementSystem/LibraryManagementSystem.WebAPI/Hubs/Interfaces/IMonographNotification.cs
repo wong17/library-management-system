@@ -1,4 +1,4 @@
-﻿namespace LibraryManagementSystem.WebAPI.Hubs
+﻿namespace LibraryManagementSystem.WebAPI.Hubs.Interfaces
 {
     public interface IMonographNotification
     {

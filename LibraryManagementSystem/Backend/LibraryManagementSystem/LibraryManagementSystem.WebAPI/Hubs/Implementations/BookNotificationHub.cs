@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using LibraryManagementSystem.WebAPI.Hubs.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 
-namespace LibraryManagementSystem.WebAPI.Hubs
+namespace LibraryManagementSystem.WebAPI.Hubs.Implementations
 {
     public class BookNotificationHub : Hub<IBookNotification>
     {

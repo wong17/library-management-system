@@ -1,7 +1,8 @@
 ﻿using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
-using LibraryManagementSystem.WebAPI.Hubs;
+using LibraryManagementSystem.WebAPI.Hubs.Implementations;
+using LibraryManagementSystem.WebAPI.Hubs.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Net;

@@ -1,7 +1,8 @@
 ﻿using LibraryManagementSystem.Bll.Interfaces.Library;
 using LibraryManagementSystem.Common.Runtime;
 using LibraryManagementSystem.Entities.Dtos.Library;
-using LibraryManagementSystem.WebAPI.Hubs;
+using LibraryManagementSystem.WebAPI.Hubs.Implementations;
+using LibraryManagementSystem.WebAPI.Hubs.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Net;
@@ -10,7 +11,7 @@ namespace LibraryManagementSystem.WebAPI.Controllers.Library
 {
     [Route("api/subcategories")]
     [ApiController]
-    public class SubCategoryController(ISubCategoryBll subCategoryBll, 
+    public class SubCategoryController(ISubCategoryBll subCategoryBll,
         IHubContext<SubCategoryNotificationHub, ISubCategoryNotification> subCategoryHubContext) : ControllerBase
     {
         /// <summary>
