@@ -2,26 +2,15 @@
 {
     public class Monograph
     {
-        private int monographId;
-        private string? classification;
-        private string? title;
-        private string? description;
-        private string? tutor;
-        private DateTime presentationDate;
-        private byte[]? image;
-        private int careerId;
-        private bool isActive;
-        private bool isAvailable;
-
-        public int MonographId { get => monographId; set => monographId = value; }
-        public string? Classification { get => classification; set => classification = value; }
-        public string? Title { get => title; set => title = value; }
-        public string? Description { get => description; set => description = value; }
-        public string? Tutor { get => tutor; set => tutor = value; }
-        public DateTime PresentationDate { get => presentationDate; set => presentationDate = value; }
-        public byte[]? Image { get => image; set => image = value; }
-        public int CareerId { get => careerId; set => careerId = value; }
-        public bool IsActive { get => isActive; set => isActive = value; }
-        public bool IsAvailable { get => isAvailable; set => isAvailable = value; }
+        public int MonographId { get; set; }
+        public string? Classification { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public string? Tutor { get; set; }
+        public DateTime PresentationDate { get; set; }
+        public byte[]? Image { get; set; }
+        public int CareerId { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsAvailable { get; set; }
     }
 }

@@ -2,12 +2,8 @@
 {
     public class Role
     {
-        private int roleId;
-        private string? name;
-        private string? description;
-
-        public int RoleId { get => roleId; set => roleId = value; }
-        public string? Name { get => name; set => name = value; }
-        public string? Description { get => description; set => description = value; }
+        public int RoleId { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
     }
 }
